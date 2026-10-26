@@ -5,7 +5,7 @@ import "../globals.css";
 const inter = Inter({ subsets: ["latin", "latin-ext"] });
 
 export const metadata: Metadata = {
-  title: "🦊 SPPDF Beer Pong - Výsledky",
+  title: "SPPDF Beer Pong - Výsledky",
   description: "Veřejné výsledky Beer Pong turnajů SPPDF",
   icons: {
     icon: "/icon.svg",

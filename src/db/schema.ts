@@ -134,6 +134,7 @@ export const scheduledMatch = pgTable("scheduled_match", {
   roundId: integer("round_id")
     .notNull()
     .references(() => round.id, { onDelete: "cascade" }),
+  matchRound: integer("match_round").notNull().default(1),
   tableNumber: integer("table_number").notNull().default(1),
   team1Id: integer("team1_id")
     .notNull()

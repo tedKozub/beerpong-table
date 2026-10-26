@@ -17,23 +17,8 @@ import {
   getTeamPlayersForRound,
 } from "@/actions/teams";
 import { getPlayersForSeason } from "@/actions/players";
-import { RankBadge } from "@/components/RankBadge";
-import {
-  Calendar,
-  CheckCircle2,
-  Clock,
-  Crown,
-  Plus,
-  Shield,
-  Swords,
-  Target,
-  Trash2,
-  Trophy,
-  User,
-  Users,
-  Wind,
-  X,
-} from "lucide-react";
+import { getScheduleForRound } from "@/actions/schedule";
+import { ScheduleSection } from "@/components/ScheduleSection";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -56,6 +41,7 @@ export default async function RoundDetailPage({
     teams,
     players,
     roster,
+    schedule,
   ] = await Promise.all([
     getSeasonById(currentRound.seasonId),
     getMatchesForRound(roundId),
@@ -64,9 +50,9 @@ export default async function RoundDetailPage({
     getTeamsForSeason(currentRound.seasonId),
     getPlayersForSeason(currentRound.seasonId),
     getTeamPlayersForRound(roundId),
+    getScheduleForRound(roundId),
   ]);
 
-  // Získáme detailní skóre hráčů pro každý zápas večera
   const matchesWithDetails = await Promise.all(
     matches.map(async (m) => ({
       ...m,
@@ -74,12 +60,19 @@ export default async function RoundDetailPage({
     }))
   );
 
+  const scoreLeaderboard = [...playerStats].sort(
+    (a, b) => b.totalScore - a.totalScore
+  );
+  const bjLeaderboard = [...playerStats].sort(
+    (a, b) => b.totalBlowjobs - a.totalBlowjobs
+  );
+
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto flex flex-col gap-10">
-      {/* Header & Breadcrumbs */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-300 pb-6">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto flex flex-col gap-8">
+      {/* Hlavička & Breadcrumbs */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-300 pb-5">
         <div>
-          <div className="text-sm breadcrumbs mb-1">
+          <div className="text-xs breadcrumbs mb-1">
             <ul>
               <li>
                 <Link href="/">Domů</Link>
@@ -96,18 +89,18 @@ export default async function RoundDetailPage({
             </ul>
           </div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl sm:text-4xl font-black">
+            <h1 className="text-2xl sm:text-3xl font-black">
               {currentRound.name}
             </h1>
             <span
               className={`badge ${
-                currentRound.isCompleted ? "badge-success" : "badge-warning"
-              } font-semibold whitespace-nowrap`}
+                currentRound.isCompleted ? "badge-success" : "badge-ghost"
+              } text-xs font-semibold whitespace-nowrap`}
             >
-              {currentRound.isCompleted ? "Dokončeno" : "Probíhá / Plánováno"}
+              {currentRound.isCompleted ? "Dokončeno" : "Plánováno"}
             </span>
           </div>
-          <p className="text-base-content/70 text-sm mt-1">
+          <p className="text-base-content/70 text-xs mt-1">
             Semestr: <strong>{currentSeason?.name}</strong> • Večer #{currentRound.roundNumber}
             {currentRound.date &&
               ` • ${new Date(currentRound.date).toLocaleDateString("cs-CZ")}`}
@@ -136,164 +129,171 @@ export default async function RoundDetailPage({
         </form>
       </div>
 
-      {/* Rychlý přehled: Tabulka večera a Králové kola */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Tabulka večera */}
-        <section className="card bg-base-100 shadow-xl border border-base-300 lg:col-span-2">
-          <div className="card-body p-6">
-            <h2 className="card-title text-xl font-bold flex items-center gap-2 mb-2">
-              <Trophy className="w-5 h-5 text-warning" />
-              Pořadí večera ({currentRound.name})
-            </h2>
-            <p className="text-sm text-base-content/70 mb-4">
-              Výsledky a body získané týmy během tohoto konkrétního večera
+      {/* Rozpis zápasů na stoly (Round-Robin z PR #40 + PDF & Prezentace) */}
+      <ScheduleSection
+        roundId={roundId}
+        roundName={`${currentSeason?.name ?? "Turnaj"} - ${currentRound.name}`}
+        schedule={schedule}
+        isAdmin={true}
+      />
+
+      {/* Tabulka večera */}
+      <section className="card bg-base-100 shadow-md border border-base-200">
+        <div className="card-body p-4 sm:p-6">
+          <h2 className="text-lg font-bold mb-1">
+            Pořadí večera ({currentRound.name})
+          </h2>
+          <p className="text-xs text-base-content/70 mb-4">
+            Výsledky a body získané v tomto kole
+          </p>
+
+          {teamStandings.length === 0 ? (
+            <p className="text-base-content/60 italic py-6 text-center text-sm">
+              V tomto kole zatím nebyly zapsány žádné výsledky.
             </p>
-
-            {teamStandings.length === 0 ? (
-              <p className="text-base-content/60 italic py-6 text-center">
-                V tomto kole zatím nebyly zapsány žádné výsledky.
-              </p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="table w-full">
-                  <thead>
-                    <tr>
-                      <th className="w-12 text-center">Poř.</th>
-                      <th>Tým</th>
-                      <th className="text-center">Zápasy</th>
-                      <th className="text-center">V</th>
-                      <th className="text-center">R</th>
-                      <th className="text-center">P</th>
-                      <th className="text-center">Skóre</th>
-                      <th className="text-right">Body</th>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table table-sm sm:table-md w-full">
+                <thead>
+                  <tr className="bg-base-200/50">
+                    <th className="w-12 text-center">Poř.</th>
+                    <th>Tým</th>
+                    <th className="text-center">Z</th>
+                    <th className="text-center">V</th>
+                    <th className="text-center">R</th>
+                    <th className="text-center">P</th>
+                    <th className="text-center">Skóre</th>
+                    <th className="text-right">Body</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {teamStandings.map((t, idx) => (
+                    <tr
+                      key={t.teamId}
+                      className={idx === 0 ? "bg-warning/15 font-bold" : ""}
+                    >
+                      <td className="text-center tabular-nums font-semibold">
+                        {idx + 1}.
+                      </td>
+                      <td className="font-semibold">{t.teamName}</td>
+                      <td className="text-center tabular-nums">{t.played}</td>
+                      <td className="text-center text-success tabular-nums">{t.wins}</td>
+                      <td className="text-center text-base-content/60 tabular-nums">
+                        {t.draws}
+                      </td>
+                      <td className="text-center text-error tabular-nums">{t.losses}</td>
+                      <td className="text-center tabular-nums">
+                        {t.cupsScored}:{t.cupsConceded}
+                      </td>
+                      <td className="text-right font-black text-primary tabular-nums">
+                        {t.points}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {teamStandings.map((t, idx) => (
-                      <tr
-                        key={t.teamId}
-                        className={idx === 0 ? "bg-warning/10 font-bold" : ""}
-                      >
-                        <td className="text-center">
-                          <RankBadge rank={idx + 1} />
-                        </td>
-                        <td className="font-semibold text-base">{t.teamName}</td>
-                        <td className="text-center tabular-nums">{t.played}</td>
-                        <td className="text-center text-success tabular-nums">{t.wins}</td>
-                        <td className="text-center text-base-content/60 tabular-nums">
-                          {t.draws}
-                        </td>
-                        <td className="text-center text-error tabular-nums">{t.losses}</td>
-                        <td className="text-center tabular-nums">
-                          {t.cupsScored}:{t.cupsConceded}
-                        </td>
-                        <td className="text-right font-black text-lg text-primary tabular-nums">
-                          {t.points}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </section>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </section>
 
-        {/* Králové večera */}
-        <section className="card bg-base-100 shadow-xl border border-base-300">
-          <div className="card-body p-6">
-            <h2 className="card-title text-xl font-bold flex items-center gap-2 mb-2">
-              <Crown className="w-5 h-5 text-warning" />
-              Králové večera
-            </h2>
-            <p className="text-sm text-base-content/70 mb-4">
-              Nejlepší střelci a obránci v tomto kole
+      {/* Střelci a BlowJob King kola */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="card bg-base-100 shadow-md border border-base-200 p-4 sm:p-5">
+          <h3 className="font-bold text-base mb-2">Střelci kola</h3>
+          {scoreLeaderboard.length === 0 ? (
+            <p className="text-xs text-base-content/60 italic py-3 text-center">
+              Žádné statistiky.
             </p>
-
-            {playerStats.length === 0 ? (
-              <p className="text-base-content/60 italic py-6 text-center">
-                Žádné statistiky.
-              </p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="table table-sm w-full">
-                  <thead>
-                    <tr>
-                      <th className="w-8 text-center">#</th>
-                      <th>Hráč</th>
-                      <th className="text-center">
-                        <span className="flex items-center justify-center gap-1">
-                          <Target className="w-3 h-3 text-primary" />
-                          Góly
-                        </span>
-                      </th>
-                      <th className="text-center">
-                        <span className="flex items-center justify-center gap-1">
-                          <Wind className="w-3 h-3 text-info" />
-                          BJ
-                        </span>
-                      </th>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table table-sm w-full">
+                <thead>
+                  <tr className="bg-base-200/50">
+                    <th className="w-10 text-center">#</th>
+                    <th>Hráč</th>
+                    <th className="text-right">Kelímky</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {scoreLeaderboard.slice(0, 8).map((p, idx) => (
+                    <tr
+                      key={p.playerId}
+                      className={idx === 0 ? "bg-warning/15 font-bold" : ""}
+                    >
+                      <td className="text-center tabular-nums">{idx + 1}.</td>
+                      <td className="font-medium">{p.playerName}</td>
+                      <td className="text-right font-bold tabular-nums text-primary">
+                        {p.totalScore}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {playerStats.slice(0, 8).map((p, idx) => (
-                      <tr
-                        key={p.playerId}
-                        className={idx === 0 ? "bg-warning/10 font-bold" : ""}
-                      >
-                        <td className="text-center">
-                          <RankBadge rank={idx + 1} />
-                        </td>
-                        <td className="font-semibold">{p.playerName}</td>
-                        <td className="text-center font-bold tabular-nums text-primary">
-                          {p.totalScore}
-                        </td>
-                        <td className="text-center tabular-nums text-info">
-                          {p.totalBlowjobs}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </section>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        <div className="card bg-base-100 shadow-md border border-base-200 p-4 sm:p-5">
+          <h3 className="font-bold text-base mb-2">BlowJob King kola</h3>
+          {bjLeaderboard.length === 0 ? (
+            <p className="text-xs text-base-content/60 italic py-3 text-center">
+              Žádné statistiky.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table table-sm w-full">
+                <thead>
+                  <tr className="bg-base-200/50">
+                    <th className="w-10 text-center">#</th>
+                    <th>Hráč</th>
+                    <th className="text-right">Vyfouknuto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bjLeaderboard.slice(0, 8).map((p, idx) => (
+                    <tr
+                      key={p.playerId}
+                      className={idx === 0 ? "bg-warning/15 font-bold" : ""}
+                    >
+                      <td className="text-center tabular-nums">{idx + 1}.</td>
+                      <td className="font-medium">{p.playerName}</td>
+                      <td className="text-right font-bold tabular-nums text-info">
+                        {p.totalBlowjobs}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Zápasy večera */}
-      <section className="card bg-base-100 shadow-xl border border-base-300">
-        <div className="card-body p-6">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h2 className="card-title text-2xl font-bold flex items-center gap-2">
-                <Swords className="w-6 h-6 text-primary" />
-                Zápasy turnajového večera
-              </h2>
-              <p className="text-sm text-base-content/70">
-                Odehraná utkání, konečný stav a individuální zásahy hráčů
-              </p>
-            </div>
-            <span className="badge badge-neutral text-sm tabular-nums">
+      <section className="card bg-base-100 shadow-md border border-base-200">
+        <div className="card-body p-4 sm:p-6">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-lg font-bold">Odehraná utkání večera</h2>
+            <span className="badge badge-neutral text-xs tabular-nums">
               {matchesWithDetails.length} zápasů
             </span>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             {matchesWithDetails.map((m) => (
               <div
                 key={m.id}
-                className="flex flex-col bg-base-200/60 p-5 rounded-2xl border border-base-300 gap-4"
+                className="flex flex-col bg-base-200/50 p-4 rounded-xl border border-base-300 gap-2"
               >
-                {/* Zápasový řádek */}
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                  <div className="flex-1 text-center sm:text-right font-bold text-lg">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
+                  <div className="flex-1 text-center sm:text-right font-bold text-base">
                     {m.team1Name}
                   </div>
-                  <div className="badge badge-lg font-black px-6 py-4 bg-base-100 text-xl border-base-300 shadow-inner tabular-nums">
+                  <div className="badge badge-lg font-black px-4 py-3 bg-base-100 text-lg border-base-300 tabular-nums">
                     {m.team1Score} : {m.team2Score}
                   </div>
-                  <div className="flex-1 text-center sm:text-left font-bold text-lg">
+                  <div className="flex-1 text-center sm:text-left font-bold text-base">
                     {m.team2Name}
                   </div>
                   <form
@@ -304,21 +304,18 @@ export default async function RoundDetailPage({
                   >
                     <button
                       type="submit"
-                      className="btn btn-ghost btn-xs text-error hover:bg-error/10 gap-1"
+                      className="btn btn-ghost btn-xs text-error hover:bg-error/10"
                       title="Smazat zápas"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
                       Smazat
                     </button>
                   </form>
                 </div>
 
-                {/* Individuální body hráčů v tomto zápase */}
                 {m.playerScores && m.playerScores.length > 0 && (
-                  <div className="border-t border-base-300/80 pt-3 flex flex-wrap justify-between gap-4 text-xs">
-                    {/* Tým 1 střelci */}
+                  <div className="border-t border-base-300/80 pt-2 flex flex-wrap justify-between gap-3 text-xs">
                     <div className="flex-1 flex flex-col gap-1 items-start sm:items-end">
-                      <span className="font-bold text-base-content/60 uppercase">
+                      <span className="font-bold text-base-content/60">
                         {m.team1Name}:
                       </span>
                       {m.playerScores
@@ -328,20 +325,14 @@ export default async function RoundDetailPage({
                             key={ps.id}
                             className="badge badge-ghost badge-sm gap-1 whitespace-nowrap"
                           >
-                            <strong>{ps.playerName}</strong>: {ps.score}
-                            <Target className="w-3 h-3 text-primary inline" />
-                            {ps.blowjobs > 0 && (
-                              <span className="flex items-center gap-0.5 ml-1 text-info">
-                                • {ps.blowjobs} <Wind className="w-3 h-3 inline" />
-                              </span>
-                            )}
+                            <strong>{ps.playerName}</strong>: {ps.score} trefeno
+                            {ps.blowjobs > 0 && ` • ${ps.blowjobs} BJ`}
                           </span>
                         ))}
                     </div>
 
-                    {/* Tým 2 střelci */}
                     <div className="flex-1 flex flex-col gap-1 items-start">
-                      <span className="font-bold text-base-content/60 uppercase">
+                      <span className="font-bold text-base-content/60">
                         {m.team2Name}:
                       </span>
                       {m.playerScores
@@ -351,13 +342,8 @@ export default async function RoundDetailPage({
                             key={ps.id}
                             className="badge badge-ghost badge-sm gap-1 whitespace-nowrap"
                           >
-                            <strong>{ps.playerName}</strong>: {ps.score}
-                            <Target className="w-3 h-3 text-primary inline" />
-                            {ps.blowjobs > 0 && (
-                              <span className="flex items-center gap-0.5 ml-1 text-info">
-                                • {ps.blowjobs} <Wind className="w-3 h-3 inline" />
-                              </span>
-                            )}
+                            <strong>{ps.playerName}</strong>: {ps.score} trefeno
+                            {ps.blowjobs > 0 && ` • ${ps.blowjobs} BJ`}
                           </span>
                         ))}
                     </div>
@@ -367,19 +353,16 @@ export default async function RoundDetailPage({
             ))}
 
             {matchesWithDetails.length === 0 && (
-              <p className="text-base-content/60 italic py-6 text-center">
-                V tomto kole zatím neproběhl žádný zápas. Zapiš výsledek níže.
+              <p className="text-base-content/60 italic py-4 text-center text-xs">
+                V tomto kole zatím neproběhl žádný zápas.
               </p>
             )}
           </div>
 
           {/* Formulář pro zápis nového zápasu večera */}
           {teams.length >= 2 && (
-            <div className="mt-8 pt-6 border-t border-base-300">
-              <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
-                <Plus className="w-5 h-5 text-primary" />
-                Zapsat výsledek zápasu
-              </h3>
+            <div className="mt-6 pt-4 border-t border-base-300">
+              <h3 className="font-bold text-base mb-3">Zapsat výsledek zápasu</h3>
               <form
                 action={async (formData: FormData) => {
                   "use server";
@@ -432,14 +415,16 @@ export default async function RoundDetailPage({
                     });
                   }
                 }}
-                className="flex flex-col gap-4 bg-base-200/50 p-5 rounded-2xl border border-base-300"
+                className="flex flex-col gap-3 bg-base-200/50 p-4 rounded-xl border border-base-300"
               >
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex-1 min-w-[180px]">
-                    <label className="label label-text font-bold">Tým 1</label>
+                  <div className="flex-1 min-w-[160px]">
+                    <label className="label label-text font-semibold text-xs">
+                      Tým 1
+                    </label>
                     <select
                       name="team1Id"
-                      className="select select-bordered w-full"
+                      className="select select-bordered select-sm w-full"
                       required
                     >
                       <option value="">Vyber tým 1</option>
@@ -451,41 +436,43 @@ export default async function RoundDetailPage({
                     </select>
                   </div>
 
-                  <div className="w-20">
-                    <label className="label label-text font-bold text-center">
+                  <div className="w-16">
+                    <label className="label label-text font-semibold text-xs text-center">
                       Skóre 1
                     </label>
                     <input
                       name="team1Score"
                       type="number"
                       min="0"
-                      className="input input-bordered w-full text-center font-bold text-lg tabular-nums"
+                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums"
                       defaultValue="10"
                       required
                     />
                   </div>
 
-                  <div className="text-xl font-bold self-end pb-3">:</div>
+                  <div className="text-lg font-bold self-end pb-1.5">:</div>
 
-                  <div className="w-20">
-                    <label className="label label-text font-bold text-center">
+                  <div className="w-16">
+                    <label className="label label-text font-semibold text-xs text-center">
                       Skóre 2
                     </label>
                     <input
                       name="team2Score"
                       type="number"
                       min="0"
-                      className="input input-bordered w-full text-center font-bold text-lg tabular-nums"
+                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums"
                       defaultValue="7"
                       required
                     />
                   </div>
 
-                  <div className="flex-1 min-w-[180px]">
-                    <label className="label label-text font-bold">Tým 2</label>
+                  <div className="flex-1 min-w-[160px]">
+                    <label className="label label-text font-semibold text-xs">
+                      Tým 2
+                    </label>
                     <select
                       name="team2Id"
-                      className="select select-bordered w-full"
+                      className="select select-bordered select-sm w-full"
                       required
                     >
                       <option value="">Vyber tým 2</option>
@@ -498,17 +485,13 @@ export default async function RoundDetailPage({
                   </div>
                 </div>
 
-                {/* Volitelné zadání individuálních bodů hráčů */}
                 {players.length > 0 && (
-                  <details className="collapse collapse-arrow bg-base-100 border border-base-300 rounded-xl mt-2">
-                    <summary className="collapse-title font-bold text-sm">
+                  <details className="collapse collapse-arrow bg-base-100 border border-base-300 rounded-lg text-xs">
+                    <summary className="collapse-title font-semibold text-xs">
                       Zadat individuální statistiky hráčů (kelímky a blowjoby)
                     </summary>
-                    <div className="collapse-content flex flex-col gap-3 pt-2">
-                      <p className="text-xs text-base-content/70">
-                        Vyber tým, za který hráč v tomto zápase nastoupil, a počet trefených a vyfouknutých kelímků.
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1">
+                    <div className="collapse-content flex flex-col gap-2 pt-1">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
                         {players.map((p) => {
                           const defaultTeam = roster.find(
                             (r) => r.playerId === p.id
@@ -517,9 +500,9 @@ export default async function RoundDetailPage({
                           return (
                             <div
                               key={p.id}
-                              className="flex items-center justify-between gap-2 p-2 rounded-lg bg-base-200 text-xs"
+                              className="flex items-center justify-between gap-2 p-1.5 rounded bg-base-200 text-xs"
                             >
-                              <span className="font-semibold truncate max-w-[110px]">
+                              <span className="font-medium truncate max-w-[110px]">
                                 {p.name}
                               </span>
                               <div className="flex items-center gap-1.5">
@@ -559,8 +542,7 @@ export default async function RoundDetailPage({
                 )}
 
                 <div className="flex justify-end mt-2">
-                  <button type="submit" className="btn btn-primary gap-1">
-                    <CheckCircle2 className="w-4 h-4" />
+                  <button type="submit" className="btn btn-primary btn-sm">
                     Uložit výsledek zápasu
                   </button>
                 </div>
@@ -571,41 +553,36 @@ export default async function RoundDetailPage({
       </section>
 
       {/* Soupisky pro tento turnajový večer (dynamické týmy) */}
-      <section className="card bg-base-100 shadow-xl border border-base-300">
-        <div className="card-body p-6">
-          <div className="flex justify-between items-center mb-2">
-            <div>
-              <h2 className="card-title text-xl font-bold flex items-center gap-2">
-                <Users className="w-5 h-5 text-primary" />
-                Soupisky týmů pro tento večer
-              </h2>
-              <p className="text-sm text-base-content/70">
-                Hráči mohou v jednotlivých kolech nastupovat za různé týmy – jejich individuální skóre se započítává do jejich celosemestrálního profilu, zatímco body ze zápasu jdou týmu.
-              </p>
-            </div>
+      <section className="card bg-base-100 shadow-md border border-base-200">
+        <div className="card-body p-4 sm:p-6">
+          <div className="flex justify-between items-center mb-1">
+            <h2 className="text-lg font-bold">Soupisky týmů pro tento večer</h2>
+            <span className="text-xs text-base-content/60">
+              Hráči mohou v jednotlivých kolech nastupovat za různé týmy
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
             {teams.map((t) => {
               const teamMembers = roster.filter((r) => r.teamId === t.id);
               return (
                 <div
                   key={t.id}
-                  className="card bg-base-200/70 border border-base-300 p-4 rounded-xl flex flex-col gap-2"
+                  className="bg-base-200/60 border border-base-300 p-3 rounded-lg flex flex-col gap-2"
                 >
-                  <h3 className="font-bold text-base flex justify-between items-center">
+                  <h3 className="font-bold text-sm flex justify-between items-center">
                     <span>{t.name}</span>
                     <span className="badge badge-sm badge-neutral tabular-nums font-semibold">
                       {teamMembers.length}
                     </span>
                   </h3>
-                  <div className="flex flex-col gap-1 mt-1">
+                  <div className="flex flex-col gap-1 mt-0.5">
                     {teamMembers.map((m) => (
                       <div
                         key={m.id}
-                        className="flex justify-between items-center bg-base-100 px-2.5 py-1.5 rounded text-xs"
+                        className="flex justify-between items-center bg-base-100 px-2 py-1 rounded text-xs"
                       >
-                        <span className="font-medium">{m.playerName}</span>
+                        <span>{m.playerName}</span>
                         <form
                           action={async () => {
                             "use server";
@@ -614,17 +591,17 @@ export default async function RoundDetailPage({
                         >
                           <button
                             type="submit"
-                            className="text-error hover:font-bold p-0.5"
+                            className="text-error hover:font-bold px-1"
                             title="Odebrat z týmu pro toto kolo"
                           >
-                            <X className="w-3.5 h-3.5" />
+                            ×
                           </button>
                         </form>
                       </div>
                     ))}
                     {teamMembers.length === 0 && (
-                      <span className="text-xs text-base-content/50 italic py-1">
-                        Žádní hráči zatím nepřiřazeni.
+                      <span className="text-xs text-base-content/50 italic py-0.5">
+                        Žádní hráči nepřiřazeni.
                       </span>
                     )}
                   </div>
@@ -644,14 +621,14 @@ export default async function RoundDetailPage({
                   await assignPlayerToTeamInRound(roundId, teamId, playerId);
                 }
               }}
-              className="flex flex-wrap items-center gap-2 mt-6 pt-4 border-t border-base-300"
+              className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-base-300 text-xs"
             >
-              <span className="text-xs font-bold uppercase text-base-content/70 mr-1">
-                Přiřadit hráče na dnešní večer:
+              <span className="font-semibold text-base-content/70">
+                Přiřadit hráče na tento večer:
               </span>
               <select
                 name="playerId"
-                className="select select-bordered select-sm"
+                className="select select-bordered select-xs"
                 required
               >
                 <option value="">Vyber hráče...</option>
@@ -661,10 +638,10 @@ export default async function RoundDetailPage({
                   </option>
                 ))}
               </select>
-              <span className="text-sm font-medium">hraje za</span>
+              <span>hraje za</span>
               <select
                 name="teamId"
-                className="select select-bordered select-sm"
+                className="select select-bordered select-xs"
                 required
               >
                 <option value="">Vyber tým...</option>
@@ -674,8 +651,7 @@ export default async function RoundDetailPage({
                   </option>
                 ))}
               </select>
-              <button type="submit" className="btn btn-primary btn-sm gap-1">
-                <Plus className="w-3.5 h-3.5" />
+              <button type="submit" className="btn btn-primary btn-xs">
                 Přiřadit
               </button>
             </form>
