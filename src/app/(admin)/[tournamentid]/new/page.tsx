@@ -16,11 +16,16 @@ export default async function Home(params: {
   const tournamentHref = `/${params.params.tournamentid}`;
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Link href={tournamentHref} className="text-blue-400 hover:underline">
-          ← Zpět na turnaj
-        </Link>
+    <div className="min-h-screen p-4 sm:p-8 md:p-12 bg-base-200 text-base-content font-[family-name:var(--font-geist-sans)]">
+      <main className="max-w-4xl mx-auto flex flex-col gap-6">
+        <div>
+          <Link href={tournamentHref} className="text-sm font-semibold text-primary hover:underline">
+            ← Zpět na rozpis turnaje
+          </Link>
+          <h1 className="text-3xl font-black tracking-tight text-base-content mt-2">
+            Zadání výsledku zápasu
+          </h1>
+        </div>
         <ScoreInputTable
           teams={teams}
           tournamentId={params.params.tournamentid}

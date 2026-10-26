@@ -215,22 +215,22 @@ export const ScoreInputTable = (props: {
   };
 
   return (
-    <div className="overflow-x-auto">
-      {/* <div>{JSON.stringify(props.teams)}</div> */}
+    <div className="overflow-x-auto card bg-base-100 border border-base-300 p-4 sm:p-6 rounded-2xl shadow-sm">
       <form ref={formRef} onSubmit={handleSubmit}>
         <table className="min-w-full border-collapse table-auto text-center">
-          <thead className="bg-gray-800">
+          <thead className="bg-base-200 text-base-content border-b border-base-300">
             <tr>
-              <th colSpan={2} className="py-2 px-4 border-b">
-                Tým 1: &nbsp;:
+              <th colSpan={2} className="py-3 px-4 border-b border-base-300">
+                <span className="font-bold mr-2">Tým 1:</span>
                 <select
+                  className="select select-bordered select-sm bg-base-100 text-base-content font-medium"
                   onChange={(e) => {
                     console.log("changed, yo:", e.target.value);
                     onSelectChange(setTeam1, setTeam1Players, e.target.value);
                   }}
                   value={team1?.id || "No team selected"}
                 >
-                  <option>No team selected</option>
+                  <option>Vyberte tým</option>
                   {props.teams.map((team) => (
                     <option key={team.id} value={team.id}>
                       {team.name}
@@ -247,19 +247,20 @@ export const ScoreInputTable = (props: {
                   <ArrowUpDown size={16} />
                 </button>
               </th>
-              <th colSpan={2} className="py-2 px-4 border-b">
+              <th colSpan={2} className="py-3 px-4 border-b border-base-300 font-black text-lg">
                 Skóre
               </th>
-              <th colSpan={2} className="py-2 px-4 border-b">
-                Tým 2: &nbsp;
+              <th colSpan={2} className="py-3 px-4 border-b border-base-300">
+                <span className="font-bold mr-2">Tým 2:</span>
                 <select
+                  className="select select-bordered select-sm bg-base-100 text-base-content font-medium"
                   onChange={(e) => {
                     console.log("changed, yo:", e.target.value);
                     onSelectChange(setTeam2, setTeam2Players, e.target.value);
                   }}
                   value={team2?.id || "No team selected"}
                 >
-                  <option>No team selected</option>
+                  <option>Vyberte tým</option>
                   {props.teams.map((team) => (
                     <option key={team.id} value={team.id}>
                       {team.name}
@@ -278,56 +279,56 @@ export const ScoreInputTable = (props: {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
-            <tr>
-              <td className="py-2 px-4 border-b text-nowrap">Hráč 1</td>
-              <td className="py-2 px-4 border-b">BJ</td>
-              <td colSpan={2} className="py-2 px-4 border-b">
+          <tbody className="divide-y divide-base-300 text-base-content">
+            <tr className="text-xs uppercase font-bold tracking-wider text-base-content/70 bg-base-200/30">
+              <td className="py-2 px-4 border-b border-base-300 text-nowrap">Hráč 1</td>
+              <td className="py-2 px-4 border-b border-base-300">BJ</td>
+              <td colSpan={2} className="py-2 px-4 border-b border-base-300">
                 Body
               </td>
-              <td className="py-2 px-4 border-b">BJ</td>
-              <td className="py-2 px-4 border-b text-nowrap">Hráč 1</td>
+              <td className="py-2 px-4 border-b border-base-300">BJ</td>
+              <td className="py-2 px-4 border-b border-base-300 text-nowrap">Hráč 1</td>
             </tr>
-            <tr className="bg-gray-300">
-              <td className="py-2 px-4 border-b text-black font-bold">
-                {team1Players.player1?.name}
+            <tr className="bg-base-200/60 font-bold text-base-content">
+              <td className="py-2 px-4 border-b border-base-300">
+                {team1Players.player1?.name || "-"}
               </td>
               <TableInput name="team1player1BJ" />
               <TableInput name="team1player1score" />
               <TableInput name="team2player1score" />
               <TableInput name="team2player1BJ" />
-              <td className="py-2 px-4 border-b text-black font-bold">
-                {team2Players.player1?.name}
+              <td className="py-2 px-4 border-b border-base-300">
+                {team2Players.player1?.name || "-"}
               </td>
             </tr>
-            <tr>
-              <td className="py-2 px-4 border-b text-nowrap">Hráč 2</td>
-              <td className="py-2 px-4 border-b"></td>
-              <td colSpan={2} className="py-2 px-4 border-b">
+            <tr className="text-xs uppercase font-bold tracking-wider text-base-content/70 bg-base-200/30">
+              <td className="py-2 px-4 border-b border-base-300 text-nowrap">Hráč 2</td>
+              <td className="py-2 px-4 border-b border-base-300"></td>
+              <td colSpan={2} className="py-2 px-4 border-b border-base-300">
                 Body
               </td>
-              <td className="py-2 px-4 border-b"></td>
-              <td className="py-2 px-4 border-b text-nowrap">Hráč 2</td>
+              <td className="py-2 px-4 border-b border-base-300"></td>
+              <td className="py-2 px-4 border-b border-base-300 text-nowrap">Hráč 2</td>
             </tr>
-            <tr className="bg-gray-300 text-white">
-              <td className="py-2 px-4 border-b text-black font-bold ">
-                {team1Players.player2?.name}
+            <tr className="bg-base-200/60 font-bold text-base-content">
+              <td className="py-2 px-4 border-b border-base-300">
+                {team1Players.player2?.name || "-"}
               </td>
               <TableInput name="team1player2BJ" />
               <TableInput name="team1player2score" />
               <TableInput name="team2player2score" />
               <TableInput name="team2player2BJ" />
-              <td className="py-2 px-4 border-b text-black font-bold">
-                {team2Players.player2?.name}
+              <td className="py-2 px-4 border-b border-base-300">
+                {team2Players.player2?.name || "-"}
               </td>
             </tr>
           </tbody>
         </table>
-        <div className="flex justify-end w-full mt-2">
+        <div className="flex justify-end w-full mt-4">
           <SubmitDialog
             handleModalConfirm={handleModalConfirm}
             disabled={saving}
-            description={`Team ${team1?.name} : Team ${team2?.name}`}
+            description={`Tým ${team1?.name ?? "..."} vs Tým ${team2?.name ?? "..."}`}
           />
         </div>
       </form>

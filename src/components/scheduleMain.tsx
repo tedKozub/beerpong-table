@@ -42,12 +42,12 @@ const CurrentMatchCard = ({
 }) => {
   const content = (
     <>
-      <div className="text-sm text-gray-400 mb-2">Stůl {match.tableNumber}</div>
-      <div className="flex items-center justify-between gap-3 text-lg font-semibold">
+      <div className="text-xs font-semibold text-base-content/60 mb-2">Stůl {match.tableNumber}</div>
+      <div className="flex items-center justify-between gap-3 text-lg font-bold text-base-content">
         <span className="flex-1 text-right">{match.team1Name}</span>
         <span
           className={
-            match.score ? "text-green-500 text-nowrap" : "text-gray-500 text-sm"
+            match.score ? "text-success font-black text-nowrap" : "text-base-content/50 text-sm font-medium"
           }
         >
           {match.score ?? "vs"}
@@ -56,9 +56,9 @@ const CurrentMatchCard = ({
       </div>
       <div className="mt-3 text-sm text-center">
         {match.score ? (
-          <span className="text-green-500">Odehráno</span>
+          <span className="text-success font-semibold">Odehráno</span>
         ) : (
-          <span className="text-blue-400">Zadat výsledek →</span>
+          <span className="text-primary font-bold">Zadat výsledek →</span>
         )}
       </div>
     </>
@@ -66,7 +66,7 @@ const CurrentMatchCard = ({
 
   if (match.score) {
     return (
-      <div className="rounded-lg border border-gray-800 bg-zinc-900 p-5 opacity-70">
+      <div className="rounded-xl border border-base-300 bg-base-100/60 p-5 opacity-70">
         {content}
       </div>
     );
@@ -74,7 +74,7 @@ const CurrentMatchCard = ({
   return (
     <Link
       href={scoreInputHref(tournamentId, match)}
-      className="block rounded-lg border border-blue-500 bg-zinc-900 p-5 hover:bg-zinc-800 transition-colors"
+      className="block rounded-xl border-2 border-primary bg-base-100 p-5 hover:bg-base-200/60 transition-all shadow-sm"
     >
       {content}
     </Link>
@@ -116,16 +116,16 @@ export const ScheduleMain = ({
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="border-b border-gray-800">
+    <div className="min-h-screen bg-base-200 text-base-content">
+      <div className="border-b border-base-300 bg-base-100/50">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">{tournamentName}</h1>
-            <p className="text-gray-400 mt-2">
+            <h1 className="text-3xl font-black tracking-tight text-base-content">{tournamentName}</h1>
+            <p className="text-base-content/70 mt-1 text-sm font-medium">
               Odehráno {playedCount} z {schedule.length} zápasů
             </p>
           </div>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             <SharePublicLink tournamentId={tournamentId} />
             <Link href={`/${tournamentId}/stats`} className="btn btn-secondary">
               Statistiky turnaje
@@ -152,26 +152,26 @@ export const ScheduleMain = ({
 
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-10">
         {isOutdated && (
-          <div className="rounded-lg border border-yellow-600 bg-yellow-950 p-4 text-yellow-200">
-            Rozpis neodpovídá aktuálním týmům v turnaji. Přegeneruj ho.
+          <div className="alert alert-warning">
+            <span>Rozpis neodpovídá aktuálním týmům v turnaji. Přegeneruj ho.</span>
           </div>
         )}
 
         {currentRound === null ? (
-          <div className="rounded-lg border border-green-600 bg-green-950 p-6 text-center">
-            <h2 className="text-2xl font-bold text-green-300">
+          <div className="alert alert-success justify-center text-center p-6 flex flex-col items-center">
+            <h2 className="text-2xl font-black">
               Všechny zápasy odehrány
             </h2>
             <Link
               href={`/${tournamentId}/stats`}
-              className="btn btn-primary mt-4"
+              className="btn btn-primary mt-4 font-bold"
             >
               Zobrazit výsledky
             </Link>
           </div>
         ) : (
           <section>
-            <h2 className="text-2xl font-bold mb-4">
+            <h2 className="text-2xl font-black tracking-tight mb-4 text-base-content">
               Aktuální kolo {currentRound}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -184,8 +184,8 @@ export const ScheduleMain = ({
               ))}
             </div>
             {nextRound !== null && (
-              <p className="mt-4 text-sm text-gray-400">
-                <span className="font-semibold text-gray-300">
+              <p className="mt-4 text-sm text-base-content/70">
+                <span className="font-semibold text-base-content">
                   Další kolo {nextRound}:
                 </span>{" "}
                 {rounds
@@ -201,21 +201,21 @@ export const ScheduleMain = ({
         )}
 
         <section>
-          <h2 className="text-xl font-semibold mb-4">Celý rozpis</h2>
+          <h2 className="text-xl font-bold tracking-tight mb-4 text-base-content">Celý rozpis</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {Array.from(rounds, ([round, matches]) => (
               <div
                 key={round}
-                className={`bg-zinc-900 rounded-lg border p-4 ${
+                className={`card bg-base-100 rounded-xl border p-4 shadow-sm ${
                   round === currentRound
-                    ? "border-blue-500 ring-1 ring-blue-500"
-                    : "border-gray-800"
+                    ? "border-primary ring-2 ring-primary/30"
+                    : "border-base-300"
                 } ${matches.every((m) => m.score) ? "opacity-60" : ""}`}
               >
-                <h3 className="text-lg font-semibold mb-3">
+                <h3 className="text-lg font-bold mb-3 text-base-content">
                   Kolo {round}
                   {round === currentRound && (
-                    <span className="ml-2 text-sm font-normal text-blue-400">
+                    <span className="ml-2 text-xs font-semibold text-primary badge badge-primary badge-outline">
                       právě se hraje
                     </span>
                   )}
@@ -225,25 +225,25 @@ export const ScheduleMain = ({
                     {matches.map((m) => (
                       <tr
                         key={m.tableNumber}
-                        className="border-t border-gray-800"
+                        className="border-t border-base-300"
                       >
-                        <td className="py-2 pr-2 text-gray-400 text-nowrap">
+                        <td className="py-2 pr-2 text-base-content/60 text-xs font-medium text-nowrap">
                           Stůl {m.tableNumber}
                         </td>
-                        <td className="py-2 text-right">{m.team1Name}</td>
+                        <td className="py-2 text-right font-medium text-base-content">{m.team1Name}</td>
                         <td className="py-2 px-2 text-center text-nowrap">
                           {m.score ? (
-                            <span className="text-green-500">{m.score}</span>
+                            <span className="text-success font-bold">{m.score}</span>
                           ) : (
                             <Link
                               href={scoreInputHref(tournamentId, m)}
-                              className="text-blue-400 hover:underline"
+                              className="text-primary font-semibold hover:underline"
                             >
                               zadat
                             </Link>
                           )}
                         </td>
-                        <td className="py-2">{m.team2Name}</td>
+                        <td className="py-2 font-medium text-base-content">{m.team2Name}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -255,8 +255,8 @@ export const ScheduleMain = ({
 
         {children}
 
-        <section className="border-t border-gray-800 pt-6">
-          <h2 className="text-lg font-semibold mb-4">Nastavení rozpisu</h2>
+        <section className="border-t border-base-300 pt-6">
+          <h2 className="text-lg font-bold mb-4 text-base-content">Nastavení rozpisu</h2>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <ScheduleGenerateForm
               tournamentId={tournamentId}
@@ -267,12 +267,12 @@ export const ScheduleMain = ({
               <AlertDialogTrigger asChild>
                 <button className="btn btn-ghost">Upravit týmy</button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="bg-white">
-                <AlertDialogHeader className="bg-white">
-                  <AlertDialogTitle className="text-black font-bold">
+              <AlertDialogContent className="bg-base-100 border border-base-300 text-base-content">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="font-bold text-base-content">
                     Zpět k nastavení turnaje?
                   </AlertDialogTitle>
-                  <AlertDialogDescription>
+                  <AlertDialogDescription className="text-base-content/70">
                     Rozpis bude smazán, abys mohl upravit týmy. Odehrané zápasy
                     zůstanou zachovány. Po úpravě rozpis znovu vygeneruj.
                   </AlertDialogDescription>

@@ -18,8 +18,35 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="cs" className="dark" data-theme="dark">
-      <body className={`${inter.className} antialiased bg-[#0a0a0f] text-white min-h-screen`}>
+    <html lang="cs" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var m = localStorage.getItem('beerpong_theme_mode');
+                var t = 'beerpong-light';
+                if (m === 'dark') {
+                  t = 'beerpong-dark';
+                } else if (m === 'light') {
+                  t = 'beerpong-light';
+                } else {
+                  t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'beerpong-dark' : 'beerpong-light';
+                }
+                document.documentElement.setAttribute('data-theme', t);
+                if (t === 'beerpong-dark') {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
+      <body
+        className={`${inter.className} antialiased min-h-screen flex flex-col bg-base-200 text-base-content transition-colors duration-150`}
+      >
         {children}
       </body>
     </html>

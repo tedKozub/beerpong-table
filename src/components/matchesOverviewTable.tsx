@@ -10,43 +10,42 @@ export const MatchesOverViewTable: React.FC<MatchesOverViewTableProps> = ({
   matches,
 }) => {
   return (
-    <div className="overflow-x-auto rounded-lg shadow">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-black">
+    <div className="overflow-x-auto rounded-xl border border-base-300 bg-base-100 shadow-sm">
+      <table className="table table-zebra w-full">
+        <thead className="bg-base-200 text-base-content">
           <tr>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
-              Team Name
+            <th className="px-6 py-4 text-left text-xs font-bold text-base-content/70 uppercase tracking-wider">
+              Tým 1
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
-              Score
+            <th className="px-6 py-4 text-center text-xs font-bold text-base-content/70 uppercase tracking-wider">
+              Skóre
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
-              Team Name
+            <th className="px-6 py-4 text-left text-xs font-bold text-base-content/70 uppercase tracking-wider">
+              Tým 2
             </th>
             <th className="px-6 py-4 w-20"></th>
           </tr>
         </thead>
-        <tbody className="bg-black divide-y divide-gray-200">
-          {matches.map((match, index) => (
+        <tbody className="divide-y divide-base-300">
+          {matches.map((match) => (
             <tr
               key={match.match.id}
-              className={`${
-                index % 2 === 0 ? "bg-black" : "bg-gray-900"
-              } hover:bg-gray-700 transition-colors duration-200`}
+              className="hover:bg-base-200/60 transition-colors duration-150"
             >
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white-900">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-base-content">
                 {match.team1?.name || "N/A"}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-white-600 font-semibold">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-success font-black">
                 {match.match.score || "N/A"}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white-900">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-base-content">
                 {match.team2?.name || "N/A"}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                 <button
                   onClick={() => deleteMatch(match.match.id)}
-                  className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                  className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/20 transition-colors"
+                  title="Smazat zápas"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

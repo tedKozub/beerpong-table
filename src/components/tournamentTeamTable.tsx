@@ -24,37 +24,35 @@ export default async function TournamentTeamTable(id: { id: number }) {
 
   return (
     <>
-      <div className="overflow-x-auto rounded-lg shadow">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-black">
+      <div className="overflow-x-auto rounded-xl border border-base-300 bg-base-100 shadow-sm">
+        <table className="table table-zebra w-full">
+          <thead className="bg-base-200 text-base-content">
             <tr>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
-                Team Name
+              <th className="px-6 py-4 text-left text-xs font-bold text-base-content/70 uppercase tracking-wider">
+                Název týmu
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
-                Player 1
+              <th className="px-6 py-4 text-left text-xs font-bold text-base-content/70 uppercase tracking-wider">
+                Hráč 1
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
-                Player 2
+              <th className="px-6 py-4 text-left text-xs font-bold text-base-content/70 uppercase tracking-wider">
+                Hráč 2
               </th>
               <th className="px-6 py-4 w-20"></th>
             </tr>
           </thead>
-          <tbody className="bg-black divide-y divide-gray-200">
-            {tournamentTeamData.map((data: TeamData, index) => (
+          <tbody className="divide-y divide-base-300">
+            {tournamentTeamData.map((data: TeamData) => (
               <tr
                 key={data.teamId}
-                className={`${
-                  index % 2 === 0 ? "bg-black" : "bg-gray-900"
-                } hover:bg-gray-700 transition-colors duration-200`}
+                className="hover:bg-base-200/60 transition-colors duration-150"
               >
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-base-content">
                   {data.teamName || "N/A"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-base-content/80">
                   {data.player1Name || "N/A"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-base-content/80">
                   {data.player2Name || "N/A"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
@@ -65,8 +63,8 @@ export default async function TournamentTeamTable(id: { id: number }) {
           </tbody>
         </table>
       </div>
-      <div className="text-right mt-4 text-sm text-gray-100">
-        Počet týmů {tournamentTeamData.length}
+      <div className="text-right mt-3 text-xs font-semibold text-base-content/70">
+        Celkem týmů: {tournamentTeamData.length}
       </div>
     </>
   );

@@ -1,6 +1,7 @@
 import { getTournamentById } from "@/actions/tournaments";
 import { getTeamsForTournamentSorted } from "@/actions/teams";
 import { getPlayersForTournamentId } from "@/actions/players";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
@@ -69,7 +70,7 @@ export default async function PublicTournamentPage({
 
   return (
     <div className="min-h-screen px-3 py-4 sm:px-6 sm:py-8 md:p-10">
-      <div className="w-full max-w-[1280px] mx-auto flex items-center mb-3 sm:mb-6">
+      <div className="w-full max-w-[1280px] mx-auto flex items-center justify-between mb-3 sm:mb-6">
         <Link
           href="/public"
           className="btn btn-ghost btn-sm sm:btn-md gap-1.5 px-2 sm:px-4 text-base-content/80 hover:text-base-content"
@@ -77,6 +78,7 @@ export default async function PublicTournamentPage({
           <span className="text-base">←</span>
           <span className="text-xs sm:text-sm font-semibold">Zpět na přehled</span>
         </Link>
+        <ThemeToggle />
       </div>
 
       <main className="mx-auto w-full max-w-[1280px] flex flex-col gap-4 sm:gap-6 md:gap-8 items-center">

@@ -20,6 +20,12 @@ export const Navbar = async () => {
           <Palette className="w-3.5 h-3.5" />
           Design System
         </Link>
+        <Link
+          href="/public"
+          className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/80 hover:text-base-content hidden sm:inline-flex"
+        >
+          Veřejné výsledky
+        </Link>
       </div>
 
       <div className="navbar-end flex items-center gap-3">

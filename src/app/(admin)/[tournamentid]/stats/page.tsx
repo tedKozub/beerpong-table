@@ -4,133 +4,165 @@ import { getTeamsForTournamentSorted } from "@/actions/teams";
 import { getTournamentById } from "@/actions/tournaments";
 import ExportCSVButton from "@/components/ExportCSVButton";
 import SharePublicLink from "@/components/SharePublicLink";
+import Link from "next/link";
 
 export default async function Home(params: {
   params: { tournamentid: number };
 }) {
-  const playersBJ = await getPlayersForTournamentId(params.params.tournamentid);
-  const playersSC = await getPlayersForTournamentId(params.params.tournamentid);
-  const teamsOrdered = await getTeamsForTournamentSorted(
-    params.params.tournamentid
-  );
-  const tournament = await getTournamentById(params.params.tournamentid);
+  const tournamentId = Number(params.params.tournamentid);
+  const [playersBJ, playersSC, teamsOrdered, tournament] = await Promise.all([
+    getPlayersForTournamentId(tournamentId),
+    getPlayersForTournamentId(tournamentId),
+    getTeamsForTournamentSorted(tournamentId),
+    getTournamentById(tournamentId),
+  ]);
 
-  const playersSortedByBlowjobs = playersBJ.sort(
+  const playersSortedByBlowjobs = [...playersBJ].sort(
     (a, b) => (Number(b.blowjobs) ?? 0) - (Number(a.blowjobs) ?? 0)
   );
-  const playersSortedByScore = playersSC.sort(
+  const playersSortedByScore = [...playersSC].sort(
     (a, b) => (Number(b.score) ?? 0) - (Number(a.score) ?? 0)
   );
 
-  const tournamentName = tournament?.name ?? "tournament";
+  const tournamentName = tournament?.name ?? "Turnaj";
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <div className="flex justify-between w-full text-center gap-8 row-start-3">
-          <div className="rounded-lg text-center shadow-md p-6">
-            <h2 className="text-xl font-bold mb-4">Celkové skóre</h2>
-            <table className="min-w-full">
-              <thead className="bg-gray-800">
-                <tr>
-                  <th className="px-4 py-2">Pořadí</th>
-                  <th className="px-4 py-2">Tým</th>
-                  <th className="px-4 py-2">Skóre</th>
-                </tr>
-              </thead>
-              <tbody>
-                {teamsOrdered.map((team) => (
-                  <tr
-                    key={team.id}
-                    className={
-                      teamsOrdered.indexOf(team) === 0
-                        ? "bg-lime-600 text-black font-bold p-4"
-                        : teamsOrdered.indexOf(team) === 1
-                        ? "bg-orange-400 text-black font-bold p-4"
-                        : teamsOrdered.indexOf(team) === 2
-                        ? "bg-yellow-500 text-black font-bold p-4"
-                        : ""
-                    }
-                  >
-                    <td className="py-2">{teamsOrdered.indexOf(team) + 1}.</td>
-                    <td className="py-2">{team.name}</td>
-                    <td className="py-2">{team.score}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+    <div className="min-h-screen p-4 sm:p-8 md:p-12 bg-base-200 text-base-content">
+      <main className="max-w-7xl mx-auto flex flex-col gap-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <Link
+              href={`/${tournamentId}`}
+              className="text-xs font-semibold text-primary hover:underline mb-2 inline-block"
+            >
+              ← Zpět na rozpis turnaje
+            </Link>
+            <h1 className="text-3xl font-black tracking-tight text-base-content">
+              {tournamentName} · Výsledky a statistiky
+            </h1>
           </div>
-
-          <div className=" rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold mb-4">Král střelců</h2>
-            <table className="min-w-full">
-              <thead className="bg-gray-800">
-                <tr>
-                  <th className="px-4 py-2">Pořadí</th>
-                  <th className="px-4 py-2">Hráč</th>
-                  <th className="px-4 py-2">Skóre</th>
-                </tr>
-              </thead>
-              <tbody className="text-center">
-                {playersSortedByScore.map((player) => (
-                  <tr
-                    key={player.id}
-                    className={
-                      playersSortedByScore.indexOf(player) === 0
-                        ? " bg-lime-600  text-black font-bold p-4"
-                        : ""
-                    }
-                  >
-                    <td className="py-2">
-                      {playersSortedByScore.indexOf(player) + 1}.
-                    </td>
-                    <td className="py-2">{player.name}</td>
-                    <td className="py-2">{player.score}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold mb-4">BlowJob King</h2>
-            <table className="min-w-full">
-              <thead className="bg-gray-800">
-                <tr>
-                  <th className="px-4 py-2">Pořadí</th>
-                  <th className="px-4 py-2">Hráč</th>
-                  <th className="px-4 py-2">Počet blowjobů</th>
-                </tr>
-              </thead>
-              <tbody>
-                {playersSortedByBlowjobs.map((player) => (
-                  <tr
-                    key={player.id}
-                    className={
-                      playersSortedByBlowjobs.indexOf(player) === 0
-                        ? " bg-lime-600  text-black font-bold p-4"
-                        : ""
-                    }
-                  >
-                    <td className="py-2">
-                      {playersSortedByBlowjobs.indexOf(player) + 1}.
-                    </td>
-                    <td className="py-2">{player.name}</td>
-                    <td className="py-2">{player.blowjobs}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex flex-wrap items-center gap-3">
+            <SharePublicLink tournamentId={tournamentId} />
+            <ExportCSVButton
+              teams={teamsOrdered}
+              playersByScore={playersSortedByScore}
+              playersByBlowjobs={playersSortedByBlowjobs}
+              tournamentName={tournamentName}
+            />
           </div>
         </div>
-        <div className="flex gap-4 items-center">
-          <ExportCSVButton
-            teams={teamsOrdered}
-            playersByScore={playersSortedByScore}
-            playersByBlowjobs={playersSortedByBlowjobs}
-            tournamentName={tournamentName}
-          />
-          <SharePublicLink tournamentId={params.params.tournamentid} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Týmové pořadí */}
+          <div className="card bg-base-100 p-6 rounded-2xl border border-base-300 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-center text-base-content">
+              Celkové skóre týmů
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="table table-zebra w-full text-center">
+                <thead className="bg-base-200 text-base-content">
+                  <tr>
+                    <th className="py-3 px-3 text-xs font-bold text-base-content/70">Pořadí</th>
+                    <th className="py-3 px-3 text-xs font-bold text-base-content/70 text-left">Tým</th>
+                    <th className="py-3 px-3 text-xs font-bold text-base-content/70 text-right">Skóre</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-base-300">
+                  {teamsOrdered.map((team, idx) => (
+                    <tr key={team.id} className="hover:bg-base-200/50 transition-colors">
+                      <td className="py-3 font-bold">
+                        {idx === 0 ? (
+                          <span className="badge badge-warning text-xs font-black">1.</span>
+                        ) : idx === 1 ? (
+                          <span className="badge badge-ghost text-xs font-bold">2.</span>
+                        ) : idx === 2 ? (
+                          <span className="badge badge-ghost text-xs font-bold">3.</span>
+                        ) : (
+                          `${idx + 1}.`
+                        )}
+                      </td>
+                      <td className="py-3 text-left font-semibold text-base-content">{team.name}</td>
+                      <td className="py-3 text-right font-black text-success">{team.score}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Král střelců */}
+          <div className="card bg-base-100 p-6 rounded-2xl border border-base-300 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-center text-base-content">
+              Král střelců
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="table table-zebra w-full text-center">
+                <thead className="bg-base-200 text-base-content">
+                  <tr>
+                    <th className="py-3 px-3 text-xs font-bold text-base-content/70">Pořadí</th>
+                    <th className="py-3 px-3 text-xs font-bold text-base-content/70 text-left">Hráč</th>
+                    <th className="py-3 px-3 text-xs font-bold text-base-content/70 text-right">Body</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-base-300">
+                  {playersSortedByScore.map((player, idx) => (
+                    <tr key={player.id} className="hover:bg-base-200/50 transition-colors">
+                      <td className="py-3 font-bold">
+                        {idx === 0 ? (
+                          <span className="badge badge-warning text-xs font-black">1.</span>
+                        ) : idx === 1 ? (
+                          <span className="badge badge-ghost text-xs font-bold">2.</span>
+                        ) : idx === 2 ? (
+                          <span className="badge badge-ghost text-xs font-bold">3.</span>
+                        ) : (
+                          `${idx + 1}.`
+                        )}
+                      </td>
+                      <td className="py-3 text-left font-semibold text-base-content">{player.name}</td>
+                      <td className="py-3 text-right font-black text-primary">{player.score}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* BlowJob King */}
+          <div className="card bg-base-100 p-6 rounded-2xl border border-base-300 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-center text-base-content">
+              BlowJob King
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="table table-zebra w-full text-center">
+                <thead className="bg-base-200 text-base-content">
+                  <tr>
+                    <th className="py-3 px-3 text-xs font-bold text-base-content/70">Pořadí</th>
+                    <th className="py-3 px-3 text-xs font-bold text-base-content/70 text-left">Hráč</th>
+                    <th className="py-3 px-3 text-xs font-bold text-base-content/70 text-right">BJ</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-base-300">
+                  {playersSortedByBlowjobs.map((player, idx) => (
+                    <tr key={player.id} className="hover:bg-base-200/50 transition-colors">
+                      <td className="py-3 font-bold">
+                        {idx === 0 ? (
+                          <span className="badge badge-info text-xs font-black">1.</span>
+                        ) : idx === 1 ? (
+                          <span className="badge badge-ghost text-xs font-bold">2.</span>
+                        ) : idx === 2 ? (
+                          <span className="badge badge-ghost text-xs font-bold">3.</span>
+                        ) : (
+                          `${idx + 1}.`
+                        )}
+                      </td>
+                      <td className="py-3 text-left font-semibold text-base-content">{player.name}</td>
+                      <td className="py-3 text-right font-black text-info">{player.blowjobs}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </main>
     </div>

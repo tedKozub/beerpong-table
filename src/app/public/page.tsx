@@ -1,5 +1,7 @@
 import { getAllTournaments } from "@/actions/tournaments";
 import { getCombinedExportData } from "@/actions/export";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LogIn } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
@@ -56,6 +58,22 @@ export default async function PublicOverviewPage() {
 
   return (
     <div className="min-h-screen px-3 py-6 sm:px-6 sm:py-10 md:p-12">
+      <div className="w-full max-w-[1280px] mx-auto flex items-center justify-between pb-4 mb-2">
+        <Link href="/public" className="btn btn-ghost font-black text-lg gap-2 text-base-content px-2">
+          🦊 SPPDF
+        </Link>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Link
+            href="/login"
+            className="btn btn-ghost btn-sm btn-square border border-base-300 text-base-content"
+            title="Přihlášení správce"
+          >
+            <LogIn className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+
       <main className="mx-auto w-full max-w-[1280px] flex flex-col gap-6 sm:gap-8 md:gap-10 items-center">
         
         <div className="text-center">

@@ -19,22 +19,24 @@ export function SubmitDialog({
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <button className="btn btn-primary" disabled={disabled}>
-          {disabled ? "Saving..." : "Submit"}
+          {disabled ? "Ukládám..." : "Uložit výsledek"}
         </button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="bg-white">
-        <AlertDialogHeader className="bg-white">
-          <AlertDialogTitle className="text-black font-bold">
-            Are you sure?
+      <AlertDialogContent className="bg-base-100 border border-base-300 text-base-content">
+        <AlertDialogHeader>
+          <AlertDialogTitle className="font-bold text-base-content">
+            Opravdu uložit výsledek?
           </AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogDescription className="text-base-content/70">
+            {description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="btn btn-secondary">
-            Cancel
+            Zrušit
           </AlertDialogCancel>
-          <AlertDialogAction>
-            <button onClick={(e) => handleModalConfirm(e)}>Submit Match</button>
+          <AlertDialogAction onClick={(e) => handleModalConfirm(e)}>
+            Uložit zápas
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

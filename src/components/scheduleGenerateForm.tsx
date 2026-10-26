@@ -61,25 +61,25 @@ export const ScheduleGenerateForm = ({
 
   return (
     <div className="flex flex-wrap items-end gap-4">
-      <label className="flex flex-col gap-1 text-sm text-gray-400">
+      <label className="flex flex-col gap-1 text-sm font-semibold text-base-content/80">
         Počet stolů
         <input
           type="number"
           min={1}
           value={tables}
           onChange={(e) => setTables(e.target.value)}
-          className="w-28 p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="input input-bordered w-28 bg-base-100 text-base-content border-base-300"
         />
       </label>
       {hasSchedule ? (
         <AlertDialog>
           <AlertDialogTrigger asChild>{generateButton}</AlertDialogTrigger>
-          <AlertDialogContent className="bg-white">
-            <AlertDialogHeader className="bg-white">
-              <AlertDialogTitle className="text-black font-bold">
+          <AlertDialogContent className="bg-base-100 border border-base-300 text-base-content">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="font-bold text-base-content">
                 Přegenerovat rozpis?
               </AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogDescription className="text-base-content/70">
                 Současný rozpis bude nahrazen novým pro{" "}
                 {pluralCs(Number(tables), "stůl", "stoly", "stolů")}. Odehrané
                 zápasy zůstanou zachovány.

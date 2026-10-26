@@ -17,7 +17,7 @@ export default async function Home(params: {
 }) {
   const tournamentId = Number(params.params.tournamentid);
   if (isNaN(tournamentId)) {
-    return <div>Invalid tournament ID</div>;
+    return <div className="p-8 text-center text-error">Neplatné ID turnaje</div>;
   }
 
   const [tournament, teams, matches, schedule] = await Promise.all([
@@ -28,12 +28,12 @@ export default async function Home(params: {
   ]);
 
   if (!tournament?.id) {
-    return <div>Tournament not found</div>;
+    return <div className="p-8 text-center text-error">Turnaj nebyl nalezen</div>;
   }
 
   const playedMatches = matches && (
-    <div className="bg-zinc-900 rounded-lg border border-gray-800 p-6">
-      <h2 className="text-xl font-semibold mb-4">Odehrané zápasy</h2>
+    <div className="card bg-base-100 rounded-2xl border border-base-300 p-6 shadow-sm">
+      <h2 className="text-xl font-bold mb-4 text-base-content">Odehrané zápasy</h2>
       <MatchesOverViewTable matches={matches} />
     </div>
   );
@@ -61,16 +61,16 @@ export default async function Home(params: {
 
   // setup: teams with players, then the number of tables and the schedule
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="border-b border-gray-800">
+    <div className="min-h-screen bg-base-200 text-base-content">
+      <div className="border-b border-base-300 bg-base-100/50">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">{tournament.name}</h1>
-            <p className="text-gray-400 mt-2">
+            <h1 className="text-3xl font-black tracking-tight text-base-content">{tournament.name}</h1>
+            <p className="text-base-content/70 mt-1 text-sm font-medium">
               Nastavení turnaje · {pluralCs(teams.length, "tým", "týmy", "týmů")}
             </p>
           </div>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             <SharePublicLink tournamentId={tournamentId} />
             <StatsTournamentButton id={tournamentId} />
             <AddNewMatchButton
@@ -83,18 +83,18 @@ export default async function Home(params: {
 
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-zinc-900 rounded-lg border border-gray-800 p-6">
+          <div className="card bg-base-100 rounded-2xl border border-base-300 p-6 shadow-sm">
             <CreateTeam id={tournamentId} />
           </div>
-          <div className="bg-zinc-900 rounded-lg border border-gray-800 p-6">
-            <h2 className="text-xl font-semibold mb-4">Týmy v turnaji</h2>
+          <div className="card bg-base-100 rounded-2xl border border-base-300 p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-4 text-base-content">Týmy v turnaji</h2>
             <TournamentTeamTable id={tournamentId} />
           </div>
         </div>
 
-        <div className="bg-zinc-900 rounded-lg border border-gray-800 p-6">
-          <h2 className="text-xl font-semibold mb-2">Rozpis zápasů</h2>
-          <p className="text-gray-400 mb-4">
+        <div className="card bg-base-100 rounded-2xl border border-base-300 p-6 shadow-sm">
+          <h2 className="text-xl font-bold mb-2 text-base-content">Rozpis zápasů</h2>
+          <p className="text-base-content/70 mb-4 text-sm">
             {teams.length < 2
               ? "Přidej alespoň 2 týmy, pak zadej počet stolů a vygeneruj rozpis."
               : "Zadej počet stolů a vygeneruj rozpis. Rozpis se pak stane hlavní stránkou turnaje."}
