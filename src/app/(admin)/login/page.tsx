@@ -1,37 +1,13 @@
 "use server";
 
-import { getSession, login, logout } from "@/actions/auth";
-import Link from "next/link";
+import { getSession, login } from "@/actions/auth";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
   const session = await getSession();
 
   if (session?.userId) {
-    return (
-      <div className="flex-1 flex justify-center items-center py-16 px-4 bg-base-200 text-base-content">
-        <div className="card bg-base-100 p-8 rounded-2xl shadow-xl border border-base-300 text-center max-w-sm w-full">
-          <div className="w-12 h-12 rounded-full bg-success/20 text-success flex items-center justify-center mx-auto mb-4 font-bold text-xl">
-            ✓
-          </div>
-          <h1 className="text-xl font-bold mb-2 text-base-content">
-            Jste přihlášeni
-          </h1>
-          <p className="text-sm text-base-content/70 mb-6">
-            Správce turnajů (ID #{String(session?.userId)})
-          </p>
-          <div className="space-y-3">
-            <Link href="/" className="btn btn-primary w-full font-bold">
-              Přejít na seznam turnajů
-            </Link>
-            <form action={logout}>
-              <button type="submit" className="btn btn-outline btn-error w-full">
-                Odhlásit se
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
+    redirect("/");
   }
 
   return (

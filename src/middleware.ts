@@ -8,6 +8,7 @@ export default async function middleware(req: NextRequest) {
     path === "/login" ||
     path.startsWith("/public") ||
     path.startsWith("/design-system") ||
+    path.startsWith("/about") ||
     path === "/icon.svg";
 
   // 3. Decrypt the session from the cookie
