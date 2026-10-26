@@ -120,8 +120,10 @@ export const createScheduleForRound = async (
     );
   });
 
-  revalidatePath(`/rounds/${roundId}`);
-  revalidatePath(`/public/rounds/${roundId}`);
+  try {
+    revalidatePath(`/rounds/${roundId}`);
+    revalidatePath(`/public/rounds/${roundId}`);
+  } catch {}
   return { success: true };
 };
 
@@ -130,6 +132,8 @@ export const deleteScheduleForRound = async (roundId: number) => {
     .delete(scheduledMatch)
     .where(eq(scheduledMatch.roundId, roundId));
 
-  revalidatePath(`/rounds/${roundId}`);
-  revalidatePath(`/public/rounds/${roundId}`);
+  try {
+    revalidatePath(`/rounds/${roundId}`);
+    revalidatePath(`/public/rounds/${roundId}`);
+  } catch {}
 };
