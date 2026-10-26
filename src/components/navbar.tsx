@@ -15,6 +15,12 @@ export const Navbar = async () => {
           🦊 SPPDF BeerPong
         </Link>
         <Link
+          href="/seasons"
+          className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/80 hover:text-base-content hidden sm:inline-flex"
+        >
+          Semestry & Archiv
+        </Link>
+        <Link
           href="/public"
           className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/80 hover:text-base-content hidden sm:inline-flex"
         >
@@ -34,7 +40,7 @@ export const Navbar = async () => {
         <ThemeToggle />
 
         {/* Profil / Přihlášení / Odhlášení přes Popover */}
-        <UserNav session={session} />
+        <UserNav session={session ?? null} />
       </div>
     </div>
   );

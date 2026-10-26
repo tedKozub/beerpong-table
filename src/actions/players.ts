@@ -1,43 +1,53 @@
 "use server";
 
 import { db } from "@/db";
-import { player, team } from "@/db/schema";
+import { player } from "@/db/schema";
+import { Player } from "@/db/types";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
-export const getPlayerById = async (playerId: number) => {
-  const pl = await db.select().from(player).where(eq(player.id, playerId));
-  return pl.length > 0 ? pl[0] : null;
-};
+export async function getPlayersForSeason(seasonId: number) {
+  return db.select().from(player).where(eq(player.seasonId, seasonId));
+}
 
-export const getPlayersForTeamId = async (teamId: number) => {
-  const first = await db
+export async function getPlayerById(id: number) {
+  const result = await db
     .select()
-    .from(team)
-    .where(eq(team.id, teamId))
-    .innerJoin(player, eq(team.player1_id, player.id));
-  const second = await db
-    .select()
-    .from(team)
-    .where(eq(team.id, teamId))
-    .innerJoin(player, eq(team.player2_id, player.id));
-  return { player1: first[0].player, player2: second[0].player };
-};
+    .from(player)
+    .where(eq(player.id, id))
+    .limit(1);
+  return result[0];
+}
 
-export const getPlayersForTournamentId = async (tournamentId: number) => {
-  const teams = await db
-    .select()
-    .from(team)
-    .where(eq(team.tournament_id, tournamentId));
-  const players = [];
-  for (const team of teams) {
-    const first = team.player1_id
-      ? await db.select().from(player).where(eq(player.id, team.player1_id))
-      : [];
-    players.push(first[0]);
-    const second = team.player2_id
-      ? await db.select().from(player).where(eq(player.id, team.player2_id))
-      : [];
-    players.push(second[0]);
-  }
-  return players;
-};
+export async function createPlayer(data: { name: string; seasonId: number }) {
+  const result = await db
+    .insert(player)
+    .values({
+      name: data.name,
+      seasonId: data.seasonId,
+    })
+    .returning();
+  revalidatePath("/");
+  return result[0];
+}
+
+export async function updatePlayer(id: number, data: Partial<Player>) {
+  const result = await db
+    .update(player)
+    .set({
+      ...(data.name ? { name: data.name } : {}),
+    })
+    .where(eq(player.id, id))
+    .returning();
+  revalidatePath("/");
+  return result[0];
+}
+
+export async function deletePlayer(id: number) {
+  const result = await db
+    .delete(player)
+    .where(eq(player.id, id))
+    .returning();
+  revalidatePath("/");
+  return result[0];
+}

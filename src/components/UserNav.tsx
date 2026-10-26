@@ -1,11 +1,10 @@
 import { logout } from "@/actions/auth";
 import { LogOut, User, UserCheck } from "lucide-react";
 import Link from "next/link";
+import type { JWTPayload } from "jose";
 
 interface UserNavProps {
-  session: {
-    userId?: string | number;
-  } | null;
+  session?: (JWTPayload & { userId?: string | number }) | null;
 }
 
 export function UserNav({ session }: UserNavProps) {
