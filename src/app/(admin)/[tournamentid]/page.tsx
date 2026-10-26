@@ -7,6 +7,7 @@ import { MatchesOverViewTable } from "@/components/matchesOverviewTable";
 import { ScheduleGenerateForm } from "@/components/scheduleGenerateForm";
 import { ScheduleMain } from "@/components/scheduleMain";
 import StatsTournamentButton from "@/components/statsTournamentButton";
+import SharePublicLink from "@/components/SharePublicLink";
 import TournamentTeamTable from "@/components/tournamentTeamTable";
 import { pluralCs } from "@/lib/utils";
 import { loadMatches, loadTournament, MatchWithTeams } from "./action";
@@ -62,11 +63,21 @@ export default async function Home(params: {
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="border-b border-gray-800">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold">{tournament.name}</h1>
-          <p className="text-gray-400 mt-2">
-            Nastavení turnaje · {pluralCs(teams.length, "tým", "týmy", "týmů")}
-          </p>
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">{tournament.name}</h1>
+            <p className="text-gray-400 mt-2">
+              Nastavení turnaje · {pluralCs(teams.length, "tým", "týmy", "týmů")}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-4">
+            <SharePublicLink tournamentId={tournamentId} />
+            <StatsTournamentButton id={tournamentId} />
+            <AddNewMatchButton
+              id={tournamentId}
+              matches={matches || undefined}
+            />
+          </div>
         </div>
       </div>
 
@@ -99,6 +110,7 @@ export default async function Home(params: {
         {playedMatches && (
           <>
             <div className="flex justify-end space-x-4">
+              <SharePublicLink tournamentId={tournamentId} />
               <StatsTournamentButton id={tournamentId} />
               <AddNewMatchButton id={tournamentId} matches={matches!} />
             </div>

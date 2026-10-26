@@ -17,6 +17,7 @@ import {
 } from "@/lib/schedulePdf";
 import Link from "next/link";
 import { ReactNode, useState } from "react";
+import SharePublicLink from "@/components/SharePublicLink";
 import { ScheduleGenerateForm } from "./scheduleGenerateForm";
 
 type Props = {
@@ -125,6 +126,7 @@ export const ScheduleMain = ({
             </p>
           </div>
           <div className="flex flex-wrap gap-4">
+            <SharePublicLink tournamentId={tournamentId} />
             <Link href={`/${tournamentId}/stats`} className="btn btn-secondary">
               Statistiky turnaje
             </Link>
