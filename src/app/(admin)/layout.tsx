@@ -16,8 +16,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "🦊 SPPDF BeerPong App",
-  description: "BeerPong Scoring App",
+  title: "🦊 SPPDF BeerPong",
+  description: "BeerPong Scoring App & League System",
   icons: {
     icon: "/icon.svg",
   },
@@ -29,16 +29,37 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="cs" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var m = localStorage.getItem('beerpong_theme_mode');
+                var t = 'beerpong-light';
+                if (m === 'dark') {
+                  t = 'beerpong-dark';
+                } else if (m === 'light') {
+                  t = 'beerpong-light';
+                } else {
+                  t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'beerpong-dark' : 'beerpong-light';
+                }
+                document.documentElement.setAttribute('data-theme', t);
+                if (t === 'beerpong-dark') {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-base-200 text-base-content transition-colors`}
       >
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
-          <main className="flex-1 flex flex-col">
-            {children}
-          </main>
-        </div>
+        <Navbar />
+        <main className="flex-1 flex flex-col">{children}</main>
         <Toaster />
       </body>
     </html>
