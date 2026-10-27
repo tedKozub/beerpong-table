@@ -202,8 +202,6 @@ export default async function PublicOverviewPage() {
                           <th className="text-center px-1 sm:px-3">Výhry</th>
                           <th className="text-center px-1 sm:px-3">Remízy</th>
                           <th className="text-center px-1 sm:px-3">Prohry</th>
-                          <th className="text-center px-1 sm:px-3">Skóre</th>
-                          <th className="text-center px-1 sm:px-3">Rozdíl</th>
                           <th className="text-right px-2 sm:px-3">Body</th>
                         </tr>
                       </thead>
@@ -227,20 +225,6 @@ export default async function PublicOverviewPage() {
                             </td>
                             <td className="text-center px-1 sm:px-3 text-error tabular-nums">
                               {t.losses}
-                            </td>
-                            <td className="text-center px-1 sm:px-3 tabular-nums">
-                              {t.cupsScored}:{t.cupsConceded}
-                            </td>
-                            <td
-                              className={`text-center px-1 sm:px-3 tabular-nums font-semibold ${
-                                t.cupDiff > 0
-                                  ? "text-success"
-                                  : t.cupDiff < 0
-                                  ? "text-error"
-                                  : ""
-                              }`}
-                            >
-                              {t.cupDiff > 0 ? `+${t.cupDiff}` : t.cupDiff}
                             </td>
                             <td className="text-right px-2 sm:px-3 font-black text-primary tabular-nums">
                               {t.points}

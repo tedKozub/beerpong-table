@@ -209,12 +209,10 @@ export default async function SeasonDetailPage({
                   <tr className="bg-base-200/50">
                     <th className="w-12 text-center">Poř.</th>
                     <th>Tým</th>
-                    <th className="text-center">Z</th>
-                    <th className="text-center">V</th>
-                    <th className="text-center">R</th>
-                    <th className="text-center">P</th>
-                    <th className="text-center">Skóre</th>
-                    <th className="text-center">+/-</th>
+                    <th className="text-center">Zápasy</th>
+                    <th className="text-center">Výhry</th>
+                    <th className="text-center">Remízy</th>
+                    <th className="text-center">Prohry</th>
                     <th className="text-right">Body</th>
                   </tr>
                 </thead>
@@ -232,20 +230,6 @@ export default async function SeasonDetailPage({
                       <td className="text-center text-success tabular-nums">{t.wins}</td>
                       <td className="text-center text-base-content/60 tabular-nums">{t.draws}</td>
                       <td className="text-center text-error tabular-nums">{t.losses}</td>
-                      <td className="text-center tabular-nums">
-                        {t.cupsScored}:{t.cupsConceded}
-                      </td>
-                      <td
-                        className={`text-center tabular-nums text-xs font-semibold ${
-                          t.cupDiff > 0
-                            ? "text-success"
-                            : t.cupDiff < 0
-                            ? "text-error"
-                            : ""
-                        }`}
-                      >
-                        {t.cupDiff > 0 ? `+${t.cupDiff}` : t.cupDiff}
-                      </td>
                       <td className="text-right font-black text-primary tabular-nums">
                         {t.points}
                       </td>

@@ -220,8 +220,8 @@ export function ScoreInputDialog({
         playerScores: playerScoresData,
       });
 
-      router.refresh();
       onClose();
+      router.refresh();
     } catch (err) {
       console.error("Chyba při ukládání zápasu:", err);
     } finally {
@@ -230,12 +230,17 @@ export function ScoreInputDialog({
   };
 
   return (
-    <dialog className="modal modal-open z-50">
-      <div className="modal-box max-w-2xl bg-base-100 text-base-content border border-base-300 p-5 sm:p-6 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs">
+      <div
+        className="fixed inset-0 z-0"
+        onClick={onClose}
+        aria-label="Zavřít"
+      />
+      <div className="relative z-10 max-w-2xl w-full bg-base-100 text-base-content border border-base-300 p-5 sm:p-6 shadow-2xl rounded-2xl max-h-[90vh] overflow-y-auto">
         <button
           type="button"
           onClick={onClose}
-          className="btn btn-sm btn-circle btn-ghost absolute right-4 top-4"
+          className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3"
         >
           <X className="w-4 h-4" />
         </button>
@@ -511,7 +516,6 @@ export function ScoreInputDialog({
           </div>
         </form>
       </div>
-      <div className="modal-backdrop bg-black/60" onClick={onClose} />
-    </dialog>
+    </div>
   );
 }

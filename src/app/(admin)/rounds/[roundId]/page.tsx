@@ -19,6 +19,7 @@ import {
 import { getPlayersForSeason } from "@/actions/players";
 import { getScheduleForRound } from "@/actions/schedule";
 import { ScheduleSection } from "@/components/ScheduleSection";
+import { RoundSetup } from "@/components/RoundSetup";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -129,15 +130,29 @@ export default async function RoundDetailPage({
         </form>
       </div>
 
+      {/* Nastavení kola a aktivní týmy (když rozpis ještě není vygenerován) */}
+      {schedule.length === 0 && (
+        <RoundSetup
+          roundId={roundId}
+          seasonId={currentRound.seasonId}
+          seasonTeams={teams}
+          seasonPlayers={players}
+          roster={roster}
+          hasSchedule={false}
+        />
+      )}
+
       {/* Rozpis zápasů na stoly (Round-Robin z PR #40 + PDF & Prezentace) */}
-      <ScheduleSection
-        roundId={roundId}
-        roundName={`${currentSeason?.name ?? "Turnaj"} - ${currentRound.name}`}
-        schedule={schedule}
-        roster={roster}
-        allSeasonPlayers={players}
-        isAdmin={true}
-      />
+      {schedule.length > 0 && (
+        <ScheduleSection
+          roundId={roundId}
+          roundName={`${currentSeason?.name ?? "Turnaj"} - ${currentRound.name}`}
+          schedule={schedule}
+          roster={roster}
+          allSeasonPlayers={players}
+          isAdmin={true}
+        />
+      )}
 
       {/* Tabulka večera */}
       <section className="card bg-base-100 shadow-md border border-base-200">
@@ -160,11 +175,10 @@ export default async function RoundDetailPage({
                   <tr className="bg-base-200/50">
                     <th className="w-12 text-center">Poř.</th>
                     <th>Tým</th>
-                    <th className="text-center">Z</th>
-                    <th className="text-center">V</th>
-                    <th className="text-center">R</th>
-                    <th className="text-center">P</th>
-                    <th className="text-center">Skóre</th>
+                    <th className="text-center">Zápasy</th>
+                    <th className="text-center">Výhry</th>
+                    <th className="text-center">Remízy</th>
+                    <th className="text-center">Prohry</th>
                     <th className="text-right">Body</th>
                   </tr>
                 </thead>
@@ -184,9 +198,6 @@ export default async function RoundDetailPage({
                         {t.draws}
                       </td>
                       <td className="text-center text-error tabular-nums">{t.losses}</td>
-                      <td className="text-center tabular-nums">
-                        {t.cupsScored}:{t.cupsConceded}
-                      </td>
                       <td className="text-right font-black text-primary tabular-nums">
                         {t.points}
                       </td>
@@ -558,112 +569,27 @@ export default async function RoundDetailPage({
         </div>
       </section>
 
-      {/* Soupisky pro tento turnajový večer (dynamické týmy) */}
-      <section className="card bg-base-100 shadow-md border border-base-200">
-        <div className="card-body p-4 sm:p-6">
-          <div className="flex justify-between items-center mb-1">
-            <h2 className="text-lg font-bold">Soupisky týmů pro tento večer</h2>
-            <span className="text-xs text-base-content/60">
-              Hráči mohou v jednotlivých kolech nastupovat za různé týmy
+      {/* Nastavení kola a aktivní týmy (při vygenerovaném rozpisu přístupné v akordeonu) */}
+      {schedule.length > 0 && (
+        <details className="card bg-base-100 shadow-md border border-base-200">
+          <summary className="card-body p-4 sm:p-5 cursor-pointer font-bold text-sm flex items-center justify-between select-none">
+            <span>Nastavení kola a aktivní týmy</span>
+            <span className="text-xs text-base-content/60 font-normal">
+              Klikni pro správu týmů nebo přegenerování rozpisu
             </span>
+          </summary>
+          <div className="p-4 sm:p-6 pt-0">
+            <RoundSetup
+              roundId={roundId}
+              seasonId={currentRound.seasonId}
+              seasonTeams={teams}
+              seasonPlayers={players}
+              roster={roster}
+              hasSchedule={true}
+            />
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
-            {teams.map((t) => {
-              const teamMembers = roster.filter((r) => r.teamId === t.id);
-              return (
-                <div
-                  key={t.id}
-                  className="bg-base-200/60 border border-base-300 p-3 rounded-lg flex flex-col gap-2"
-                >
-                  <h3 className="font-bold text-sm flex justify-between items-center">
-                    <span>{t.name}</span>
-                    <span className="badge badge-sm badge-neutral tabular-nums font-semibold">
-                      {teamMembers.length}
-                    </span>
-                  </h3>
-                  <div className="flex flex-col gap-1 mt-0.5">
-                    {teamMembers.map((m) => (
-                      <div
-                        key={m.id}
-                        className="flex justify-between items-center bg-base-100 px-2 py-1 rounded text-xs"
-                      >
-                        <span>{m.playerName}</span>
-                        <form
-                          action={async () => {
-                            "use server";
-                            await removePlayerFromTeamInRound(roundId, m.playerId);
-                          }}
-                        >
-                          <button
-                            type="submit"
-                            className="text-error hover:font-bold px-1"
-                            title="Odebrat z týmu pro toto kolo"
-                          >
-                            ×
-                          </button>
-                        </form>
-                      </div>
-                    ))}
-                    {teamMembers.length === 0 && (
-                      <span className="text-xs text-base-content/50 italic py-0.5">
-                        Žádní hráči nepřiřazeni.
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Rychlé přiřazení hráče na dnešní večer */}
-          {players.length > 0 && teams.length > 0 && (
-            <form
-              action={async (formData: FormData) => {
-                "use server";
-                const playerId = Number(formData.get("playerId"));
-                const teamId = Number(formData.get("teamId"));
-                if (playerId && teamId) {
-                  await assignPlayerToTeamInRound(roundId, teamId, playerId);
-                }
-              }}
-              className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-base-300 text-xs"
-            >
-              <span className="font-semibold text-base-content/70">
-                Přiřadit hráče na tento večer:
-              </span>
-              <select
-                name="playerId"
-                className="select select-bordered select-xs"
-                required
-              >
-                <option value="">Vyber hráče...</option>
-                {players.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-              <span>hraje za</span>
-              <select
-                name="teamId"
-                className="select select-bordered select-xs"
-                required
-              >
-                <option value="">Vyber tým...</option>
-                {teams.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
-              <button type="submit" className="btn btn-primary btn-xs">
-                Přiřadit
-              </button>
-            </form>
-          )}
-        </div>
-      </section>
+        </details>
+      )}
     </div>
   );
 }

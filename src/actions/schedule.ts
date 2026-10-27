@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { match, round, scheduledMatch, team } from "@/db/schema";
+import { match, round, scheduledMatch, team, teamPlayer } from "@/db/schema";
 import { generateSchedule } from "@/lib/schedule";
 import { aliasedTable, asc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -89,20 +89,29 @@ export const createScheduleForRound = async (
     return { error: "Kolo nebylo nalezeno" };
   }
 
-  const teams = await db
-    .select({ id: team.id })
-    .from(team)
-    .where(eq(team.seasonId, currentRound.seasonId))
-    .orderBy(asc(team.id));
+  // 1. Zkusíme vzít týmy aktivně přiřazené do tohoto kola (přes soupisku team_player)
+  const roundTeams = await db
+    .selectDistinct({ teamId: teamPlayer.teamId })
+    .from(teamPlayer)
+    .where(eq(teamPlayer.roundId, roundId));
 
-  if (teams.length < 2) {
-    return { error: "V semestru musí být alespoň 2 týmy pro vytvoření rozpisu" };
+  let teamIds = roundTeams.map((t) => t.teamId);
+
+  // 2. Fallback: pokud v team_player nic není, vezmeme týmy ze sezóny
+  if (teamIds.length < 2) {
+    const seasonTeams = await db
+      .select({ id: team.id })
+      .from(team)
+      .where(eq(team.seasonId, currentRound.seasonId))
+      .orderBy(asc(team.id));
+    teamIds = seasonTeams.map((t) => t.id);
   }
 
-  const schedule = generateSchedule(
-    teams.map((t) => t.id),
-    tables
-  );
+  if (teamIds.length < 2) {
+    return { error: "V kole musí být alespoň 2 aktivní týmy pro vytvoření rozpisu" };
+  }
+
+  const schedule = generateSchedule(teamIds, tables);
 
   await db.transaction(async (tx) => {
     await tx

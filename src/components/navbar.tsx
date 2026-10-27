@@ -15,44 +15,34 @@ export const Navbar = async () => {
   ]);
 
   return (
-    <div className="navbar sticky top-0 z-50 bg-base-100/90 backdrop-blur-md border-b border-base-300 px-3 sm:px-6 transition-colors">
-      <div className="flex-1 flex items-center gap-2 sm:gap-4 flex-wrap">
+    <div className="navbar sticky top-0 z-50 bg-base-100/90 backdrop-blur-md border-b border-base-300 px-3 sm:px-6 transition-colors flex-nowrap">
+      <div className="flex-1 flex items-center gap-2 sm:gap-4 flex-nowrap min-w-0">
         <Link
           href="/"
-          className="btn btn-ghost text-lg sm:text-xl font-black tracking-tight text-base-content px-1 sm:px-2"
+          className="btn btn-ghost text-lg sm:text-xl font-black tracking-tight text-base-content px-1 sm:px-2 shrink-0"
         >
           🦊 SPPDF BeerPong
         </Link>
 
         {/* Přepínač semestrů ve stylu MUNI IS */}
         {seasons.length > 0 && (
-          <SeasonSelector
-            seasons={seasons}
-            currentSeasonId={activeSeason?.id}
-          />
+          <div className="shrink-0">
+            <SeasonSelector
+              seasons={seasons}
+              currentSeasonId={activeSeason?.id}
+            />
+          </div>
         )}
 
         <Link
-          href="/public"
-          className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/80 hover:text-base-content hidden md:inline-flex"
-        >
-          Veřejné výsledky
-        </Link>
-        <Link
-          href="/seasons"
-          className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/80 hover:text-base-content hidden lg:inline-flex"
-        >
-          Správa semestrů
-        </Link>
-        <Link
           href="/about"
-          className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/80 hover:text-base-content hidden sm:inline-flex"
+          className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/80 hover:text-base-content shrink-0"
         >
-          O lize & Pravidla
+          About
         </Link>
       </div>
 
-      <div className="navbar-end flex items-center gap-2">
+      <div className="navbar-end flex items-center gap-2 shrink-0">
         <ThemeToggle />
         <UserNav session={session ?? null} />
       </div>

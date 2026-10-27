@@ -93,37 +93,7 @@ export function ScheduleSection({
       : waveNumbers.find((w) => w > currentWave) ?? null;
 
   if (schedule.length === 0) {
-    if (!isAdmin) return null;
-
-    return (
-      <section className="card bg-base-100 shadow-md border border-base-200">
-        <div className="card-body p-5 sm:p-6">
-          <h2 className="text-xl font-bold">Rozpis zápasů na stoly</h2>
-          <p className="text-sm text-base-content/70">
-            Pro tento večer zatím nebyl vygenerován rozpis zápasů na stoly (Round-Robin).
-          </p>
-          <form onSubmit={handleGenerate} className="flex flex-wrap items-center gap-3 mt-3">
-            <label className="text-sm font-medium">Počet stolů:</label>
-            <input
-              type="number"
-              min="1"
-              max="10"
-              value={tablesCount}
-              onChange={(e) => setTablesCount(e.target.value)}
-              className="input input-bordered input-sm w-20 text-center font-bold tabular-nums"
-              required
-            />
-            <button
-              type="submit"
-              disabled={generating}
-              className="btn btn-primary btn-sm"
-            >
-              {generating ? "Generuji..." : "Vygenerovat rozpis"}
-            </button>
-          </form>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
@@ -223,15 +193,34 @@ export function ScheduleSection({
                     </span>
                   </div>
                   {isAdmin && (
-                    <div className="mt-3 text-center text-xs">
+                    <div className="mt-3 text-center">
                       {isPlayed ? (
-                        <span className="text-success font-medium">
-                          Odehráno • Klikni pro úpravu
-                        </span>
+                        <div className="flex items-center justify-between gap-2 pt-2 border-t border-base-200">
+                          <span className="text-xs text-success font-semibold">
+                            Odehráno
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedMatch(m);
+                            }}
+                            className="btn btn-xs btn-outline"
+                          >
+                            Upravit
+                          </button>
+                        </div>
                       ) : (
-                        <span className="text-primary font-bold">
-                          Zadat výsledek →
-                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedMatch(m);
+                          }}
+                          className="btn btn-sm btn-primary w-full font-bold shadow"
+                        >
+                          Vyplnit
+                        </button>
                       )}
                     </div>
                   )}
@@ -291,31 +280,47 @@ export function ScheduleSection({
                     return (
                       <div
                         key={`all-${m.tableNumber}-${m.team1Id}`}
-                        onClick={() => {
-                          if (isAdmin) setSelectedMatch(m);
-                        }}
-                        className={`py-2 flex items-center justify-between gap-2 ${
-                          isAdmin ? "cursor-pointer hover:bg-base-200/70 px-1 rounded transition-colors" : ""
-                        }`}
+                        className="py-2 flex items-center justify-between gap-2"
                       >
-                        <span className="text-base-content/60 font-medium shrink-0">
+                        <span className="text-base-content/60 font-medium shrink-0 w-12 sm:w-14">
                           Stůl {m.tableNumber}
                         </span>
                         <span className="font-semibold text-right flex-1 truncate">
                           {m.team1Name}
                         </span>
                         <span
-                          className={`px-2 py-0.5 rounded tabular-nums font-bold shrink-0 text-center ${
+                          className={`px-2 py-0.5 rounded tabular-nums font-bold shrink-0 text-center text-xs ${
                             isPlayed
                               ? "bg-success/20 text-success-content"
-                              : "text-primary hover:underline"
+                              : "text-base-content/50"
                           }`}
                         >
-                          {m.score ?? (isAdmin ? "zadat" : "vs")}
+                          {m.score ?? "vs"}
                         </span>
                         <span className="font-semibold text-left flex-1 truncate">
                           {m.team2Name}
                         </span>
+                        {isAdmin && (
+                          <div className="shrink-0 ml-1">
+                            {isPlayed ? (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedMatch(m)}
+                                className="btn btn-ghost btn-xs text-xs"
+                              >
+                                Upravit
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedMatch(m)}
+                                className="btn btn-primary btn-xs font-bold"
+                              >
+                                Vyplnit
+                              </button>
+                            )}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
