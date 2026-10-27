@@ -65,7 +65,7 @@ export default async function PublicOverviewPage() {
       <div className="min-h-screen px-3 py-6 sm:px-6 sm:py-10 md:p-12">
         <main className="mx-auto w-full max-w-[1280px] flex flex-col gap-6 items-center text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-2 tracking-tight">
-            🦊 SPPDF Beer Pong
+            🦊 SPPDF Beerpong
           </h1>
           <p className="text-base-content/70 text-base sm:text-lg">
             V současné chvíli není vyhlášena žádná aktivní sezóna semestru.
@@ -109,10 +109,10 @@ export default async function PublicOverviewPage() {
           </Link>
           <ThemeToggle />
           <Link
-            href="/login"
-            className="btn btn-ghost btn-sm text-xs font-semibold border border-base-300 text-base-content"
+            href="/"
+            className="btn btn-primary btn-sm text-xs font-semibold"
           >
-            Přihlášení
+            Admin / Zápis
           </Link>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default async function PublicOverviewPage() {
         {/* Titulek */}
         <div className="text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-2 sm:mb-3 tracking-tight">
-            🦊 SPPDF Beer Pong
+            🦊 SPPDF Beerpong
           </h1>
           <p className="text-base-content/70 text-sm sm:text-base md:text-lg">
             Oficiální výsledky turnajů • {activeSeason.name}

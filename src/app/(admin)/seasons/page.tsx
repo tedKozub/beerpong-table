@@ -25,7 +25,7 @@ export default async function SeasonsArchivePage() {
             Sezóny & Archiv semestrů
           </h1>
           <p className="text-base-content/70 text-xs sm:text-sm mt-0.5">
-            Přehled všech semestrů v historii BeerPong ligy
+            Přehled všech semestrů v historii beerpongové ligy
           </p>
         </div>
       </div>

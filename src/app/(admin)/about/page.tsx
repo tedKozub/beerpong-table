@@ -18,7 +18,7 @@ export default function AboutPage() {
             🦊 O aplikaci & Pravidla ligy
           </h1>
           <p className="text-base-content/70 mt-1 text-base">
-            Oficiální organizační systém turnajů SPPDF Beer Pong
+            Oficiální organizační systém turnajů SPPDF Beerpong
           </p>
         </div>
 
@@ -38,7 +38,7 @@ export default function AboutPage() {
                 </span>
               </div>
               <h2 className="text-2xl font-black tracking-tight text-base-content">
-                Upravená pravidla SPPDF Beer Pong
+                Upravená pravidla SPPDF Beerpong
               </h2>
               <p className="text-base-content/85 text-base leading-relaxed">
                 Oficiální upravená pravidla SPPDF pro aktuální sezónu se v současnosti finalizují a brzy budou v plném znění doplněna přímo sem.

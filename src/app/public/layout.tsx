@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "@/components/ui/toaster";
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin", "latin-ext"] });
 
 export const metadata: Metadata = {
-  title: "SPPDF Beer Pong - Výsledky",
-  description: "Veřejné výsledky Beer Pong turnajů SPPDF",
+  title: "SPPDF Beerpong - Výsledky",
+  description: "Veřejné výsledky beerpong turnajů SPPDF",
   icons: {
     icon: "/icon.svg",
   },
@@ -48,6 +49,7 @@ export default function PublicLayout({
         className={`${inter.className} antialiased min-h-screen flex flex-col bg-base-200 text-base-content transition-colors duration-150`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );

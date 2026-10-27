@@ -56,7 +56,7 @@ export default function DesignSystemPage() {
             <div className="flex items-center gap-2 mb-2">
               <span className="badge badge-primary gap-1.5 font-bold text-xs uppercase tracking-wider">
                 <Award className="w-3.5 h-3.5" />
-                SPPDF BeerPong 2.0
+                SPPDF Beerpong 2.0
               </span>
               <span className="badge badge-ghost text-xs">Styleguide a designové tokeny</span>
             </div>
@@ -487,7 +487,7 @@ export default function DesignSystemPage() {
           <div className="card-body p-6 sm:p-8 flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-base-300 pb-4 gap-2">
               <span className="text-xs text-base-content/60 w-32 font-medium">Heading 1</span>
-              <h1 className="text-4xl font-black flex-1">SPPDF BeerPong Liga 2025</h1>
+              <h1 className="text-4xl font-black flex-1">SPPDF Beerpong liga 2025</h1>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-base-300 pb-4 gap-2">

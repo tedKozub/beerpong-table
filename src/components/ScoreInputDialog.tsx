@@ -4,6 +4,7 @@ import {
   getMatchDetailsForTeams,
   saveOrUpdateMatchScore,
 } from "@/actions/matches";
+import { useToast } from "@/hooks/use-toast";
 import { ArrowUpDown, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -43,6 +44,7 @@ export function ScoreInputDialog({
   existingScore,
 }: ScoreInputDialogProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [saving, setSaving] = useState(false);
 
   // Získáme hráče zapsané na soupisce daného kola pro team1 a team2
@@ -220,9 +222,19 @@ export function ScoreInputDialog({
         playerScores: playerScoresData,
       });
 
+      toast({
+        title: "Výsledek zápasu byl uložen",
+        description: `${team1.name} (${team1Total}) : (${team2Total}) ${team2.name}`,
+      });
+
       onClose();
       router.refresh();
-    } catch (err) {
+    } catch (err: any) {
+      toast({
+        title: "Chyba při ukládání",
+        description: err?.message || "Nepodařilo se uložit výsledek zápasu.",
+        variant: "destructive",
+      });
       console.error("Chyba při ukládání zápasu:", err);
     } finally {
       setSaving(false);
@@ -230,39 +242,39 @@ export function ScoreInputDialog({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-xs">
       <div
         className="fixed inset-0 z-0"
         onClick={onClose}
         aria-label="Zavřít"
       />
-      <div className="relative z-10 max-w-2xl w-full bg-base-100 text-base-content border border-base-300 p-5 sm:p-6 shadow-2xl rounded-2xl max-h-[90vh] overflow-y-auto">
+      <div className="relative z-10 max-w-3xl sm:max-w-4xl w-full bg-base-100 text-base-content border border-base-300 p-5 sm:p-8 shadow-2xl rounded-2xl max-h-[92vh] overflow-y-auto">
         <button
           type="button"
           onClick={onClose}
-          className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3"
+          className="btn btn-sm btn-circle btn-ghost absolute right-4 top-4"
         >
           <X className="w-4 h-4" />
         </button>
 
-        <div className="mb-4">
-          <span className="badge badge-neutral text-xs font-bold tabular-nums">
+        <div className="mb-5">
+          <span className="badge badge-neutral text-xs font-bold tabular-nums px-2.5 py-1">
             Stůl {tableNumber}
           </span>
-          <h2 className="text-xl font-bold mt-1">Zápis výsledku zápasu</h2>
-          <p className="text-xs text-base-content/60">
-            Zadej body (trefené kelímky) a vyfouknuté kelímky (blowjoby) pro jednotlivé hráče
+          <h2 className="text-xl sm:text-2xl font-black mt-1">Zápis výsledku zápasu</h2>
+          <p className="text-xs sm:text-sm text-base-content/60">
+            Zadej body (trefené kelímky) a vyfouknutí (BJ) pro jednotlivé hráče
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="overflow-x-auto border border-base-300 rounded-xl">
-            <table className="table table-sm w-full text-center">
+            <table className="table table-sm sm:table-md w-full text-center">
               <thead className="bg-base-200">
                 <tr>
-                  <th colSpan={2} className="py-2.5 px-3 border-b border-base-300">
+                  <th colSpan={2} className="py-3 px-3 sm:px-4 border-b border-base-300">
                     <div className="flex items-center justify-between gap-1">
-                      <span className="font-bold text-sm text-base-content truncate">
+                      <span className="font-bold text-sm sm:text-base text-base-content truncate">
                         {team1.name}
                       </span>
                       <button
@@ -277,13 +289,13 @@ export function ScoreInputDialog({
                   </th>
                   <th
                     colSpan={2}
-                    className="py-2.5 px-2 border-b border-base-300 text-center font-bold text-sm"
+                    className="py-3 px-2 border-b border-base-300 text-center font-bold text-sm sm:text-base"
                   >
-                    Skóre
+                    Body
                   </th>
-                  <th colSpan={2} className="py-2.5 px-3 border-b border-base-300">
+                  <th colSpan={2} className="py-3 px-3 sm:px-4 border-b border-base-300">
                     <div className="flex items-center justify-between gap-1">
-                      <span className="font-bold text-sm text-base-content truncate">
+                      <span className="font-bold text-sm sm:text-base text-base-content truncate">
                         {team2.name}
                       </span>
                       <button
@@ -300,20 +312,20 @@ export function ScoreInputDialog({
               </thead>
               <tbody>
                 {/* Hlavička sloupců pro Hráč 1 */}
-                <tr className="text-xs text-base-content/60 bg-base-200/40">
-                  <td className="py-1 px-3 text-left font-medium">Hráč 1</td>
-                  <td className="py-1 px-2 text-center font-medium">BJ</td>
-                  <td colSpan={2} className="py-1 px-2 text-center font-bold">
+                <tr className="text-xs text-base-content/70 bg-base-200/50">
+                  <td className="py-1.5 px-3 text-left font-semibold">Hráč 1</td>
+                  <td className="py-1.5 px-2 text-center font-bold text-info bg-info/10">BJ</td>
+                  <td colSpan={2} className="py-1.5 px-2 text-center font-bold text-primary">
                     Body
                   </td>
-                  <td className="py-1 px-2 text-center font-medium">BJ</td>
-                  <td className="py-1 px-3 text-right font-medium">Hráč 1</td>
+                  <td className="py-1.5 px-2 text-center font-bold text-info bg-info/10">BJ</td>
+                  <td className="py-1.5 px-3 text-right font-semibold">Hráč 1</td>
                 </tr>
                 <tr>
                   {/* Hráč 1 Tým 1 */}
                   <td className="py-2 px-3 text-left">
                     <select
-                      className="select select-bordered select-xs w-full max-w-[140px] font-semibold"
+                      className="select select-bordered select-xs sm:select-sm w-full max-w-[150px] font-semibold"
                       value={t1p1?.id ?? ""}
                       onChange={(e) => {
                         const found = allSeasonPlayers.find(
@@ -329,50 +341,50 @@ export function ScoreInputDialog({
                       ))}
                     </select>
                   </td>
-                  <td className="p-1 text-center">
+                  <td className="p-1.5 text-center bg-info/5">
                     <input
                       type="number"
                       min="0"
                       value={t1p1Bj}
                       onChange={(e) => setT1p1Bj(e.target.value)}
                       placeholder="0"
-                      className="input input-bordered input-xs sm:input-sm w-14 text-center font-bold tabular-nums"
+                      className="input input-bordered input-xs sm:input-sm w-14 sm:w-16 text-center font-bold tabular-nums border-info/50 text-info bg-info/10 focus:border-info"
                     />
                   </td>
-                  <td className="p-1 text-center">
+                  <td className="p-1.5 text-center">
                     <input
                       type="number"
                       min="0"
                       value={t1p1Score}
                       onChange={(e) => setT1p1Score(e.target.value)}
                       placeholder="0"
-                      className="input input-bordered input-xs sm:input-sm w-16 text-center font-bold tabular-nums text-primary"
+                      className="input input-bordered input-xs sm:input-sm w-16 sm:w-20 text-center font-bold tabular-nums text-primary border-primary/50 focus:border-primary"
                     />
                   </td>
-                  <td className="p-1 text-center">
+                  <td className="p-1.5 text-center">
                     <input
                       type="number"
                       min="0"
                       value={t2p1Score}
                       onChange={(e) => setT2p1Score(e.target.value)}
                       placeholder="0"
-                      className="input input-bordered input-xs sm:input-sm w-16 text-center font-bold tabular-nums text-primary"
+                      className="input input-bordered input-xs sm:input-sm w-16 sm:w-20 text-center font-bold tabular-nums text-primary border-primary/50 focus:border-primary"
                     />
                   </td>
-                  <td className="p-1 text-center">
+                  <td className="p-1.5 text-center bg-info/5">
                     <input
                       type="number"
                       min="0"
                       value={t2p1Bj}
                       onChange={(e) => setT2p1Bj(e.target.value)}
                       placeholder="0"
-                      className="input input-bordered input-xs sm:input-sm w-14 text-center font-bold tabular-nums"
+                      className="input input-bordered input-xs sm:input-sm w-14 sm:w-16 text-center font-bold tabular-nums border-info/50 text-info bg-info/10 focus:border-info"
                     />
                   </td>
                   {/* Hráč 1 Tým 2 */}
                   <td className="py-2 px-3 text-right">
                     <select
-                      className="select select-bordered select-xs w-full max-w-[140px] font-semibold"
+                      className="select select-bordered select-xs sm:select-sm w-full max-w-[150px] font-semibold"
                       value={t2p1?.id ?? ""}
                       onChange={(e) => {
                         const found = allSeasonPlayers.find(
@@ -391,20 +403,20 @@ export function ScoreInputDialog({
                 </tr>
 
                 {/* Hlavička sloupců pro Hráč 2 */}
-                <tr className="text-xs text-base-content/60 bg-base-200/40">
-                  <td className="py-1 px-3 text-left font-medium">Hráč 2</td>
-                  <td className="py-1 px-2 text-center font-medium">BJ</td>
-                  <td colSpan={2} className="py-1 px-2 text-center font-bold">
+                <tr className="text-xs text-base-content/70 bg-base-200/50">
+                  <td className="py-1.5 px-3 text-left font-semibold">Hráč 2</td>
+                  <td className="py-1.5 px-2 text-center font-bold text-info bg-info/10">BJ</td>
+                  <td colSpan={2} className="py-1.5 px-2 text-center font-bold text-primary">
                     Body
                   </td>
-                  <td className="py-1 px-2 text-center font-medium">BJ</td>
-                  <td className="py-1 px-3 text-right font-medium">Hráč 2</td>
+                  <td className="py-1.5 px-2 text-center font-bold text-info bg-info/10">BJ</td>
+                  <td className="py-1.5 px-3 text-right font-semibold">Hráč 2</td>
                 </tr>
                 <tr>
                   {/* Hráč 2 Tým 1 */}
                   <td className="py-2 px-3 text-left">
                     <select
-                      className="select select-bordered select-xs w-full max-w-[140px] font-semibold"
+                      className="select select-bordered select-xs sm:select-sm w-full max-w-[150px] font-semibold"
                       value={t1p2?.id ?? ""}
                       onChange={(e) => {
                         const found = allSeasonPlayers.find(
@@ -420,50 +432,50 @@ export function ScoreInputDialog({
                       ))}
                     </select>
                   </td>
-                  <td className="p-1 text-center">
+                  <td className="p-1.5 text-center bg-info/5">
                     <input
                       type="number"
                       min="0"
                       value={t1p2Bj}
                       onChange={(e) => setT1p2Bj(e.target.value)}
                       placeholder="0"
-                      className="input input-bordered input-xs sm:input-sm w-14 text-center font-bold tabular-nums"
+                      className="input input-bordered input-xs sm:input-sm w-14 sm:w-16 text-center font-bold tabular-nums border-info/50 text-info bg-info/10 focus:border-info"
                     />
                   </td>
-                  <td className="p-1 text-center">
+                  <td className="p-1.5 text-center">
                     <input
                       type="number"
                       min="0"
                       value={t1p2Score}
                       onChange={(e) => setT1p2Score(e.target.value)}
                       placeholder="0"
-                      className="input input-bordered input-xs sm:input-sm w-16 text-center font-bold tabular-nums text-primary"
+                      className="input input-bordered input-xs sm:input-sm w-16 sm:w-20 text-center font-bold tabular-nums text-primary border-primary/50 focus:border-primary"
                     />
                   </td>
-                  <td className="p-1 text-center">
+                  <td className="p-1.5 text-center">
                     <input
                       type="number"
                       min="0"
                       value={t2p2Score}
                       onChange={(e) => setT2p2Score(e.target.value)}
                       placeholder="0"
-                      className="input input-bordered input-xs sm:input-sm w-16 text-center font-bold tabular-nums text-primary"
+                      className="input input-bordered input-xs sm:input-sm w-16 sm:w-20 text-center font-bold tabular-nums text-primary border-primary/50 focus:border-primary"
                     />
                   </td>
-                  <td className="p-1 text-center">
+                  <td className="p-1.5 text-center bg-info/5">
                     <input
                       type="number"
                       min="0"
                       value={t2p2Bj}
                       onChange={(e) => setT2p2Bj(e.target.value)}
                       placeholder="0"
-                      className="input input-bordered input-xs sm:input-sm w-14 text-center font-bold tabular-nums"
+                      className="input input-bordered input-xs sm:input-sm w-14 sm:w-16 text-center font-bold tabular-nums border-info/50 text-info bg-info/10 focus:border-info"
                     />
                   </td>
                   {/* Hráč 2 Tým 2 */}
                   <td className="py-2 px-3 text-right">
                     <select
-                      className="select select-bordered select-xs w-full max-w-[140px] font-semibold"
+                      className="select select-bordered select-xs sm:select-sm w-full max-w-[150px] font-semibold"
                       value={t2p2?.id ?? ""}
                       onChange={(e) => {
                         const found = allSeasonPlayers.find(
@@ -485,11 +497,11 @@ export function ScoreInputDialog({
           </div>
 
           {/* Celkové skóre týmů */}
-          <div className="flex items-center justify-between p-3.5 rounded-xl bg-base-200 border border-base-300">
+          <div className="flex items-center justify-between p-4 rounded-xl bg-base-200 border border-base-300">
             <div className="font-bold text-sm sm:text-base truncate flex-1">
               {team1.name}
             </div>
-            <div className="text-2xl font-black text-primary tabular-nums px-4 shrink-0">
+            <div className="text-2xl sm:text-3xl font-black text-primary tabular-nums px-4 shrink-0">
               {team1Total} : {team2Total}
             </div>
             <div className="font-bold text-sm sm:text-base text-right truncate flex-1">
@@ -508,10 +520,17 @@ export function ScoreInputDialog({
             </button>
             <button
               type="submit"
-              className="btn btn-primary btn-sm"
+              className="btn btn-primary btn-sm gap-1.5"
               disabled={saving}
             >
-              {saving ? "Ukládám..." : "Uložit výsledek zápasu"}
+              {saving ? (
+                <>
+                  <span className="loading loading-spinner loading-xs" />
+                  <span>Ukládám...</span>
+                </>
+              ) : (
+                <span>Uložit výsledek zápasu</span>
+              )}
             </button>
           </div>
         </form>

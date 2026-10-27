@@ -16,8 +16,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "SPPDF BeerPong",
-  description: "BeerPong Scoring App & League System",
+  title: "SPPDF Beerpong",
+  description: "Beerpong Scoring App & League System",
   icons: {
     icon: "/icon.svg",
   },

@@ -8,6 +8,7 @@ import {
   createScheduleForRound,
   deleteScheduleForRound,
 } from "@/actions/schedule";
+import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -48,6 +49,7 @@ export function RoundSetup({
   hasSchedule,
 }: RoundSetupProps) {
   const router = useRouter();
+  const { toast } = useToast();
 
   // Form state
   const [teamName, setTeamName] = useState("");
@@ -82,6 +84,11 @@ export function RoundSetup({
     e.preventDefault();
     if (!teamName.trim() || !player1Name.trim() || !player2Name.trim()) {
       setError("Vyplň prosím název týmu i oba hráče.");
+      toast({
+        title: "Chyba",
+        description: "Vyplň prosím název týmu i oba hráče.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -96,27 +103,51 @@ export function RoundSetup({
 
       if (res.error) {
         setError(res.error);
+        toast({
+          title: "Chyba při přidávání týmu",
+          description: res.error,
+          variant: "destructive",
+        });
       } else {
+        const addedName = teamName.trim();
         setTeamName("");
         setPlayer1Name("");
         setPlayer2Name("");
+        toast({
+          title: "Tým přidán",
+          description: `Tým ${addedName} byl úspěšně zařazen do tohoto kola.`,
+        });
         router.refresh();
       }
     } catch (err: any) {
       setError(err?.message || "Chyba při přidávání týmu");
+      toast({
+        title: "Chyba",
+        description: err?.message || "Chyba při přidávání týmu",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRemoveTeam = async (teamId: number) => {
-    if (!confirm("Opravdu chceš odebrat tento tým z kola?")) return;
+  const handleRemoveTeam = async (teamId: number, name: string) => {
+    if (!confirm(`Opravdu chceš odebrat tým ${name} z tohoto kola?`)) return;
     setLoading(true);
     try {
       await removeTeamFromRound(roundId, teamId);
+      toast({
+        title: "Tým odebrán",
+        description: `Tým ${name} byl odebrán z kola.`,
+      });
       router.refresh();
     } catch (err: any) {
       setError(err?.message || "Chyba při odebírání týmu");
+      toast({
+        title: "Chyba při odebírání týmu",
+        description: err?.message,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -135,11 +166,25 @@ export function RoundSetup({
       const res = await createScheduleForRound(roundId, tables);
       if (res?.error) {
         setError(res.error);
+        toast({
+          title: "Chyba generování",
+          description: res.error,
+          variant: "destructive",
+        });
       } else {
+        toast({
+          title: "Rozpis vygenerován",
+          description: `Rozpis zápasů na ${tables} ${tables === 1 ? "stůl" : tables < 5 ? "stoly" : "stolů"} byl úspěšně vytvořen.`,
+        });
         router.refresh();
       }
     } catch (err: any) {
       setError(err?.message || "Chyba při generování rozpisu");
+      toast({
+        title: "Chyba při generování rozpisu",
+        description: err?.message,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -156,9 +201,18 @@ export function RoundSetup({
     setLoading(true);
     try {
       await deleteScheduleForRound(roundId);
+      toast({
+        title: "Rozpis smazán",
+        description: "Rozpis zápasů byl smazán a je možné ho znovu nastavit.",
+      });
       router.refresh();
     } catch (err: any) {
       setError(err?.message || "Chyba při resetování rozpisu");
+      toast({
+        title: "Chyba",
+        description: err?.message,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -273,10 +327,19 @@ export function RoundSetup({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn btn-primary btn-sm"
+                  className="btn btn-primary btn-sm gap-1.5"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  Přidat tým
+                  {loading ? (
+                    <>
+                      <span className="loading loading-spinner loading-xs" />
+                      <span>Přidávám...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Přidat tým</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>
@@ -313,7 +376,7 @@ export function RoundSetup({
                         <td className="text-center">
                           <button
                             type="button"
-                            onClick={() => handleRemoveTeam(t.teamId)}
+                            onClick={() => handleRemoveTeam(t.teamId, t.teamName)}
                             disabled={loading}
                             title="Odebrat tým z kola"
                             className="btn btn-ghost btn-xs text-error p-1"
@@ -363,11 +426,18 @@ export function RoundSetup({
               type="button"
               onClick={handleGenerateSchedule}
               disabled={loading || activeTeams.length < 2}
-              className="btn btn-primary btn-sm font-bold"
+              className="btn btn-primary btn-sm font-bold gap-1.5"
             >
-              {hasSchedule
-                ? "Pře-generovat rozpis zápasů"
-                : "Vygenerovat rozpis zápasů na stoly"}
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner loading-xs" />
+                  <span>Zpracovávám...</span>
+                </>
+              ) : hasSchedule ? (
+                "Pře-generovat rozpis zápasů"
+              ) : (
+                "Vygenerovat rozpis zápasů na stoly"
+              )}
             </button>
           </div>
         </div>

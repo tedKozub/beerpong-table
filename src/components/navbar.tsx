@@ -21,7 +21,7 @@ export const Navbar = async () => {
           href="/"
           className="btn btn-ghost text-lg sm:text-xl font-black tracking-tight text-base-content px-1 sm:px-2 shrink-0"
         >
-          🦊 SPPDF BeerPong
+          🦊 SPPDF Beerpong
         </Link>
 
         {/* Přepínač semestrů ve stylu MUNI IS */}
@@ -39,6 +39,15 @@ export const Navbar = async () => {
           className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/80 hover:text-base-content shrink-0"
         >
           About
+        </Link>
+
+        <Link
+          href="/public"
+          className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/70 hover:text-base-content shrink-0 gap-1"
+          title="Přepnout na veřejné výsledky"
+        >
+          <span>Veřejné výsledky</span>
+          <span className="text-[10px] opacity-60">↗</span>
         </Link>
       </div>
 

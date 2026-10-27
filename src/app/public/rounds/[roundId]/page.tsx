@@ -10,6 +10,8 @@ import { getTeamsForSeason, getTeamPlayersForRound } from "@/actions/teams";
 import { getScheduleForRound } from "@/actions/schedule";
 import { ScheduleSection } from "@/components/ScheduleSection";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { CopyPublicLinkButton } from "@/components/CopyPublicLinkButton";
+import { ExportCsvButton } from "@/components/ExportCsvButton";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -125,10 +127,10 @@ export default async function PublicRoundDetailPage({
           </Link>
           <ThemeToggle />
           <Link
-            href="/login"
-            className="btn btn-ghost btn-sm text-xs font-semibold border border-base-300 text-base-content"
+            href={`/rounds/${roundId}`}
+            className="btn btn-primary btn-sm text-xs font-semibold"
           >
-            Přihlášení
+            Admin / Zápis
           </Link>
         </div>
       </div>
@@ -143,7 +145,7 @@ export default async function PublicRoundDetailPage({
             ← Zpět na přehled semestru
           </Link>
 
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-1">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-1">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black">
                 {currentRound.name} • {currentSeason?.name}
@@ -154,6 +156,16 @@ export default async function PublicRoundDetailPage({
                   : "Termín nebyl upřesněn"}{" "}
                 • {currentRound.isCompleted ? "Odehráno" : "Plánováno"}
               </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <CopyPublicLinkButton roundId={roundId} />
+              <ExportCsvButton
+                roundName={`${currentSeason?.name ?? "Turnaj"} - ${currentRound.name}`}
+                standings={teamStandings}
+                scoreLeaderboard={scoreLeaderboard}
+                bjLeaderboard={bjLeaderboard}
+              />
             </div>
           </div>
         </div>

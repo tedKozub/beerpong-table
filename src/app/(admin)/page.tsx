@@ -12,7 +12,7 @@ export default async function HomePage() {
   if (!activeSeason) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 text-center max-w-2xl mx-auto">
-        <h1 className="text-3xl font-black mb-3">BeerPong Liga</h1>
+        <h1 className="text-3xl font-black mb-3">Beerpong liga</h1>
         <p className="text-base-content/70 text-base mb-6">
           V systému zatím není nastavena žádná aktivní sezóna semestru.
         </p>
@@ -42,7 +42,7 @@ export default async function HomePage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-300 pb-5">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-            BeerPong Liga • {activeSeason.name}
+            Beerpong liga
           </h1>
           <p className="text-base-content/70 text-xs sm:text-sm mt-0.5">
             Přehled turnajových večerů, aktuální ligová tabulka týmů a střelci
