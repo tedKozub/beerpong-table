@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { match, player, playerMatchScore, team } from "@/db/schema";
 import { Match } from "@/db/types";
-import { eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function getMatchesForRound(roundId: number) {
@@ -163,4 +163,106 @@ export async function deleteMatch(id: number) {
   revalidatePath("/");
   return deleted;
 }
+
+export async function saveOrUpdateMatchScore(data: {
+  roundId: number;
+  team1Id: number;
+  team2Id: number;
+  team1Score: number;
+  team2Score: number;
+  playerScores: {
+    playerId: number;
+    teamId: number;
+    score: number;
+    blowjobs: number;
+  }[];
+}) {
+  const existingMatches = await db
+    .select()
+    .from(match)
+    .where(
+      and(
+        eq(match.roundId, data.roundId),
+        or(
+          and(eq(match.team1Id, data.team1Id), eq(match.team2Id, data.team2Id)),
+          and(eq(match.team1Id, data.team2Id), eq(match.team2Id, data.team1Id))
+        )
+      )
+    );
+
+  let result;
+  if (existingMatches.length > 0) {
+    const existing = existingMatches[0];
+    const isDirectOrder = existing.team1Id === data.team1Id;
+    const team1Score = isDirectOrder ? data.team1Score : data.team2Score;
+    const team2Score = isDirectOrder ? data.team2Score : data.team1Score;
+
+    result = await updateMatch(existing.id, {
+      team1Score,
+      team2Score,
+      status: "completed",
+      playerScores: data.playerScores,
+    });
+  } else {
+    result = await createMatch({
+      roundId: data.roundId,
+      team1Id: data.team1Id,
+      team2Id: data.team2Id,
+      team1Score: data.team1Score,
+      team2Score: data.team2Score,
+      status: "completed",
+      playerScores: data.playerScores,
+    });
+  }
+
+  try {
+    revalidatePath(`/rounds/${data.roundId}`);
+    revalidatePath(`/public/rounds/${data.roundId}`);
+    revalidatePath("/");
+    revalidatePath("/public");
+  } catch {}
+
+  return result;
+}
+
+export async function getMatchDetailsForTeams(
+  roundId: number,
+  team1Id: number,
+  team2Id: number
+) {
+  const existingMatches = await db
+    .select()
+    .from(match)
+    .where(
+      and(
+        eq(match.roundId, roundId),
+        or(
+          and(eq(match.team1Id, team1Id), eq(match.team2Id, team2Id)),
+          and(eq(match.team1Id, team2Id), eq(match.team2Id, team1Id))
+        )
+      )
+    );
+
+  if (existingMatches.length === 0) return null;
+  const m = existingMatches[0];
+
+  const scores = await db
+    .select({
+      id: playerMatchScore.id,
+      playerId: player.id,
+      playerName: player.name,
+      teamId: playerMatchScore.teamId,
+      score: playerMatchScore.score,
+      blowjobs: playerMatchScore.blowjobs,
+    })
+    .from(playerMatchScore)
+    .innerJoin(player, eq(playerMatchScore.playerId, player.id))
+    .where(eq(playerMatchScore.matchId, m.id));
+
+  return {
+    match: m,
+    scores,
+  };
+}
+
 

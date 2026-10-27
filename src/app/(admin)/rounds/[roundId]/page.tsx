@@ -134,6 +134,8 @@ export default async function RoundDetailPage({
         roundId={roundId}
         roundName={`${currentSeason?.name ?? "Turnaj"} - ${currentRound.name}`}
         schedule={schedule}
+        roster={roster}
+        allSeasonPlayers={players}
         isAdmin={true}
       />
 
@@ -361,193 +363,197 @@ export default async function RoundDetailPage({
 
           {/* Formulář pro zápis nového zápasu večera */}
           {teams.length >= 2 && (
-            <div className="mt-6 pt-4 border-t border-base-300">
-              <h3 className="font-bold text-base mb-3">Zapsat výsledek zápasu</h3>
-              <form
-                action={async (formData: FormData) => {
-                  "use server";
-                  const team1Id = Number(formData.get("team1Id"));
-                  const team2Id = Number(formData.get("team2Id"));
-                  const team1Score = Number(formData.get("team1Score"));
-                  const team2Score = Number(formData.get("team2Score"));
+            <details className="mt-6 pt-4 border-t border-base-300 group">
+              <summary className="font-semibold text-xs text-base-content/70 hover:text-base-content cursor-pointer select-none">
+                + Manuální zápis zápasu mimo rozpis
+              </summary>
+              <div className="mt-3">
+                <form
+                  action={async (formData: FormData) => {
+                    "use server";
+                    const team1Id = Number(formData.get("team1Id"));
+                    const team2Id = Number(formData.get("team2Id"));
+                    const team1Score = Number(formData.get("team1Score"));
+                    const team2Score = Number(formData.get("team2Score"));
 
-                  if (team1Id && team2Id && team1Id !== team2Id) {
-                    const playerScoresData: {
-                      playerId: number;
-                      teamId: number;
-                      score: number;
-                      blowjobs: number;
-                    }[] = [];
+                    if (team1Id && team2Id && team1Id !== team2Id) {
+                      const playerScoresData: {
+                        playerId: number;
+                        teamId: number;
+                        score: number;
+                        blowjobs: number;
+                      }[] = [];
 
-                    for (const p of players) {
-                      const scoreVal = formData.get(`p_score_${p.id}`);
-                      const bjVal = formData.get(`p_bj_${p.id}`);
-                      const teamVal = formData.get(`p_team_${p.id}`);
+                      for (const p of players) {
+                        const scoreVal = formData.get(`p_score_${p.id}`);
+                        const bjVal = formData.get(`p_bj_${p.id}`);
+                        const teamVal = formData.get(`p_team_${p.id}`);
 
-                      if (scoreVal !== null || bjVal !== null) {
-                        const score = Number(scoreVal) || 0;
-                        const bj = Number(bjVal) || 0;
-                        const assignedTeamId = Number(teamVal);
+                        if (scoreVal !== null || bjVal !== null) {
+                          const score = Number(scoreVal) || 0;
+                          const bj = Number(bjVal) || 0;
+                          const assignedTeamId = Number(teamVal);
 
-                        if (
-                          (score > 0 || bj > 0) &&
-                          (assignedTeamId === team1Id || assignedTeamId === team2Id)
-                        ) {
-                          playerScoresData.push({
-                            playerId: p.id,
-                            teamId: assignedTeamId,
-                            score,
-                            blowjobs: bj,
-                          });
+                          if (
+                            (score > 0 || bj > 0) &&
+                            (assignedTeamId === team1Id || assignedTeamId === team2Id)
+                          ) {
+                            playerScoresData.push({
+                              playerId: p.id,
+                              teamId: assignedTeamId,
+                              score,
+                              blowjobs: bj,
+                            });
+                          }
                         }
                       }
+
+                      await createMatch({
+                        roundId,
+                        team1Id,
+                        team2Id,
+                        team1Score: isNaN(team1Score) ? 0 : team1Score,
+                        team2Score: isNaN(team2Score) ? 0 : team2Score,
+                        status: "completed",
+                        playerScores:
+                          playerScoresData.length > 0 ? playerScoresData : undefined,
+                      });
                     }
-
-                    await createMatch({
-                      roundId,
-                      team1Id,
-                      team2Id,
-                      team1Score: isNaN(team1Score) ? 0 : team1Score,
-                      team2Score: isNaN(team2Score) ? 0 : team2Score,
-                      status: "completed",
-                      playerScores:
-                        playerScoresData.length > 0 ? playerScoresData : undefined,
-                    });
-                  }
-                }}
-                className="flex flex-col gap-3 bg-base-200/50 p-4 rounded-xl border border-base-300"
-              >
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex-1 min-w-[160px]">
-                    <label className="label label-text font-semibold text-xs">
-                      Tým 1
-                    </label>
-                    <select
-                      name="team1Id"
-                      className="select select-bordered select-sm w-full"
-                      required
-                    >
-                      <option value="">Vyber tým 1</option>
-                      {teams.map((t) => (
-                        <option key={t.id} value={t.id}>
-                          {t.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="w-16">
-                    <label className="label label-text font-semibold text-xs text-center">
-                      Skóre 1
-                    </label>
-                    <input
-                      name="team1Score"
-                      type="number"
-                      min="0"
-                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums"
-                      defaultValue="10"
-                      required
-                    />
-                  </div>
-
-                  <div className="text-lg font-bold self-end pb-1.5">:</div>
-
-                  <div className="w-16">
-                    <label className="label label-text font-semibold text-xs text-center">
-                      Skóre 2
-                    </label>
-                    <input
-                      name="team2Score"
-                      type="number"
-                      min="0"
-                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums"
-                      defaultValue="7"
-                      required
-                    />
-                  </div>
-
-                  <div className="flex-1 min-w-[160px]">
-                    <label className="label label-text font-semibold text-xs">
-                      Tým 2
-                    </label>
-                    <select
-                      name="team2Id"
-                      className="select select-bordered select-sm w-full"
-                      required
-                    >
-                      <option value="">Vyber tým 2</option>
-                      {teams.map((t) => (
-                        <option key={t.id} value={t.id}>
-                          {t.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {players.length > 0 && (
-                  <details className="collapse collapse-arrow bg-base-100 border border-base-300 rounded-lg text-xs">
-                    <summary className="collapse-title font-semibold text-xs">
-                      Zadat individuální statistiky hráčů (kelímky a blowjoby)
-                    </summary>
-                    <div className="collapse-content flex flex-col gap-2 pt-1">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
-                        {players.map((p) => {
-                          const defaultTeam = roster.find(
-                            (r) => r.playerId === p.id
-                          )?.teamId;
-
-                          return (
-                            <div
-                              key={p.id}
-                              className="flex items-center justify-between gap-2 p-1.5 rounded bg-base-200 text-xs"
-                            >
-                              <span className="font-medium truncate max-w-[110px]">
-                                {p.name}
-                              </span>
-                              <div className="flex items-center gap-1.5">
-                                <select
-                                  name={`p_team_${p.id}`}
-                                  className="select select-bordered select-xs"
-                                  defaultValue={defaultTeam ?? ""}
-                                >
-                                  <option value="">Nevybrán</option>
-                                  {teams.map((t) => (
-                                    <option key={t.id} value={t.id}>
-                                      {t.name}
-                                    </option>
-                                  ))}
-                                </select>
-                                <input
-                                  name={`p_score_${p.id}`}
-                                  type="number"
-                                  placeholder="Góly"
-                                  min="0"
-                                  className="input input-bordered input-xs w-14 tabular-nums"
-                                />
-                                <input
-                                  name={`p_bj_${p.id}`}
-                                  type="number"
-                                  placeholder="BJ"
-                                  min="0"
-                                  className="input input-bordered input-xs w-12 tabular-nums"
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                  }}
+                  className="flex flex-col gap-3 bg-base-200/50 p-4 rounded-xl border border-base-300"
+                >
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex-1 min-w-[160px]">
+                      <label className="label label-text font-semibold text-xs">
+                        Tým 1
+                      </label>
+                      <select
+                        name="team1Id"
+                        className="select select-bordered select-sm w-full"
+                        required
+                      >
+                        <option value="">Vyber tým 1</option>
+                        {teams.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                  </details>
-                )}
 
-                <div className="flex justify-end mt-2">
-                  <button type="submit" className="btn btn-primary btn-sm">
-                    Uložit výsledek zápasu
-                  </button>
-                </div>
-              </form>
-            </div>
+                    <div className="w-16">
+                      <label className="label label-text font-semibold text-xs text-center">
+                        Skóre 1
+                      </label>
+                      <input
+                        name="team1Score"
+                        type="number"
+                        min="0"
+                        className="input input-bordered input-sm w-full text-center font-bold tabular-nums"
+                        defaultValue="10"
+                        required
+                      />
+                    </div>
+
+                    <div className="text-lg font-bold self-end pb-1.5">:</div>
+
+                    <div className="w-16">
+                      <label className="label label-text font-semibold text-xs text-center">
+                        Skóre 2
+                      </label>
+                      <input
+                        name="team2Score"
+                        type="number"
+                        min="0"
+                        className="input input-bordered input-sm w-full text-center font-bold tabular-nums"
+                        defaultValue="7"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex-1 min-w-[160px]">
+                      <label className="label label-text font-semibold text-xs">
+                        Tým 2
+                      </label>
+                      <select
+                        name="team2Id"
+                        className="select select-bordered select-sm w-full"
+                        required
+                      >
+                        <option value="">Vyber tým 2</option>
+                        {teams.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {players.length > 0 && (
+                    <details className="collapse collapse-arrow bg-base-100 border border-base-300 rounded-lg text-xs">
+                      <summary className="collapse-title font-semibold text-xs">
+                        Zadat individuální statistiky hráčů (kelímky a blowjoby)
+                      </summary>
+                      <div className="collapse-content flex flex-col gap-2 pt-1">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
+                          {players.map((p) => {
+                            const defaultTeam = roster.find(
+                              (r) => r.playerId === p.id
+                            )?.teamId;
+
+                            return (
+                              <div
+                                key={p.id}
+                                className="flex items-center justify-between gap-2 p-1.5 rounded bg-base-200 text-xs"
+                              >
+                                <span className="font-medium truncate max-w-[110px]">
+                                  {p.name}
+                                </span>
+                                <div className="flex items-center gap-1.5">
+                                  <select
+                                    name={`p_team_${p.id}`}
+                                    className="select select-bordered select-xs"
+                                    defaultValue={defaultTeam ?? ""}
+                                  >
+                                    <option value="">Nevybrán</option>
+                                    {teams.map((t) => (
+                                      <option key={t.id} value={t.id}>
+                                        {t.name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <input
+                                    name={`p_score_${p.id}`}
+                                    type="number"
+                                    placeholder="Góly"
+                                    min="0"
+                                    className="input input-bordered input-xs w-14 tabular-nums"
+                                  />
+                                  <input
+                                    name={`p_bj_${p.id}`}
+                                    type="number"
+                                    placeholder="BJ"
+                                    min="0"
+                                    className="input input-bordered input-xs w-12 tabular-nums"
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </details>
+                  )}
+
+                  <div className="flex justify-end mt-2">
+                    <button type="submit" className="btn btn-primary btn-sm">
+                      Uložit výsledek zápasu
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </details>
           )}
         </div>
       </section>
