@@ -45,7 +45,9 @@ export default async function SeasonsArchivePage() {
               <div className="flex justify-between items-start">
                 <span
                   className={`badge ${
-                    s.isActive ? "badge-success font-bold gap-1.5" : "badge-ghost"
+                    s.isActive
+                      ? "badge-success text-success-content font-bold gap-1.5"
+                      : "badge-neutral text-neutral-content font-bold"
                   } whitespace-nowrap text-xs`}
                 >
                   {s.isActive && (
@@ -53,7 +55,7 @@ export default async function SeasonsArchivePage() {
                   )}
                   {s.isActive ? "AKTIVNÍ SEMESTR" : "ARCHIV"}
                 </span>
-                <span className="text-xs text-base-content/60 font-semibold tabular-nums">
+                <span className="badge badge-outline text-xs font-semibold tabular-nums text-base-content/80">
                   {s.rounds.length} turnajových kol
                 </span>
               </div>
@@ -70,11 +72,11 @@ export default async function SeasonsArchivePage() {
                   <Link
                     key={r.id}
                     href={`/rounds/${r.id}`}
-                    className={`badge badge-sm whitespace-nowrap ${
+                    className={`badge badge-sm whitespace-nowrap font-medium ${
                       r.isCompleted
-                        ? "badge-success/20 text-success-content border-success/30"
-                        : "badge-ghost"
-                    } hover:opacity-80 transition-opacity`}
+                        ? "badge-success text-success-content font-semibold"
+                        : "badge-neutral text-neutral-content"
+                    } hover:opacity-85 transition-opacity`}
                   >
                     {r.name}
                   </Link>

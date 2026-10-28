@@ -12,7 +12,7 @@ test.describe("Mobile Responsiveness & Viewport Checks", () => {
     expect(isOverflowing).toBe(false);
 
     // Navbar displays mobile brand link
-    await expect(page.getByRole("link", { name: "🦊 SPPDF" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /🦊 SPPDF/i })).toBeVisible();
   });
 
   test("scoring dialog renders mobile cards without horizontal page overflow", async ({ page }) => {
@@ -35,8 +35,8 @@ test.describe("Mobile Responsiveness & Viewport Checks", () => {
     // Verify modal is visible
     await expect(page.getByRole("heading", { name: "Zápis výsledku zápasu" })).toBeVisible();
 
-    // Verify mobile cards exist (text "BJ (fouknutí)" is in mobile card labels)
-    await expect(page.getByText("BJ (fouknutí)").first()).toBeVisible();
+    // Verify mobile cards exist (label "BJ" is in mobile card labels)
+    await expect(page.locator("label:has-text('BJ')").first()).toBeVisible();
 
     // Check modal close/cancel button
     const cancelBtn = page.getByRole("button", { name: "Zrušit" });

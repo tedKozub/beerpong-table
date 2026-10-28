@@ -264,7 +264,7 @@ export function ScoreInputDialog({
           </span>
           <h2 className="text-xl sm:text-2xl font-black mt-1">Zápis výsledku zápasu</h2>
           <p className="text-xs sm:text-sm text-base-content/60">
-            Zadej body (trefené kelímky) a vyfouknutí (BJ) pro jednotlivé hráče
+            Zadej body a BJ pro jednotlivé hráče
           </p>
         </div>
 
@@ -316,7 +316,7 @@ export function ScoreInputDialog({
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold text-info block mb-1">BJ (fouknutí)</label>
+                    <label className="text-[11px] font-bold text-info block mb-1">BJ</label>
                     <input
                       type="number"
                       min="0"
@@ -357,7 +357,7 @@ export function ScoreInputDialog({
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold text-info block mb-1">BJ (fouknutí)</label>
+                    <label className="text-[11px] font-bold text-info block mb-1">BJ</label>
                     <input
                       type="number"
                       min="0"
@@ -416,7 +416,7 @@ export function ScoreInputDialog({
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold text-info block mb-1">BJ (fouknutí)</label>
+                    <label className="text-[11px] font-bold text-info block mb-1">BJ</label>
                     <input
                       type="number"
                       min="0"
@@ -457,7 +457,7 @@ export function ScoreInputDialog({
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold text-info block mb-1">BJ (fouknutí)</label>
+                    <label className="text-[11px] font-bold text-info block mb-1">BJ</label>
                     <input
                       type="number"
                       min="0"

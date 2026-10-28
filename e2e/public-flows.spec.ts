@@ -8,7 +8,7 @@ test.describe("Public Views & Navigation", () => {
     await expect(page.locator("h1")).toContainText("SPPDF Beerpong");
 
     // Navigation bar links
-    await expect(page.getByRole("link", { name: "🦊 SPPDF" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /🦊 SPPDF/i })).toBeVisible();
     await expect(page.getByRole("link", { name: /Admin \/ Zápis/i })).toBeVisible();
 
     // Section for rounds
@@ -51,7 +51,7 @@ test.describe("Public Views & Navigation", () => {
     await page.goto("/about");
 
     await expect(page.locator("h1")).toContainText("O aplikaci & Pravidla ligy");
-    await expect(page.getByText("VIP Oznámení")).toBeVisible();
+    await expect(page.getByText("Pravidla ligy").first()).toBeVisible();
     await expect(page.getByRole("link", { name: /Zpět na přehled/i })).toBeVisible();
   });
 });

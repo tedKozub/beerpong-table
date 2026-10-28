@@ -60,8 +60,8 @@ export function ExportCsvButton({
 
       lines.push("");
 
-      // 3. Král vyfouknutí (BJ)
-      lines.push("Král vyfouknutí");
+      // 3. BlowJob King
+      lines.push("BlowJob King");
       lines.push("Pořadí,Hráč,Počet");
       bjLeaderboard.forEach((p, idx) => {
         lines.push(

@@ -4,7 +4,7 @@ import {
   getSeasonPlayerLeaderboard,
   getSeasonTeamStandings,
 } from "@/actions/stats";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { PublicNavbar } from "@/components/PublicNavbar";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -62,8 +62,9 @@ export default async function PublicOverviewPage() {
 
   if (!activeSeason) {
     return (
-      <div className="min-h-screen px-3 py-6 sm:px-6 sm:py-10 md:p-12">
-        <main className="mx-auto w-full max-w-[1280px] flex flex-col gap-6 items-center text-center">
+      <div className="min-h-screen flex flex-col bg-base-200">
+        <PublicNavbar />
+        <main className="max-w-7xl mx-auto w-full p-3 sm:p-6 md:p-8 flex flex-col gap-6 items-center text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-2 tracking-tight">
             🦊 SPPDF Beerpong
           </h1>
@@ -92,32 +93,10 @@ export default async function PublicOverviewPage() {
   );
 
   return (
-    <div className="min-h-screen px-3 py-6 sm:px-6 sm:py-10 md:p-12">
-      <div className="w-full max-w-[1280px] mx-auto flex items-center justify-between pb-4 mb-2">
-        <Link
-          href="/public"
-          className="btn btn-ghost font-black text-lg gap-2 text-base-content px-2"
-        >
-          🦊 SPPDF
-        </Link>
-        <div className="flex items-center gap-2">
-          <Link
-            href="/about"
-            className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/80 hover:text-base-content hidden sm:inline-flex"
-          >
-            O lize & Pravidla
-          </Link>
-          <ThemeToggle />
-          <Link
-            href="/"
-            className="btn btn-primary btn-sm text-xs font-semibold"
-          >
-            Admin / Zápis
-          </Link>
-        </div>
-      </div>
+    <div className="min-h-screen flex flex-col bg-base-200">
+      <PublicNavbar seasonName={activeSeason.name} />
 
-      <main className="mx-auto w-full max-w-[1280px] flex flex-col gap-6 sm:gap-8 md:gap-10 items-center">
+      <main className="max-w-7xl mx-auto w-full p-3 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8 items-center">
         {/* Titulek */}
         <div className="text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-2 sm:mb-3 tracking-tight">

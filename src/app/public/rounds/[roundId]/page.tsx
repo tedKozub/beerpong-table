@@ -9,7 +9,7 @@ import {
 import { getTeamsForSeason, getTeamPlayersForRound } from "@/actions/teams";
 import { getScheduleForRound } from "@/actions/schedule";
 import { ScheduleSection } from "@/components/ScheduleSection";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { PublicNavbar } from "@/components/PublicNavbar";
 import { CopyPublicLinkButton } from "@/components/CopyPublicLinkButton";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
 import Link from "next/link";
@@ -109,33 +109,11 @@ export default async function PublicRoundDetailPage({
   );
 
   return (
-    <div className="min-h-screen px-3 py-6 sm:px-6 sm:py-10 md:p-12">
+    <div className="min-h-screen flex flex-col bg-base-200">
       {/* Veřejná horní lišta */}
-      <div className="w-full max-w-[1280px] mx-auto flex items-center justify-between pb-4 mb-4 border-b border-base-300">
-        <Link
-          href="/public"
-          className="btn btn-ghost font-black text-lg gap-2 text-base-content px-2"
-        >
-          🦊 SPPDF
-        </Link>
-        <div className="flex items-center gap-2">
-          <Link
-            href="/about"
-            className="btn btn-ghost btn-sm text-xs font-semibold text-base-content/80 hover:text-base-content hidden sm:inline-flex"
-          >
-            O lize & Pravidla
-          </Link>
-          <ThemeToggle />
-          <Link
-            href={`/rounds/${roundId}`}
-            className="btn btn-primary btn-sm text-xs font-semibold"
-          >
-            Admin / Zápis
-          </Link>
-        </div>
-      </div>
+      <PublicNavbar currentRoundId={roundId} seasonName={currentSeason?.name} />
 
-      <main className="mx-auto w-full max-w-[1280px] flex flex-col gap-6 sm:gap-8">
+      <main className="max-w-7xl mx-auto w-full p-3 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8">
         {/* Breadcrumb a hlavička */}
         <div className="flex flex-col gap-1">
           <Link

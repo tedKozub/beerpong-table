@@ -22,7 +22,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* VIP Zpráva: Pravidla turnaje */}
+        {/* Pravidla turnaje */}
         <section className="card bg-base-100 border-2 border-warning/50 p-4 sm:p-8 rounded-2xl shadow-md">
           <div className="flex flex-col sm:flex-row items-start gap-5">
             <div className="p-4 bg-warning/15 text-warning rounded-2xl shrink-0">
@@ -30,10 +30,7 @@ export default function AboutPage() {
             </div>
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2">
-                <span className="badge badge-warning font-black text-xs px-2.5 py-1 uppercase tracking-wider">
-                  VIP Oznámení
-                </span>
-                <span className="text-xs font-semibold text-base-content/60">
+                <span className="badge badge-warning font-bold text-xs px-2.5 py-1">
                   Pravidla ligy
                 </span>
               </div>
@@ -78,7 +75,7 @@ export default function AboutPage() {
               </div>
               <h3 className="font-bold text-base text-base-content">Týmy a hráči</h3>
               <p className="text-xs text-base-content/70 leading-relaxed">
-                Zadávání zápasů v reálném čase včetně individuálního skóre střelců a úspěšných vyfouknutí (blowjobů).
+                Zadávání zápasů v reálném čase včetně individuálního skóre střelců a BlowJob King statistik.
               </p>
             </div>
 
