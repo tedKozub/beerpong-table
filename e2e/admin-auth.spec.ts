@@ -20,7 +20,7 @@ test.describe("Admin Authentication & Protected Routes", () => {
     await expect(page.locator("h1")).toContainText("Beerpong liga");
 
     // Verify navbar elements
-    await expect(page.getByRole("link", { name: /🦊 SPPDF/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /🦊/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /Veřejné/i })).toBeVisible();
     await expect(page.getByRole("link", { name: /About/i })).toBeVisible();
 

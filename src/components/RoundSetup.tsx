@@ -253,9 +253,9 @@ export function RoundSetup({
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4 w-full min-w-0">
           {/* 1. Formulář pro přidání týmu */}
-          <div className="bg-base-200/50 p-4 rounded-xl border border-base-300 flex flex-col gap-3">
+          <div className="bg-base-200/50 p-4 rounded-xl border border-base-300 flex flex-col gap-3 min-w-0">
             <h3 className="font-bold text-sm flex items-center gap-1.5">
               <Plus className="w-4 h-4 text-primary" />
               Přidat tým do tohoto kola
@@ -346,7 +346,7 @@ export function RoundSetup({
           </div>
 
           {/* 2. Seznam aktivních týmů v kole */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 min-w-0">
             <h3 className="font-bold text-sm">
               Týmy v tomto kole ({activeTeams.length})
             </h3>
@@ -357,7 +357,7 @@ export function RoundSetup({
                 týmy vlevo pro možnost vygenerování rozpisu.
               </div>
             ) : (
-              <div className="overflow-x-auto border border-base-300 rounded-xl max-h-72 overflow-y-auto">
+              <div className="overflow-x-auto w-full border border-base-300 rounded-xl max-h-72 overflow-y-auto">
                 <table className="table table-xs sm:table-sm w-full">
                   <thead className="bg-base-200 sticky top-0">
                     <tr>

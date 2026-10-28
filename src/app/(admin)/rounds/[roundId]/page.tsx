@@ -70,11 +70,11 @@ export default async function RoundDetailPage({
   );
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 max-w-7xl mx-auto flex flex-col gap-6 sm:gap-8">
+    <div className="p-3 sm:p-6 md:p-8 max-w-7xl mx-auto w-full min-w-0 flex flex-col gap-6 sm:gap-8">
       {/* Hlavička & Breadcrumbs */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 border-b border-base-300 pb-4 sm:pb-5">
-        <div className="w-full sm:w-auto">
-          <div className="text-xs breadcrumbs mb-1 overflow-x-auto whitespace-nowrap">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 border-b border-base-300 pb-4 sm:pb-5 w-full min-w-0">
+        <div className="w-full sm:w-auto min-w-0">
+          <div className="text-xs breadcrumbs mb-1 overflow-x-auto w-full max-w-full whitespace-nowrap">
             <ul>
               <li>
                 <Link href="/">Domů</Link>
@@ -90,8 +90,8 @@ export default async function RoundDetailPage({
               <li className="font-semibold">{currentRound.name}</li>
             </ul>
           </div>
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <h1 className="text-2xl sm:text-3xl font-black">
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+            <h1 className="text-2xl sm:text-3xl font-black break-words">
               {currentRound.name}
             </h1>
             <span
@@ -110,7 +110,7 @@ export default async function RoundDetailPage({
         </div>
 
         {/* Akce v hlavičce kola */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <CopyPublicLinkButton roundId={roundId} />
           <ExportCsvButton
             roundName={`${currentSeason?.name ?? "Turnaj"} - ${currentRound.name}`}
@@ -121,6 +121,7 @@ export default async function RoundDetailPage({
 
           {/* Přepínač stavu dokončení večera */}
           <form
+            className="w-full sm:w-auto"
             action={async () => {
               "use server";
               await updateRound(currentRound.id, {
@@ -130,7 +131,7 @@ export default async function RoundDetailPage({
           >
             <button
               type="submit"
-              className={`btn btn-sm ${
+              className={`btn btn-sm w-full sm:w-auto ${
                 currentRound.isCompleted ? "btn-outline" : "btn-success"
               }`}
             >
@@ -355,8 +356,8 @@ export default async function RoundDetailPage({
                 </div>
 
                 {m.playerScores && m.playerScores.length > 0 && (
-                  <div className="border-t border-base-300/80 pt-2 flex flex-wrap justify-between gap-3 text-xs">
-                    <div className="flex-1 flex flex-col gap-1 items-start sm:items-end">
+                  <div className="border-t border-base-300/80 pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs w-full min-w-0">
+                    <div className="flex flex-col gap-1 items-start sm:items-end min-w-0">
                       <span className="font-bold text-base-content/60">
                         {m.team1Name}:
                       </span>
@@ -365,7 +366,7 @@ export default async function RoundDetailPage({
                         .map((ps) => (
                           <span
                             key={ps.id}
-                            className="badge badge-ghost badge-sm gap-1 whitespace-nowrap"
+                            className="badge badge-ghost badge-sm gap-1 whitespace-nowrap max-w-full truncate"
                           >
                             <strong>{ps.playerName}</strong>: {ps.score} trefeno
                             {ps.blowjobs > 0 && ` • ${ps.blowjobs} BJ`}
@@ -373,7 +374,7 @@ export default async function RoundDetailPage({
                         ))}
                     </div>
 
-                    <div className="flex-1 flex flex-col gap-1 items-start">
+                    <div className="flex flex-col gap-1 items-start min-w-0">
                       <span className="font-bold text-base-content/60">
                         {m.team2Name}:
                       </span>
@@ -382,7 +383,7 @@ export default async function RoundDetailPage({
                         .map((ps) => (
                           <span
                             key={ps.id}
-                            className="badge badge-ghost badge-sm gap-1 whitespace-nowrap"
+                            className="badge badge-ghost badge-sm gap-1 whitespace-nowrap max-w-full truncate"
                           >
                             <strong>{ps.playerName}</strong>: {ps.score} trefeno
                             {ps.blowjobs > 0 && ` • ${ps.blowjobs} BJ`}
@@ -406,13 +407,13 @@ export default async function RoundDetailPage({
       {/* Nastavení kola a aktivní týmy (při vygenerovaném rozpisu přístupné v akordeonu) */}
       {schedule.length > 0 && (
         <details className="card bg-base-100 shadow-md border border-base-200">
-          <summary className="card-body p-4 sm:p-5 cursor-pointer font-bold text-sm flex items-center justify-between select-none">
+          <summary className="card-body p-3.5 sm:p-5 cursor-pointer font-bold text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 select-none">
             <span>Nastavení kola a aktivní týmy</span>
             <span className="text-xs text-base-content/60 font-normal">
               Klikni pro správu týmů nebo přegenerování rozpisu
             </span>
           </summary>
-          <div className="p-4 sm:p-6 pt-0">
+          <div className="p-3.5 sm:p-6 pt-0">
             <RoundSetup
               roundId={roundId}
               seasonId={currentRound.seasonId}

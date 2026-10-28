@@ -113,9 +113,9 @@ export default async function PublicRoundDetailPage({
       {/* Veřejná horní lišta */}
       <PublicNavbar currentRoundId={roundId} seasonName={currentSeason?.name} />
 
-      <main className="max-w-7xl mx-auto w-full p-3 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8">
+      <main className="max-w-7xl mx-auto w-full p-3 sm:p-6 md:p-8 flex flex-col gap-6 sm:gap-8 min-w-0">
         {/* Breadcrumb a hlavička */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 w-full min-w-0">
           <Link
             href="/public"
             className="btn btn-ghost btn-xs self-start text-base-content/70 hover:text-base-content px-0"
@@ -123,9 +123,9 @@ export default async function PublicRoundDetailPage({
             ← Zpět na přehled semestru
           </Link>
 
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-1">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-black">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-1 w-full min-w-0">
+            <div className="w-full sm:w-auto min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-black break-words">
                 {currentRound.name} • {currentSeason?.name}
               </h1>
               <p className="text-xs text-base-content/60 mt-0.5">
@@ -136,7 +136,7 @@ export default async function PublicRoundDetailPage({
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <CopyPublicLinkButton roundId={roundId} />
               <ExportCsvButton
                 roundName={`${currentSeason?.name ?? "Turnaj"} - ${currentRound.name}`}

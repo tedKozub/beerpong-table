@@ -97,11 +97,11 @@ export function ScheduleSection({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 w-full min-w-0">
       {/* Horní lišta rozpisu s akcemi */}
       <section className="card bg-base-100 shadow-md border border-base-200">
         <div className="card-body p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 w-full min-w-0">
             <div>
               <h2 className="text-xl font-bold">Rozpis zápasů na stoly</h2>
               <p className="text-xs text-base-content/60 mt-0.5">
@@ -110,7 +110,7 @@ export function ScheduleSection({
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <button
                 className="btn btn-outline btn-sm text-xs"
                 disabled={downloading !== null}
@@ -141,7 +141,7 @@ export function ScheduleSection({
       {/* Aktuální vlna zápasů (srihak styl) */}
       {currentWave !== null && waves.has(currentWave) && (
         <section className="card bg-base-100 shadow-md border-2 border-primary/40 p-4 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 mb-4">
             <div>
               <span className="badge badge-primary badge-sm font-bold uppercase text-[10px]">
                 Právě se hraje
@@ -175,12 +175,12 @@ export function ScheduleSection({
                   <div className="text-xs text-base-content/60 font-semibold mb-2">
                     Stůl {m.tableNumber}
                   </div>
-                  <div className="flex items-center justify-between gap-3 text-base font-bold">
-                    <span className="flex-1 text-right truncate">
+                  <div className="flex items-center justify-between gap-2 sm:gap-3 text-base font-bold min-w-0">
+                    <span className="flex-1 text-right min-w-0 truncate">
                       {m.team1Name}
                     </span>
                     <span
-                      className={`px-2 py-0.5 rounded text-sm tabular-nums whitespace-nowrap ${
+                      className={`px-2 py-0.5 rounded text-sm tabular-nums shrink-0 whitespace-nowrap ${
                         isPlayed
                           ? "bg-success/20 text-success-content font-black"
                           : "bg-base-200 text-base-content/60 font-medium"
@@ -188,7 +188,7 @@ export function ScheduleSection({
                     >
                       {m.score ?? "vs"}
                     </span>
-                    <span className="flex-1 text-left truncate">
+                    <span className="flex-1 text-left min-w-0 truncate">
                       {m.team2Name}
                     </span>
                   </div>
@@ -230,7 +230,7 @@ export function ScheduleSection({
           </div>
 
           {nextWave !== null && waves.has(nextWave) && (
-            <div className="mt-4 pt-3 border-t border-base-200 text-xs text-base-content/70">
+            <div className="mt-4 pt-3 border-t border-base-200 text-xs text-base-content/70 break-words">
               <span className="font-bold text-base-content">
                 Další vlna zápasů #{nextWave}:
               </span>{" "}
@@ -280,16 +280,16 @@ export function ScheduleSection({
                     return (
                       <div
                         key={`all-${m.tableNumber}-${m.team1Id}`}
-                        className="py-2 flex items-center justify-between gap-2"
+                        className="py-2 flex items-center justify-between gap-1.5 sm:gap-2 min-w-0"
                       >
-                        <span className="text-base-content/60 font-medium shrink-0 w-12 sm:w-14">
+                        <span className="text-base-content/60 font-medium shrink-0 w-11 sm:w-14 text-xs">
                           Stůl {m.tableNumber}
                         </span>
-                        <span className="font-semibold text-right flex-1 truncate">
+                        <span className="font-semibold text-right flex-1 min-w-0 truncate">
                           {m.team1Name}
                         </span>
                         <span
-                          className={`px-2 py-0.5 rounded tabular-nums font-bold shrink-0 text-center text-xs ${
+                          className={`px-1.5 sm:px-2 py-0.5 rounded tabular-nums font-bold shrink-0 text-center text-xs ${
                             isPlayed
                               ? "bg-success/20 text-success-content"
                               : "text-base-content/50"
@@ -297,7 +297,7 @@ export function ScheduleSection({
                         >
                           {m.score ?? "vs"}
                         </span>
-                        <span className="font-semibold text-left flex-1 truncate">
+                        <span className="font-semibold text-left flex-1 min-w-0 truncate">
                           {m.team2Name}
                         </span>
                         {isAdmin && (
@@ -306,7 +306,7 @@ export function ScheduleSection({
                               <button
                                 type="button"
                                 onClick={() => setSelectedMatch(m)}
-                                className="btn btn-ghost btn-xs text-xs"
+                                className="btn btn-ghost btn-xs text-xs px-1.5"
                               >
                                 Upravit
                               </button>
@@ -314,7 +314,7 @@ export function ScheduleSection({
                               <button
                                 type="button"
                                 onClick={() => setSelectedMatch(m)}
-                                className="btn btn-primary btn-xs font-bold"
+                                className="btn btn-primary btn-xs font-bold px-2"
                               >
                                 Vyplnit
                               </button>

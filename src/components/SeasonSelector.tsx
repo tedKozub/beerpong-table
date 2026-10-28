@@ -38,7 +38,7 @@ export function SeasonSelector({
         value={currentSeasonId ?? ""}
         onChange={handleChange}
         disabled={isPending}
-        className="select select-bordered select-xs sm:select-sm font-semibold bg-base-100 text-xs sm:text-sm border-base-300 focus:outline-none max-w-[110px] sm:max-w-none truncate"
+        className="select select-bordered select-xs sm:select-sm font-semibold bg-base-100 text-xs sm:text-sm border-base-300 focus:outline-none max-w-[85px] sm:max-w-none truncate"
         title="Výběr semestru"
       >
         {seasons.map((s) => (

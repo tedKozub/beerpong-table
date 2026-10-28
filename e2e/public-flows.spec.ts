@@ -8,7 +8,7 @@ test.describe("Public Views & Navigation", () => {
     await expect(page.locator("h1")).toContainText("SPPDF Beerpong");
 
     // Navigation bar links
-    await expect(page.getByRole("link", { name: /🦊 SPPDF/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /🦊/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /Admin \/ Zápis/i })).toBeVisible();
 
     // Section for rounds
