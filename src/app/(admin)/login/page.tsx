@@ -11,10 +11,10 @@ export default async function Page() {
   }
 
   return (
-    <div className="flex-1 flex justify-center items-center py-16 px-4 bg-base-200 text-base-content">
+    <div className="flex-1 flex justify-center items-center py-8 sm:py-16 px-3 sm:px-4 bg-base-200 text-base-content">
       <form
         action={login}
-        className="card bg-base-100 w-full max-w-sm mx-auto p-8 rounded-2xl shadow-xl border border-base-300"
+        className="card bg-base-100 w-full max-w-sm mx-auto p-5 sm:p-8 rounded-2xl shadow-xl border border-base-300"
       >
         <div className="text-center mb-6">
           <h1 className="text-2xl font-black tracking-tight text-base-content mb-1">

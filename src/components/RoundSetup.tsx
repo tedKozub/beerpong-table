@@ -394,8 +394,8 @@ export function RoundSetup({
         </div>
 
         {/* 3. Spodní lišta pro generování rozpisu */}
-        <div className="mt-6 pt-4 border-t border-base-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <div className="flex items-center gap-3">
+        <div className="mt-6 pt-4 border-t border-base-200 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+          <div className="flex items-center justify-between sm:justify-start gap-3">
             <label className="text-xs font-semibold">Počet stolů pro rozpis:</label>
             <select
               value={tablesCount}
@@ -410,13 +410,13 @@ export function RoundSetup({
             </select>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
             {hasSchedule && (
               <button
                 type="button"
                 onClick={handleResetSchedule}
                 disabled={loading}
-                className="btn btn-ghost btn-xs text-error"
+                className="btn btn-ghost btn-xs text-error order-2 sm:order-1"
               >
                 Smazat rozpis
               </button>
@@ -426,7 +426,7 @@ export function RoundSetup({
               type="button"
               onClick={handleGenerateSchedule}
               disabled={loading || activeTeams.length < 2}
-              className="btn btn-primary btn-sm font-bold gap-1.5"
+              className="btn btn-primary btn-sm font-bold gap-1.5 order-1 sm:order-2 w-full sm:w-auto"
             >
               {loading ? (
                 <>

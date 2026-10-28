@@ -196,21 +196,37 @@ export default async function PublicRoundDetailPage({
                 <table className="table table-sm sm:table-md w-full">
                   <thead>
                     <tr>
-                      <th className="w-14 sm:w-20 px-2 sm:px-3 text-center sm:text-left">
-                        Pořadí
+                      <th className="w-12 sm:w-20 px-1.5 sm:px-3 text-center sm:text-left">
+                        <span className="hidden sm:inline">Pořadí</span>
+                        <span className="sm:hidden">#</span>
                       </th>
                       <th className="px-2 sm:px-3">Tým</th>
-                      <th className="text-center px-1 sm:px-3">Zápasy</th>
-                      <th className="text-center px-1 sm:px-3">Výhry</th>
-                      <th className="text-center px-1 sm:px-3">Remízy</th>
-                      <th className="text-center px-1 sm:px-3">Prohry</th>
-                      <th className="text-right px-2 sm:px-3">Body</th>
+                      <th className="text-center px-1 sm:px-3">
+                        <span className="hidden sm:inline">Zápasy</span>
+                        <span className="sm:hidden">Z</span>
+                      </th>
+                      <th className="text-center px-1 sm:px-3">
+                        <span className="hidden sm:inline">Výhry</span>
+                        <span className="sm:hidden">V</span>
+                      </th>
+                      <th className="text-center px-1 sm:px-3">
+                        <span className="hidden sm:inline">Remízy</span>
+                        <span className="sm:hidden">R</span>
+                      </th>
+                      <th className="text-center px-1 sm:px-3">
+                        <span className="hidden sm:inline">Prohry</span>
+                        <span className="sm:hidden">P</span>
+                      </th>
+                      <th className="text-right px-2 sm:px-3">
+                        <span className="hidden sm:inline">Body</span>
+                        <span className="sm:hidden">B</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {teamStandings.map((t, idx) => (
                       <tr key={t.teamId} className={getRowStyle(idx)}>
-                        <td className="w-14 sm:w-20 px-2 sm:px-3">
+                        <td className="w-12 sm:w-20 px-1.5 sm:px-3">
                           {renderRank(idx)}
                         </td>
                         <td className="px-2 sm:px-3 font-semibold sm:font-normal">

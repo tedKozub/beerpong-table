@@ -70,11 +70,11 @@ export default async function RoundDetailPage({
   );
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto flex flex-col gap-8">
+    <div className="p-3 sm:p-6 md:p-8 max-w-7xl mx-auto flex flex-col gap-6 sm:gap-8">
       {/* Hlavička & Breadcrumbs */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-300 pb-5">
-        <div>
-          <div className="text-xs breadcrumbs mb-1">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 border-b border-base-300 pb-4 sm:pb-5">
+        <div className="w-full sm:w-auto">
+          <div className="text-xs breadcrumbs mb-1 overflow-x-auto whitespace-nowrap">
             <ul>
               <li>
                 <Link href="/">Domů</Link>
@@ -90,7 +90,7 @@ export default async function RoundDetailPage({
               <li className="font-semibold">{currentRound.name}</li>
             </ul>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <h1 className="text-2xl sm:text-3xl font-black">
               {currentRound.name}
             </h1>
@@ -168,11 +168,11 @@ export default async function RoundDetailPage({
 
       {/* Tabulka večera */}
       <section className="card bg-base-100 shadow-md border border-base-200">
-        <div className="card-body p-4 sm:p-6">
-          <h2 className="text-lg font-bold mb-1">
+        <div className="card-body p-3.5 sm:p-6">
+          <h2 className="text-base sm:text-lg font-bold mb-0.5">
             Pořadí večera ({currentRound.name})
           </h2>
-          <p className="text-xs text-base-content/70 mb-4">
+          <p className="text-xs text-base-content/70 mb-3 sm:mb-4">
             Výsledky a body získané v tomto kole
           </p>
 
@@ -181,17 +181,32 @@ export default async function RoundDetailPage({
               V tomto kole zatím nebyly zapsány žádné výsledky.
             </p>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto w-full">
               <table className="table table-sm sm:table-md w-full">
                 <thead>
                   <tr className="bg-base-200/50">
-                    <th className="w-12 text-center">Poř.</th>
-                    <th>Tým</th>
-                    <th className="text-center">Zápasy</th>
-                    <th className="text-center">Výhry</th>
-                    <th className="text-center">Remízy</th>
-                    <th className="text-center">Prohry</th>
-                    <th className="text-right">Body</th>
+                    <th className="w-10 sm:w-12 text-center px-1 sm:px-3">Poř.</th>
+                    <th className="px-2 sm:px-3">Tým</th>
+                    <th className="text-center px-1 sm:px-3">
+                      <span className="hidden sm:inline">Zápasy</span>
+                      <span className="sm:hidden">Z</span>
+                    </th>
+                    <th className="text-center px-1 sm:px-3">
+                      <span className="hidden sm:inline">Výhry</span>
+                      <span className="sm:hidden">V</span>
+                    </th>
+                    <th className="text-center px-1 sm:px-3">
+                      <span className="hidden sm:inline">Remízy</span>
+                      <span className="sm:hidden">R</span>
+                    </th>
+                    <th className="text-center px-1 sm:px-3">
+                      <span className="hidden sm:inline">Prohry</span>
+                      <span className="sm:hidden">P</span>
+                    </th>
+                    <th className="text-right px-2 sm:px-3">
+                      <span className="hidden sm:inline">Body</span>
+                      <span className="sm:hidden">B</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -200,17 +215,19 @@ export default async function RoundDetailPage({
                       key={t.teamId}
                       className={idx === 0 ? "bg-warning/15 font-bold" : ""}
                     >
-                      <td className="text-center tabular-nums font-semibold">
+                      <td className="text-center px-1 sm:px-3 tabular-nums font-semibold">
                         {idx + 1}.
                       </td>
-                      <td className="font-semibold">{t.teamName}</td>
-                      <td className="text-center tabular-nums">{t.played}</td>
-                      <td className="text-center text-success tabular-nums">{t.wins}</td>
-                      <td className="text-center text-base-content/60 tabular-nums">
+                      <td className="font-semibold px-2 sm:px-3">{t.teamName}</td>
+                      <td className="text-center px-1 sm:px-3 tabular-nums">{t.played}</td>
+                      <td className="text-center px-1 sm:px-3 text-success tabular-nums font-semibold">
+                        {t.wins}
+                      </td>
+                      <td className="text-center px-1 sm:px-3 text-base-content/60 tabular-nums">
                         {t.draws}
                       </td>
-                      <td className="text-center text-error tabular-nums">{t.losses}</td>
-                      <td className="text-right font-black text-primary tabular-nums">
+                      <td className="text-center px-1 sm:px-3 text-error tabular-nums">{t.losses}</td>
+                      <td className="text-right px-2 sm:px-3 font-black text-primary tabular-nums">
                         {t.points}
                       </td>
                     </tr>
@@ -223,8 +240,8 @@ export default async function RoundDetailPage({
       </section>
 
       {/* Střelci a BlowJob King kola */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="card bg-base-100 shadow-md border border-base-200 p-4 sm:p-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="card bg-base-100 shadow-md border border-base-200 p-3.5 sm:p-5">
           <h3 className="font-bold text-base mb-2">Střelci kola</h3>
           {scoreLeaderboard.length === 0 ? (
             <p className="text-xs text-base-content/60 italic py-3 text-center">
@@ -235,9 +252,9 @@ export default async function RoundDetailPage({
               <table className="table table-sm w-full">
                 <thead>
                   <tr className="bg-base-200/50">
-                    <th className="w-10 text-center">#</th>
-                    <th>Hráč</th>
-                    <th className="text-right">Kelímky</th>
+                    <th className="w-10 text-center px-1 sm:px-2">#</th>
+                    <th className="px-2">Hráč</th>
+                    <th className="text-right px-2">Kelímky</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -246,9 +263,9 @@ export default async function RoundDetailPage({
                       key={p.playerId}
                       className={idx === 0 ? "bg-warning/15 font-bold" : ""}
                     >
-                      <td className="text-center tabular-nums">{idx + 1}.</td>
-                      <td className="font-medium">{p.playerName}</td>
-                      <td className="text-right font-bold tabular-nums text-primary">
+                      <td className="text-center px-1 sm:px-2 tabular-nums">{idx + 1}.</td>
+                      <td className="font-medium px-2">{p.playerName}</td>
+                      <td className="text-right px-2 font-bold tabular-nums text-primary">
                         {p.totalScore}
                       </td>
                     </tr>
@@ -259,7 +276,7 @@ export default async function RoundDetailPage({
           )}
         </div>
 
-        <div className="card bg-base-100 shadow-md border border-base-200 p-4 sm:p-5">
+        <div className="card bg-base-100 shadow-md border border-base-200 p-3.5 sm:p-5">
           <h3 className="font-bold text-base mb-2">BlowJob King kola</h3>
           {bjLeaderboard.length === 0 ? (
             <p className="text-xs text-base-content/60 italic py-3 text-center">
@@ -270,9 +287,9 @@ export default async function RoundDetailPage({
               <table className="table table-sm w-full">
                 <thead>
                   <tr className="bg-base-200/50">
-                    <th className="w-10 text-center">#</th>
-                    <th>Hráč</th>
-                    <th className="text-right">Vyfouknuto</th>
+                    <th className="w-10 text-center px-1 sm:px-2">#</th>
+                    <th className="px-2">Hráč</th>
+                    <th className="text-right px-2">Vyfouknuto</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -281,9 +298,9 @@ export default async function RoundDetailPage({
                       key={p.playerId}
                       className={idx === 0 ? "bg-warning/15 font-bold" : ""}
                     >
-                      <td className="text-center tabular-nums">{idx + 1}.</td>
-                      <td className="font-medium">{p.playerName}</td>
-                      <td className="text-right font-bold tabular-nums text-info">
+                      <td className="text-center px-1 sm:px-2 tabular-nums">{idx + 1}.</td>
+                      <td className="font-medium px-2">{p.playerName}</td>
+                      <td className="text-right px-2 font-bold tabular-nums text-info">
                         {p.totalBlowjobs}
                       </td>
                     </tr>

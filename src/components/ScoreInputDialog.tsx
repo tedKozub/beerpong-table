@@ -242,22 +242,23 @@ export function ScoreInputDialog({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-6 bg-black/75 backdrop-blur-xs">
       <div
         className="fixed inset-0 z-0"
         onClick={onClose}
         aria-label="Zavřít"
       />
-      <div className="relative z-10 max-w-3xl sm:max-w-4xl w-full bg-base-100 text-base-content border border-base-300 p-5 sm:p-8 shadow-2xl rounded-2xl max-h-[92vh] overflow-y-auto">
+      <div className="relative z-10 max-w-3xl sm:max-w-4xl w-full bg-base-100 text-base-content border border-base-300 p-4 sm:p-8 shadow-2xl rounded-2xl max-h-[92vh] overflow-y-auto">
         <button
           type="button"
           onClick={onClose}
-          className="btn btn-sm btn-circle btn-ghost absolute right-4 top-4"
+          aria-label="Zavřít dialog"
+          className="btn btn-sm btn-circle btn-ghost absolute right-3 sm:right-4 top-3 sm:top-4"
         >
           <X className="w-4 h-4" />
         </button>
 
-        <div className="mb-5">
+        <div className="mb-4 sm:mb-5 pr-8">
           <span className="badge badge-neutral text-xs font-bold tabular-nums px-2.5 py-1">
             Stůl {tableNumber}
           </span>
@@ -267,8 +268,212 @@ export function ScoreInputDialog({
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <div className="overflow-x-auto border border-base-300 rounded-xl">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5">
+          {/* Mobilní pohled: Karty týmů pod sebou pro pohodlné ovládání jednou rukou bez nutnosti horizontálního scrollování */}
+          <div className="sm:hidden flex flex-col gap-3">
+            {/* Karta Tým 1 */}
+            <div className="bg-base-200/50 p-3.5 rounded-xl border border-base-300 flex flex-col gap-3">
+              <div className="flex items-center justify-between border-b border-base-300 pb-2">
+                <span className="font-black text-base truncate">{team1.name}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="badge badge-primary font-black tabular-nums">{team1Total} b</span>
+                  <button
+                    type="button"
+                    className="btn btn-xs btn-ghost gap-1"
+                    title="Prohodit pořadí hráčů"
+                    onClick={swapTeam1}
+                  >
+                    <ArrowUpDown className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Hráč 1 */}
+              <div className="bg-base-100 p-2.5 rounded-lg border border-base-200 flex flex-col gap-2">
+                <span className="text-xs font-semibold text-base-content/70">Hráč 1</span>
+                <select
+                  className="select select-bordered select-sm w-full font-semibold"
+                  value={t1p1?.id ?? ""}
+                  onChange={(e) => {
+                    const found = allSeasonPlayers.find((p) => p.id === Number(e.target.value));
+                    if (found) setT1p1(found);
+                  }}
+                >
+                  {allSeasonPlayers.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+                <div className="grid grid-cols-2 gap-2 mt-0.5">
+                  <div>
+                    <label className="text-[11px] font-bold text-primary block mb-1">Body</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={t1p1Score}
+                      onChange={(e) => setT1p1Score(e.target.value)}
+                      placeholder="0"
+                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums text-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-info block mb-1">BJ (fouknutí)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={t1p1Bj}
+                      onChange={(e) => setT1p1Bj(e.target.value)}
+                      placeholder="0"
+                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums border-info/50 text-info bg-info/10 focus:border-info"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Hráč 2 */}
+              <div className="bg-base-100 p-2.5 rounded-lg border border-base-200 flex flex-col gap-2">
+                <span className="text-xs font-semibold text-base-content/70">Hráč 2</span>
+                <select
+                  className="select select-bordered select-sm w-full font-semibold"
+                  value={t1p2?.id ?? ""}
+                  onChange={(e) => {
+                    const found = allSeasonPlayers.find((p) => p.id === Number(e.target.value));
+                    if (found) setT1p2(found);
+                  }}
+                >
+                  {allSeasonPlayers.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+                <div className="grid grid-cols-2 gap-2 mt-0.5">
+                  <div>
+                    <label className="text-[11px] font-bold text-primary block mb-1">Body</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={t1p2Score}
+                      onChange={(e) => setT1p2Score(e.target.value)}
+                      placeholder="0"
+                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums text-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-info block mb-1">BJ (fouknutí)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={t1p2Bj}
+                      onChange={(e) => setT1p2Bj(e.target.value)}
+                      placeholder="0"
+                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums border-info/50 text-info bg-info/10 focus:border-info"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Karta Tým 2 */}
+            <div className="bg-base-200/50 p-3.5 rounded-xl border border-base-300 flex flex-col gap-3">
+              <div className="flex items-center justify-between border-b border-base-300 pb-2">
+                <span className="font-black text-base truncate">{team2.name}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="badge badge-primary font-black tabular-nums">{team2Total} b</span>
+                  <button
+                    type="button"
+                    className="btn btn-xs btn-ghost gap-1"
+                    title="Prohodit pořadí hráčů"
+                    onClick={swapTeam2}
+                  >
+                    <ArrowUpDown className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Hráč 1 */}
+              <div className="bg-base-100 p-2.5 rounded-lg border border-base-200 flex flex-col gap-2">
+                <span className="text-xs font-semibold text-base-content/70">Hráč 1</span>
+                <select
+                  className="select select-bordered select-sm w-full font-semibold"
+                  value={t2p1?.id ?? ""}
+                  onChange={(e) => {
+                    const found = allSeasonPlayers.find((p) => p.id === Number(e.target.value));
+                    if (found) setT2p1(found);
+                  }}
+                >
+                  {allSeasonPlayers.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+                <div className="grid grid-cols-2 gap-2 mt-0.5">
+                  <div>
+                    <label className="text-[11px] font-bold text-primary block mb-1">Body</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={t2p1Score}
+                      onChange={(e) => setT2p1Score(e.target.value)}
+                      placeholder="0"
+                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums text-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-info block mb-1">BJ (fouknutí)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={t2p1Bj}
+                      onChange={(e) => setT2p1Bj(e.target.value)}
+                      placeholder="0"
+                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums border-info/50 text-info bg-info/10 focus:border-info"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Hráč 2 */}
+              <div className="bg-base-100 p-2.5 rounded-lg border border-base-200 flex flex-col gap-2">
+                <span className="text-xs font-semibold text-base-content/70">Hráč 2</span>
+                <select
+                  className="select select-bordered select-sm w-full font-semibold"
+                  value={t2p2?.id ?? ""}
+                  onChange={(e) => {
+                    const found = allSeasonPlayers.find((p) => p.id === Number(e.target.value));
+                    if (found) setT2p2(found);
+                  }}
+                >
+                  {allSeasonPlayers.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+                <div className="grid grid-cols-2 gap-2 mt-0.5">
+                  <div>
+                    <label className="text-[11px] font-bold text-primary block mb-1">Body</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={t2p2Score}
+                      onChange={(e) => setT2p2Score(e.target.value)}
+                      placeholder="0"
+                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums text-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-info block mb-1">BJ (fouknutí)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={t2p2Bj}
+                      onChange={(e) => setT2p2Bj(e.target.value)}
+                      placeholder="0"
+                      className="input input-bordered input-sm w-full text-center font-bold tabular-nums border-info/50 text-info bg-info/10 focus:border-info"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop/Tablet zobrazení: Přehledná tabulka dvou týmů tváří v tvář */}
+          <div className="hidden sm:block overflow-x-auto border border-base-300 rounded-xl">
             <table className="table table-sm sm:table-md w-full text-center">
               <thead className="bg-base-200">
                 <tr>
@@ -497,11 +702,11 @@ export function ScoreInputDialog({
           </div>
 
           {/* Celkové skóre týmů */}
-          <div className="flex items-center justify-between p-4 rounded-xl bg-base-200 border border-base-300">
+          <div className="flex items-center justify-between p-3.5 sm:p-4 rounded-xl bg-base-200 border border-base-300">
             <div className="font-bold text-sm sm:text-base truncate flex-1">
               {team1.name}
             </div>
-            <div className="text-2xl sm:text-3xl font-black text-primary tabular-nums px-4 shrink-0">
+            <div className="text-xl sm:text-3xl font-black text-primary tabular-nums px-3 sm:px-4 shrink-0">
               {team1Total} : {team2Total}
             </div>
             <div className="font-bold text-sm sm:text-base text-right truncate flex-1">
@@ -509,10 +714,10 @@ export function ScoreInputDialog({
             </div>
           </div>
 
-          <div className="modal-action mt-2 flex justify-end gap-2">
+          <div className="modal-action mt-2 flex flex-col sm:flex-row justify-end gap-2">
             <button
               type="button"
-              className="btn btn-ghost btn-sm"
+              className="btn btn-ghost btn-sm order-2 sm:order-1"
               onClick={onClose}
               disabled={saving}
             >
@@ -520,7 +725,7 @@ export function ScoreInputDialog({
             </button>
             <button
               type="submit"
-              className="btn btn-primary btn-sm gap-1.5"
+              className="btn btn-primary btn-sm gap-1.5 order-1 sm:order-2 w-full sm:w-auto font-bold"
               disabled={saving}
             >
               {saving ? (

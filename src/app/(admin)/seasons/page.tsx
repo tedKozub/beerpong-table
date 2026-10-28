@@ -18,8 +18,8 @@ export default async function SeasonsArchivePage() {
   );
 
   return (
-    <div className="p-4 sm:p-8 max-w-6xl mx-auto flex flex-col gap-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-base-300 pb-5">
+    <div className="p-3 sm:p-6 md:p-8 max-w-6xl mx-auto flex flex-col gap-6 sm:gap-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 border-b border-base-300 pb-4 sm:pb-5">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black">
             Sezóny & Archiv semestrů
@@ -31,7 +31,7 @@ export default async function SeasonsArchivePage() {
       </div>
 
       {/* Přehled semestrů */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {seasonsWithRounds.map((s) => (
           <div
             key={s.id}
@@ -41,7 +41,7 @@ export default async function SeasonsArchivePage() {
                 : "bg-base-100 border-base-300"
             }`}
           >
-            <div className="card-body p-5 sm:p-6">
+            <div className="card-body p-4 sm:p-6">
               <div className="flex justify-between items-start">
                 <span
                   className={`badge ${

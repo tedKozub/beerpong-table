@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen p-4 sm:p-8 md:p-12 bg-base-200 text-base-content">
-      <main className="max-w-4xl mx-auto flex flex-col gap-8">
+    <div className="min-h-screen p-3 sm:p-6 md:p-12 bg-base-200 text-base-content">
+      <main className="max-w-4xl mx-auto flex flex-col gap-6 sm:gap-8">
         
         {/* Header */}
         <div>
@@ -14,16 +14,16 @@ export default function AboutPage() {
           >
             ← Zpět na přehled
           </Link>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-base-content">
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-base-content">
             🦊 O aplikaci & Pravidla ligy
           </h1>
-          <p className="text-base-content/70 mt-1 text-base">
+          <p className="text-base-content/70 mt-1 text-sm sm:text-base">
             Oficiální organizační systém turnajů SPPDF Beerpong
           </p>
         </div>
 
         {/* VIP Zpráva: Pravidla turnaje */}
-        <section className="card bg-base-100 border-2 border-warning/50 p-6 sm:p-8 rounded-2xl shadow-md">
+        <section className="card bg-base-100 border-2 border-warning/50 p-4 sm:p-8 rounded-2xl shadow-md">
           <div className="flex flex-col sm:flex-row items-start gap-5">
             <div className="p-4 bg-warning/15 text-warning rounded-2xl shrink-0">
               <ShieldAlert className="w-8 h-8" />
