@@ -47,11 +47,14 @@ test.describe("Public Views & Navigation", () => {
     await expect(page.getByRole("heading", { name: /Pořadí večera/i })).toBeVisible();
   });
 
-  test("loads about page with rules and system info", async ({ page }) => {
+  test("loads about page with authors and system info", async ({ page }) => {
     await page.goto("/about");
 
-    await expect(page.locator("h1")).toContainText("O aplikaci & Pravidla ligy");
-    await expect(page.getByText("Pravidla ligy").first()).toBeVisible();
+    await expect(page.locator("h1")).toContainText("O aplikaci");
+    await expect(page.getByText("Tadeáš Kozub").first()).toBeVisible();
+    await expect(page.getByText("Petr Hýbl").first()).toBeVisible();
+    await expect(page.getByText("Štěpán Řihák").first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /petrsgamer\/beerpong-table/i })).toBeVisible();
     await expect(page.getByRole("link", { name: /Zpět na přehled/i })).toBeVisible();
   });
 });
