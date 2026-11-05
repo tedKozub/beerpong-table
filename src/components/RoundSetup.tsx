@@ -55,7 +55,7 @@ export function RoundSetup({
   const [teamName, setTeamName] = useState("");
   const [player1Name, setPlayer1Name] = useState("");
   const [player2Name, setPlayer2Name] = useState("");
-  const [tablesCount, setTablesCount] = useState("2");
+  const [tablesCount, setTablesCount] = useState("6");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -400,13 +400,14 @@ export function RoundSetup({
             <select
               value={tablesCount}
               onChange={(e) => setTablesCount(e.target.value)}
-              className="select select-bordered select-xs w-20 tabular-nums"
+              className="select select-bordered select-xs w-28 tabular-nums"
               disabled={loading}
             >
-              <option value="1">1 stůl</option>
-              <option value="2">2 stoly</option>
-              <option value="3">3 stoly</option>
-              <option value="4">4 stoly</option>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+                <option key={num} value={num}>
+                  {num} {num === 1 ? "stůl" : num < 5 ? "stoly" : "stolů"}
+                </option>
+              ))}
             </select>
           </div>
 

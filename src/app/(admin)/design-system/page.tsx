@@ -118,7 +118,7 @@ export default function DesignSystemPage() {
                   toast({
                     variant: "success",
                     title: "Výsledek zápasu uložen",
-                    description: "Brouci zvítězili 10:7 nad Vlky a získávají 3 body.",
+                    description: "Brouci zvítězili 10:7 nad Vlky a získávají 2 body.",
                   });
                 }}
                 className="btn btn-success gap-2 text-white"

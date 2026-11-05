@@ -122,7 +122,7 @@ export async function getSeasonTeamStandings(
   return calculateStandings(matches);
 }
 
-// Pomocná funkce pro výpočet ligové tabulky (3 body výhra, 1 remíza, 0 prohra)
+// Pomocná funkce pro výpočet ligové tabulky (2 body výhra, 1 remíza, 0 prohra)
 async function calculateStandings(
   matches: {
     matchId: number;
@@ -182,11 +182,11 @@ async function calculateStandings(
 
     if (m.team1Score > m.team2Score) {
       t1.wins += 1;
-      t1.points += 3;
+      t1.points += 2;
       t2.losses += 1;
     } else if (m.team1Score < m.team2Score) {
       t2.wins += 1;
-      t2.points += 3;
+      t2.points += 2;
       t1.losses += 1;
     } else {
       t1.draws += 1;

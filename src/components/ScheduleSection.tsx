@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  createScheduleForRound,
   deleteScheduleForRound,
   ScheduledMatchWithResult,
 } from "@/actions/schedule";
@@ -41,8 +40,6 @@ export function ScheduleSection({
   isAdmin = false,
 }: ScheduleSectionProps) {
   const [downloading, setDownloading] = useState<"pdf" | "slides" | null>(null);
-  const [tablesCount, setTablesCount] = useState("2");
-  const [generating, setGenerating] = useState(false);
 
   // Dialog state for entering/editing score for a match
   const [selectedMatch, setSelectedMatch] =
@@ -58,16 +55,6 @@ export function ScheduleSection({
       console.error("Chyba při stahování PDF:", e);
     } finally {
       setDownloading(null);
-    }
-  };
-
-  const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setGenerating(true);
-    try {
-      await createScheduleForRound(roundId, Number(tablesCount));
-    } finally {
-      setGenerating(false);
     }
   };
 
