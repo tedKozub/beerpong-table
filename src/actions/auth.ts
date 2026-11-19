@@ -31,3 +31,11 @@ export async function getSession() {
   const session = await decrypt(cookie);
   return session;
 }
+
+export async function requireAuth() {
+  const session = await getSession();
+  if (!session?.userId) {
+    throw new Error("Neoprávněný přístup: Tato akce vyžaduje přihlášení administrátora.");
+  }
+  return session;
+}

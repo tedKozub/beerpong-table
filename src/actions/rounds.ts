@@ -5,6 +5,7 @@ import { round } from "@/db/schema";
 import { Round } from "@/db/types";
 import { eq, asc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAuth } from "./auth";
 
 export async function getRoundsForSeason(seasonId: number) {
   return db
@@ -29,6 +30,7 @@ export async function createRound(data: {
   roundNumber?: number;
   date?: Date;
 }) {
+  await requireAuth();
   const result = await db
     .insert(round)
     .values({
@@ -43,6 +45,7 @@ export async function createRound(data: {
 }
 
 export async function updateRound(id: number, data: Partial<Round>) {
+  await requireAuth();
   const result = await db
     .update(round)
     .set({
@@ -62,6 +65,7 @@ export async function updateRound(id: number, data: Partial<Round>) {
 }
 
 export async function deleteRound(id: number) {
+  await requireAuth();
   const result = await db
     .delete(round)
     .where(eq(round.id, id))

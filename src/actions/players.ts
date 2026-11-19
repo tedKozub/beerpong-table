@@ -5,6 +5,7 @@ import { player } from "@/db/schema";
 import { Player } from "@/db/types";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAuth } from "./auth";
 
 export async function getPlayersForSeason(seasonId: number) {
   return db.select().from(player).where(eq(player.seasonId, seasonId));
@@ -20,6 +21,7 @@ export async function getPlayerById(id: number) {
 }
 
 export async function createPlayer(data: { name: string; seasonId: number }) {
+  await requireAuth();
   const result = await db
     .insert(player)
     .values({
@@ -32,6 +34,7 @@ export async function createPlayer(data: { name: string; seasonId: number }) {
 }
 
 export async function updatePlayer(id: number, data: Partial<Player>) {
+  await requireAuth();
   const result = await db
     .update(player)
     .set({
@@ -44,6 +47,7 @@ export async function updatePlayer(id: number, data: Partial<Player>) {
 }
 
 export async function deletePlayer(id: number) {
+  await requireAuth();
   const result = await db
     .delete(player)
     .where(eq(player.id, id))

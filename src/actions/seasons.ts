@@ -5,6 +5,7 @@ import { round, season } from "@/db/schema";
 import { Season } from "@/db/types";
 import { desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAuth } from "./auth";
 
 export async function getAllSeasons() {
   return db
@@ -33,6 +34,7 @@ export async function getActiveSeason() {
 }
 
 export async function setActiveSeason(id: number) {
+  await requireAuth();
   // 1. Zrušíme aktivní stav u všech sezón
   await db.update(season).set({ isActive: false });
 
@@ -58,6 +60,7 @@ export async function getSeasonById(id: number) {
 }
 
 export async function createSeason(s: { name: string; isActive?: boolean }) {
+  await requireAuth();
   // Pokud je označena jako aktivní, deaktivujeme ostatní
   if (s.isActive) {
     await db.update(season).set({ isActive: false });
@@ -88,6 +91,7 @@ export async function createSeason(s: { name: string; isActive?: boolean }) {
 }
 
 export async function updateSeason(id: number, s: Partial<Season>) {
+  await requireAuth();
   if (s.isActive) {
     await db.update(season).set({ isActive: false });
   }
@@ -107,6 +111,7 @@ export async function updateSeason(id: number, s: Partial<Season>) {
 }
 
 export async function deleteSeason(id: number) {
+  await requireAuth();
   const deletedSeason = await db
     .delete(season)
     .where(eq(season.id, id))

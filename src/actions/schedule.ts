@@ -5,6 +5,7 @@ import { match, round, scheduledMatch, team, teamPlayer } from "@/db/schema";
 import { generateSchedule } from "@/lib/schedule";
 import { aliasedTable, asc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAuth } from "./auth";
 
 export type ScheduledMatchWithResult = {
   round: number; // match wave / sub-round
@@ -75,6 +76,7 @@ export const createScheduleForRound = async (
   roundId: number,
   tables: number
 ) => {
+  await requireAuth();
   if (!Number.isInteger(tables) || tables < 1) {
     return { error: "Zadej platný počet stolů" };
   }
@@ -137,6 +139,7 @@ export const createScheduleForRound = async (
 };
 
 export const deleteScheduleForRound = async (roundId: number) => {
+  await requireAuth();
   await db
     .delete(scheduledMatch)
     .where(eq(scheduledMatch.roundId, roundId));

@@ -5,6 +5,7 @@ import { player, scheduledMatch, team, teamPlayer } from "@/db/schema";
 import { Team } from "@/db/types";
 import { and, eq, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAuth } from "./auth";
 
 export async function getTeamsForSeason(seasonId: number) {
   return db.select().from(team).where(eq(team.seasonId, seasonId));
@@ -16,6 +17,7 @@ export async function getTeamById(id: number) {
 }
 
 export async function createTeam(data: { name: string; seasonId: number }) {
+  await requireAuth();
   const result = await db
     .insert(team)
     .values({
@@ -28,6 +30,7 @@ export async function createTeam(data: { name: string; seasonId: number }) {
 }
 
 export async function updateTeam(id: number, data: Partial<Team>) {
+  await requireAuth();
   const result = await db
     .update(team)
     .set({
@@ -40,6 +43,7 @@ export async function updateTeam(id: number, data: Partial<Team>) {
 }
 
 export async function deleteTeam(id: number) {
+  await requireAuth();
   const result = await db.delete(team).where(eq(team.id, id)).returning();
   revalidatePath("/");
   return result[0];
@@ -51,6 +55,7 @@ export async function assignPlayerToTeamInRound(
   teamId: number,
   playerId: number
 ) {
+  await requireAuth();
   // Smažeme případné existující přiřazení hráče v daném kole (hráč může být v kole jen v jednom týmu)
   await db
     .delete(teamPlayer)
@@ -76,6 +81,7 @@ export async function removePlayerFromTeamInRound(
   roundId: number,
   playerId: number
 ) {
+  await requireAuth();
   const result = await db
     .delete(teamPlayer)
     .where(

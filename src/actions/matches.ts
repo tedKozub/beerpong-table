@@ -5,6 +5,7 @@ import { match, player, playerMatchScore, team } from "@/db/schema";
 import { Match } from "@/db/types";
 import { and, eq, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAuth } from "./auth";
 
 export async function getMatchesForRound(roundId: number) {
   const matches = await db
@@ -79,6 +80,7 @@ export async function createMatch(data: {
     blowjobs: number;
   }[];
 }) {
+  await requireAuth();
   const [newMatch] = await db
     .insert(match)
     .values({
@@ -121,6 +123,7 @@ export async function updateMatch(
     }[];
   }
 ) {
+  await requireAuth();
   const [updated] = await db
     .update(match)
     .set({
@@ -155,6 +158,7 @@ export async function updateMatch(
 }
 
 export async function deleteMatch(id: number) {
+  await requireAuth();
   // player_match_score se smaže automaticky díky onDelete: cascade
   const [deleted] = await db
     .delete(match)
@@ -177,6 +181,7 @@ export async function saveOrUpdateMatchScore(data: {
     blowjobs: number;
   }[];
 }) {
+  await requireAuth();
   const existingMatches = await db
     .select()
     .from(match)
