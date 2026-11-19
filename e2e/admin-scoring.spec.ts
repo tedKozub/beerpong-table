@@ -20,7 +20,7 @@ test.describe("Admin Round Management & Match Scoring", () => {
     // Header and round info
     await expect(page.locator("h1")).toBeVisible();
     await expect(page.getByRole("button", { name: /Kopírovat veřejný odkaz/i })).toBeVisible();
-    await expect(page.getByRole("button", { name: /Export CSV/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Exportovat výsledky/i })).toBeVisible();
 
     // Schedule section
     await expect(page.getByRole("heading", { name: /Rozpis zápasů na stoly/i })).toBeVisible();

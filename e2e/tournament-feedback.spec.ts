@@ -9,18 +9,24 @@ async function loginAsAdmin(page: any) {
 }
 
 test.describe("Tournament Feedback & Field-Tested Features", () => {
-  test("XLSX export download button is present as primary action alongside CSV", async ({ page }) => {
+  test("export dropdown menu clearly offers XLSX as recommended primary action and CSV", async ({ page }) => {
     await loginAsAdmin(page);
     await page.goto("/rounds/11");
 
-    // Primary XLSX button
-    const xlsxBtn = page.getByRole("button", { name: /Stáhnout XLSX/i });
+    // Open export dropdown
+    const exportDropdown = page.getByRole("button", { name: /Exportovat výsledky/i });
+    await expect(exportDropdown).toBeVisible();
+    await exportDropdown.click();
+
+    // Primary XLSX option
+    const xlsxBtn = page.getByRole("button", { name: /Excel \(\.xlsx\)/i });
     await expect(xlsxBtn).toBeVisible();
     await xlsxBtn.click();
     await expect(page.getByText("XLSX export stažen", { exact: true })).toBeVisible();
 
-    // CSV button still available
-    const csvBtn = page.getByRole("button", { name: /Export CSV/i });
+    // Reopen dropdown and test CSV option
+    await exportDropdown.click();
+    const csvBtn = page.getByRole("button", { name: /CSV \(\.csv\)/i });
     await expect(csvBtn).toBeVisible();
     await csvBtn.click();
     await expect(page.getByText("CSV export stažen", { exact: true })).toBeVisible();

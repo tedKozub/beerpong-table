@@ -1,9 +1,14 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { downloadCSVFile, escapeCSV } from "@/lib/csv";
-import { generateAndDownloadXlsx, TeamStandingItem, LeaderboardItem } from "@/lib/exportXlsx";
-import { Download, FileSpreadsheet } from "lucide-react";
+import {
+  generateAndDownloadXlsx,
+  TeamStandingItem,
+  LeaderboardItem,
+} from "@/lib/exportXlsx";
+import { Download, FileSpreadsheet, ChevronDown, Check } from "lucide-react";
 
 interface ExportCsvButtonProps {
   roundName: string;
@@ -18,7 +23,28 @@ export function ExportCsvButton({
   scoreLeaderboard = [],
   bjLeaderboard = [],
 }: ExportCsvButtonProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Zavření dropdownu při kliknutí mimo komponentu
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   const handleExportXlsx = async () => {
     try {
@@ -100,26 +126,78 @@ export function ExportCsvButton({
   };
 
   return (
-    <div className="join inline-flex shadow-sm">
+    <div className="relative inline-block text-left" ref={dropdownRef}>
       <button
         type="button"
-        onClick={handleExportXlsx}
-        className="btn btn-primary btn-sm text-xs gap-1.5 join-item font-semibold"
-        title="Stáhnout výsledky v moderním Excel formátu (.xlsx)"
-      >
-        <FileSpreadsheet className="h-3.5 w-3.5" />
-        <span>Stáhnout XLSX</span>
-      </button>
-
-      <button
-        type="button"
-        onClick={handleExportCsv}
-        className="btn btn-outline btn-sm text-xs gap-1.5 join-item"
-        title="Stáhnout výsledky v CSV formátu"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="btn btn-outline btn-sm text-xs gap-1.5 font-medium"
+        title="Stáhnout výsledky ve formátu Excel nebo CSV"
+        aria-haspopup="true"
+        aria-expanded={isOpen}
       >
         <Download className="h-3.5 w-3.5" />
-        <span>Export CSV</span>
+        <span>Exportovat výsledky</span>
+        <ChevronDown
+          className={`h-3 w-3 transition-transform duration-150 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
       </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-1.5 w-64 rounded-xl bg-base-100 p-1.5 shadow-xl border border-base-200 z-50 animate-in fade-in zoom-in-95">
+          <div className="px-3 py-1.5 border-b border-base-200 mb-1">
+            <span className="text-[11px] font-bold text-base-content/60 uppercase tracking-wider">
+              Vyberte formát ke stažení
+            </span>
+          </div>
+
+          {/* 1. Excel XLSX - primární doporučený formát */}
+          <button
+            type="button"
+            onClick={() => {
+              handleExportXlsx();
+              setIsOpen(false);
+            }}
+            className="w-full flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-base-200 text-left transition-colors group"
+          >
+            <div className="p-1.5 rounded-md bg-primary/10 text-primary mt-0.5 group-hover:bg-primary group-hover:text-primary-content transition-colors">
+              <FileSpreadsheet className="h-4 w-4" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-1">
+                <span className="font-bold text-xs">Excel (.xlsx)</span>
+                <span className="badge badge-primary badge-xs text-[10px] font-bold">
+                  Doporučeno
+                </span>
+              </div>
+              <p className="text-[11px] text-base-content/60 mt-0.5 leading-snug">
+                Formátované listy pro týmy, střelce a BlowJob Kinga
+              </p>
+            </div>
+          </button>
+
+          {/* 2. CSV - sekundární textový formát */}
+          <button
+            type="button"
+            onClick={() => {
+              handleExportCsv();
+              setIsOpen(false);
+            }}
+            className="w-full flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-base-200 text-left transition-colors group mt-0.5"
+          >
+            <div className="p-1.5 rounded-md bg-base-200 text-base-content/70 mt-0.5 group-hover:bg-neutral group-hover:text-neutral-content transition-colors">
+              <Download className="h-4 w-4" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="font-bold text-xs">CSV (.csv)</span>
+              <p className="text-[11px] text-base-content/60 mt-0.5 leading-snug">
+                Jednoduchý textový soubor pro další zpracování
+              </p>
+            </div>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

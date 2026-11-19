@@ -35,10 +35,13 @@ test.describe("Public Views & Navigation", () => {
     // Verify toast notification for copy
     await expect(page.getByText("Odkaz zkopírován", { exact: true })).toBeVisible();
 
-    // Verify Export CSV button
-    const exportBtn = page.getByRole("button", { name: /Export CSV/i });
+    // Verify Export dropdown and CSV download
+    const exportBtn = page.getByRole("button", { name: /Exportovat výsledky/i });
     await expect(exportBtn).toBeVisible();
     await exportBtn.click();
+    const csvOption = page.getByRole("button", { name: /CSV \(\.csv\)/i });
+    await expect(csvOption).toBeVisible();
+    await csvOption.click();
 
     // Verify toast notification for export
     await expect(page.getByText("CSV export stažen", { exact: true })).toBeVisible();
