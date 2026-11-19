@@ -126,8 +126,8 @@ export function ScheduleSection({
         </div>
       </section>
 
-      {/* Turnajové stopky pro měření času zápasů a vln */}
-      <TournamentStopwatch />
+      {/* Turnajové stopky pro měření času zápasů a vln (pouze v administraci, nikdy na veřejné stránce) */}
+      {isAdmin && <TournamentStopwatch />}
 
       {/* Aktuální vlna zápasů (srihak styl) */}
       {currentWave !== null && waves.has(currentWave) && (

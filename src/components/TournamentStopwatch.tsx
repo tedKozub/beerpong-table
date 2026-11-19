@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
-  Timer,
   Play,
   Pause,
   RotateCcw,
@@ -12,14 +11,13 @@ import {
   VolumeX,
   Minimize2,
   Maximize2,
-  Clock,
   X,
 } from "lucide-react";
 
 interface StopwatchState {
   mode: "countdown" | "countup";
   isRunning: boolean;
-  durationSeconds: number; // výchozí délka odpočtu v sekundách (např. 12 * 60 = 720)
+  durationSeconds: number; // výchozí délka odpočtu v sekundách (např. 10 * 60 = 600)
   targetTimestamp: number | null; // čas v ms, kdy odpočet dosáhne 0 (nebo start timestamp u countup)
   remainingSeconds: number; // zbývající sekundy (použito při pauze)
   soundEnabled: boolean;
@@ -29,9 +27,9 @@ interface StopwatchState {
 
 const STORAGE_KEY = "beerpong_tournament_stopwatch_v1";
 
-const DEFAULT_DURATION = 12 * 60; // 12 minut default
+const DEFAULT_DURATION = 10 * 60; // 10 minut default
 
-function playBeepSequence() {
+function playDigitalAlarm() {
   try {
     const AudioContextClass =
       window.AudioContext || (window as any).webkitAudioContext;
@@ -40,21 +38,34 @@ function playBeepSequence() {
     const ctx = new AudioContextClass();
     const now = ctx.currentTime;
 
-    // 3 krátké tóny upozornění na konec limitu
-    [0, 0.25, 0.5, 0.85].forEach((delay, idx) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(idx === 3 ? 880 : 587.33, now + delay);
+    // Klasický digitální budík / piezo alarm:
+    // 3 série po 4 ostrých pulzech (obdélníková vlna ~2730 Hz typická pro piezo bzučák)
+    const bursts = [0, 0.4, 0.8];
+    const beepsPerBurst = 4;
+    const beepDuration = 0.045; // 45 ms
+    const beepStep = 0.075; // 75 ms mezi začátky
 
-      gain.gain.setValueAtTime(0.3, now + delay);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + delay + (idx === 3 ? 0.4 : 0.18));
+    bursts.forEach((burstStart) => {
+      for (let i = 0; i < beepsPerBurst; i++) {
+        const start = now + burstStart + i * beepStep;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
+        // Obdélníková vlna dodá nezaměnitelný ostrý digitální budíkový tón
+        osc.type = "square";
+        osc.frequency.setValueAtTime(2730, start);
 
-      osc.start(now + delay);
-      osc.stop(now + delay + (idx === 3 ? 0.45 : 0.2));
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.25, start + 0.003);
+        gain.gain.setValueAtTime(0.25, start + beepDuration - 0.003);
+        gain.gain.linearRampToValueAtTime(0, start + beepDuration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(start);
+        osc.stop(start + beepDuration + 0.005);
+      }
     });
   } catch (e) {
     // Prohlížeč mohl zablokovat audio bez interakce
@@ -131,7 +142,7 @@ export function TournamentStopwatch() {
         if (remaining <= 0) {
           // Konec odpočtu
           if (state.soundEnabled && !hasFinishedAlert) {
-            playBeepSequence();
+            playDigitalAlarm();
           }
           setHasFinishedAlert(true);
           setState((prev) => ({
@@ -252,6 +263,16 @@ export function TournamentStopwatch() {
     setDisplaySeconds(initSec);
   };
 
+  const [isMinimizing, setIsMinimizing] = useState(false);
+
+  const handleMinimize = () => {
+    setIsMinimizing(true);
+    setTimeout(() => {
+      setState((prev) => ({ ...prev, isMinimized: true }));
+      setIsMinimizing(false);
+    }, 220);
+  };
+
   const formatTime = (totalSec: number) => {
     const mins = Math.floor(totalSec / 60);
     const secs = totalSec % 60;
@@ -264,19 +285,19 @@ export function TournamentStopwatch() {
         <button
           type="button"
           onClick={() => setState((prev) => ({ ...prev, isClosed: false }))}
-          className="btn btn-circle btn-primary shadow-lg border border-primary/30"
+          className="btn btn-sm btn-primary shadow-lg border border-primary/30 text-xs font-bold px-3.5"
           title="Otevřít turnajové stopky"
         >
-          <Timer className="h-5 w-5" />
+          Stopky
         </button>
       </div>
     );
   }
 
-  // Minimalizovaná plovoucí pilulka
+  // Minimalizovaná plovoucí pilulka (animovaný příchod od spodního okraje)
   if (state.isMinimized) {
     return (
-      <div className="fixed bottom-4 right-4 z-40 animate-in fade-in zoom-in-95">
+      <div className="fixed bottom-4 right-4 z-40 transition-all duration-300 ease-out transform animate-in fade-in zoom-in-75 slide-in-from-bottom-4 slide-in-from-right-4">
         <div className="bg-base-100/95 backdrop-blur-md border-2 border-primary/40 shadow-xl rounded-full px-3.5 py-1.5 flex items-center gap-2.5">
           <button
             type="button"
@@ -320,20 +341,21 @@ export function TournamentStopwatch() {
   const isZero = state.mode === "countdown" && displaySeconds === 0;
 
   return (
-    <div className="card bg-base-100 shadow-md border-2 border-primary/30 mb-6 overflow-hidden">
+    <div
+      className={`card bg-base-100 shadow-md border-2 border-primary/30 mb-6 overflow-hidden transition-all duration-300 ease-in-out transform origin-bottom-right ${
+        isMinimizing
+          ? "scale-50 translate-x-16 translate-y-12 opacity-0 pointer-events-none"
+          : "scale-100 opacity-100 animate-in fade-in zoom-in-95 duration-200"
+      }`}
+    >
       <div className="card-body p-3.5 sm:p-5">
-        {/* Horní hlavička stopek */}
+        {/* Horní hlavička stopek bez ikony hodin */}
         <div className="flex items-center justify-between gap-2 border-b border-base-200 pb-2.5">
-          <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-primary/10 text-primary">
-              <Timer className="h-4 w-4" />
-            </span>
-            <div>
-              <h3 className="font-bold text-sm leading-none">Turnajové stopky</h3>
-              <p className="text-[11px] text-base-content/60 mt-0.5">
-                {state.mode === "countdown" ? "Odpočet kola" : "Měření času"}
-              </p>
-            </div>
+          <div>
+            <h3 className="font-bold text-sm leading-none">Turnajové stopky</h3>
+            <p className="text-[11px] text-base-content/60 mt-0.5">
+              {state.mode === "countdown" ? "Odpočet kola" : "Měření času"}
+            </p>
           </div>
 
           <div className="flex items-center gap-1">
@@ -356,7 +378,7 @@ export function TournamentStopwatch() {
 
             <button
               type="button"
-              onClick={() => setState((prev) => ({ ...prev, isMinimized: true }))}
+              onClick={handleMinimize}
               className="btn btn-ghost btn-xs btn-square text-base-content/70"
               title="Minimalizovat do plovoucího widgetu"
             >
@@ -447,12 +469,12 @@ export function TournamentStopwatch() {
           </div>
         </div>
 
-        {/* Spodní předvolby časů a režim */}
+        {/* Spodní předvolby časů (6 minut a 10 minut) a režim */}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-base-200/70 mt-2 text-xs">
           {/* Předvolby */}
           <div className="flex items-center gap-1.5">
             <span className="text-base-content/60 text-[11px]">Předvolby:</span>
-            {[10, 12, 15, 20].map((mins) => (
+            {[6, 10].map((mins) => (
               <button
                 key={mins}
                 type="button"

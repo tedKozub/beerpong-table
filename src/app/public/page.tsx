@@ -6,57 +6,10 @@ import {
 } from "@/actions/stats";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { LeaderboardCard } from "@/components/LeaderboardCard";
+import { StandingsTable } from "@/components/StandingsTable";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-
-function renderRank(idx: number) {
-  if (idx === 0) {
-    return (
-      <span className="badge badge-warning font-black text-xs h-6 sm:h-7 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center whitespace-nowrap">
-        <span className="relative inline-flex items-center justify-center">
-          <span className="tabular-nums">1</span>
-          <span className="absolute left-full top-0 select-none">.</span>
-        </span>
-      </span>
-    );
-  }
-  if (idx === 1) {
-    return (
-      <span className="badge badge-ghost bg-slate-300 text-slate-900 border-slate-300 font-bold text-xs h-6 sm:h-7 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center whitespace-nowrap">
-        <span className="relative inline-flex items-center justify-center">
-          <span className="tabular-nums">2</span>
-          <span className="absolute left-full top-0 select-none">.</span>
-        </span>
-      </span>
-    );
-  }
-  if (idx === 2) {
-    return (
-      <span className="badge badge-ghost bg-amber-800 text-amber-100 border-amber-800 font-bold text-xs h-6 sm:h-7 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center whitespace-nowrap">
-        <span className="relative inline-flex items-center justify-center">
-          <span className="tabular-nums">3</span>
-          <span className="absolute left-full top-0 select-none">.</span>
-        </span>
-      </span>
-    );
-  }
-  return (
-    <span className="text-base-content/70 font-medium pl-1 sm:pl-2 tabular-nums">
-      {idx + 1}.
-    </span>
-  );
-}
-
-function getRowStyle(idx: number) {
-  if (idx === 0)
-    return "bg-warning/15 font-bold hover:bg-warning/25 transition-colors";
-  if (idx === 1)
-    return "bg-base-200/80 font-semibold hover:bg-base-200 transition-colors";
-  if (idx === 2)
-    return "bg-base-200/50 font-medium hover:bg-base-200 transition-colors";
-  return "hover:bg-base-200/40 transition-colors";
-}
 
 export default async function PublicOverviewPage() {
   const activeSeason = await getActiveSeason();
@@ -165,72 +118,10 @@ export default async function PublicOverviewPage() {
                   Celkové Týmové Pořadí
                 </h3>
 
-                {teamStandings.length === 0 ? (
-                  <p className="text-center text-base-content/60 italic py-6">
-                    Zatím nebyly zaznamenány žádné výsledky zápasů.
-                  </p>
-                ) : (
-                  <div className="overflow-x-auto w-full">
-                    <table className="table table-sm sm:table-md w-full">
-                      <thead>
-                        <tr>
-                          <th className="w-12 sm:w-20 px-1.5 sm:px-3 text-center sm:text-left">
-                            <span className="hidden sm:inline">Pořadí</span>
-                            <span className="sm:hidden">#</span>
-                          </th>
-                          <th className="px-2 sm:px-3">Tým</th>
-                          <th className="text-center px-1 sm:px-3">
-                            <span className="hidden sm:inline">Zápasy</span>
-                            <span className="sm:hidden">Z</span>
-                          </th>
-                          <th className="text-center px-1 sm:px-3">
-                            <span className="hidden sm:inline">Výhry</span>
-                            <span className="sm:hidden">V</span>
-                          </th>
-                          <th className="text-center px-1 sm:px-3">
-                            <span className="hidden sm:inline">Remízy</span>
-                            <span className="sm:hidden">R</span>
-                          </th>
-                          <th className="text-center px-1 sm:px-3">
-                            <span className="hidden sm:inline">Prohry</span>
-                            <span className="sm:hidden">P</span>
-                          </th>
-                          <th className="text-right px-2 sm:px-3">
-                            <span className="hidden sm:inline">Body</span>
-                            <span className="sm:hidden">B</span>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {teamStandings.map((t, idx) => (
-                          <tr key={t.teamId} className={getRowStyle(idx)}>
-                            <td className="w-12 sm:w-20 px-1.5 sm:px-3">
-                              {renderRank(idx)}
-                            </td>
-                            <td className="px-2 sm:px-3 font-semibold sm:font-normal">
-                              {t.teamName}
-                            </td>
-                            <td className="text-center px-1 sm:px-3 tabular-nums">
-                              {t.played}
-                            </td>
-                            <td className="text-center px-1 sm:px-3 text-success font-semibold tabular-nums">
-                              {t.wins}
-                            </td>
-                            <td className="text-center px-1 sm:px-3 text-base-content/60 tabular-nums">
-                              {t.draws}
-                            </td>
-                            <td className="text-center px-1 sm:px-3 text-error tabular-nums">
-                              {t.losses}
-                            </td>
-                            <td className="text-right px-2 sm:px-3 font-black text-primary tabular-nums">
-                              {t.points}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                <StandingsTable
+                  standings={teamStandings}
+                  emptyText="Zatím nebyly zaznamenány žádné výsledky zápasů."
+                />
               </div>
             </div>
 

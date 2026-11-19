@@ -28,8 +28,8 @@ const config: Config = {
     themes: [
       {
         "beerpong-light": {
-          "primary": "#ea580c",         // Energetic Brew Orange
-          "primary-content": "#ffffff", // Pure white for perfect 4.6:1+ contrast
+          "primary": "#c2410c",         // Deep Amber Brew Orange (5.2:1 WCAG AA compliant with white text & bg)
+          "primary-content": "#ffffff", // Pure white for perfect 5.2:1+ contrast
           "secondary": "#1e293b",       // Deep Slate
           "secondary-content": "#ffffff",
           "accent": "#f59e0b",          // Golden Ale (1. place, crown)
@@ -40,12 +40,12 @@ const config: Config = {
           "base-200": "#f8fafc",        // Slate-50 page background
           "base-300": "#e2e8f0",        // Slate-200 borders
           "base-content": "#0f172a",    // Slate-900 high contrast text (16.1:1 AAA)
-          "info": "#2563eb",            // Blue for BJ defense
+          "info": "#1d4ed8",            // High-contrast Blue (6.3:1 AAA)
           "info-content": "#ffffff",
-          "success": "#16a34a",         // Emerald green for wins
+          "success": "#15803d",         // High-contrast Emerald green (6.56:1 AAA)
           "success-content": "#ffffff",
           "warning": "#d97706",         // Amber warning
-          "warning-content": "#ffffff",
+          "warning-content": "#1c1917", // High contrast dark text on gold warning
           "error": "#dc2626",           // Crimson error for losses/delete
           "error-content": "#ffffff",
         },

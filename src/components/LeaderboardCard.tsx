@@ -9,6 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Search, Trophy, List } from "lucide-react";
+import { renderRank, getPodiumRowStyle } from "@/lib/podium";
+import { PlayerDetailModal } from "@/components/PlayerDetailModal";
 
 export interface LeaderboardPlayer {
   playerId: number;
@@ -41,6 +43,7 @@ export function LeaderboardCard({
 }: LeaderboardCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [detailPlayerId, setDetailPlayerId] = useState<number | null>(null);
 
   const defaultColTitle =
     valueColumnTitle || (type === "score" ? "Kelímky" : "Vyfouknuto");
@@ -104,18 +107,21 @@ export function LeaderboardCard({
                   {previewPlayers.map((p, idx) => (
                     <tr
                       key={p.playerId}
-                      className={idx === 0 ? "bg-warning/15 font-bold" : ""}
+                      className={getPodiumRowStyle(idx)}
                     >
-                      <td className="text-center px-1 sm:px-2 tabular-nums font-semibold">
-                        {idx === 0 ? (
-                          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-warning/30 text-warning-content text-xs font-black">
-                            1.
-                          </span>
-                        ) : (
-                          `${idx + 1}.`
-                        )}
+                      <td className="w-12 text-center px-1 sm:px-2 tabular-nums">
+                        {renderRank(idx)}
                       </td>
-                      <td className="font-medium px-2">{p.playerName}</td>
+                      <td className="font-semibold px-2">
+                        <button
+                          type="button"
+                          onClick={() => setDetailPlayerId(p.playerId)}
+                          className="text-left hover:text-primary transition-colors underline-offset-2 hover:underline"
+                          title="Zobrazit profil a statistiky hráče"
+                        >
+                          {p.playerName}
+                        </button>
+                      </td>
                       <td
                         className={`text-right px-2 font-bold tabular-nums ${valueColorClass}`}
                       >
@@ -195,37 +201,23 @@ export function LeaderboardCard({
                   </tr>
                 ) : (
                   filteredPlayers.map((p) => {
-                    const isFirst = p.rank === 1;
-                    const isTopThree = p.rank <= 3;
-
                     return (
                       <tr
                         key={p.playerId}
-                        className={`hover:bg-base-200/40 ${
-                          isFirst ? "bg-warning/15 font-bold" : ""
-                        }`}
+                        className={getPodiumRowStyle(p.rank - 1)}
                       >
-                        <td className="text-center tabular-nums font-semibold">
-                          {isTopThree ? (
-                            <span
-                              className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
-                                p.rank === 1
-                                  ? "bg-warning/30 text-warning-content"
-                                  : p.rank === 2
-                                  ? "bg-base-300 text-base-content"
-                                  : "bg-amber-700/20 text-amber-800 dark:text-amber-300"
-                              }`}
-                            >
-                              {p.rank}.
-                            </span>
-                          ) : (
-                            <span className="text-base-content/70">
-                              {p.rank}.
-                            </span>
-                          )}
+                        <td className="w-12 text-center tabular-nums">
+                          {renderRank(p.rank - 1)}
                         </td>
                         <td className="font-semibold text-xs sm:text-sm">
-                          {p.playerName}
+                          <button
+                            type="button"
+                            onClick={() => setDetailPlayerId(p.playerId)}
+                            className="text-left hover:text-primary transition-colors underline-offset-2 hover:underline"
+                            title="Zobrazit profil a statistiky hráče"
+                          >
+                            {p.playerName}
+                          </button>
                         </td>
                         <td className="text-center text-xs tabular-nums hidden sm:table-cell text-base-content/70">
                           {p.matchesPlayed !== undefined ? p.matchesPlayed : "—"}
@@ -257,6 +249,13 @@ export function LeaderboardCard({
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Detail hráče */}
+      <PlayerDetailModal
+        playerId={detailPlayerId}
+        isOpen={Boolean(detailPlayerId)}
+        onOpenChange={(open) => !open && setDetailPlayerId(null)}
+      />
     </div>
   );
 }

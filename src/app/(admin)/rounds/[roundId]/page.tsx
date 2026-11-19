@@ -22,6 +22,9 @@ import { RoundSetup } from "@/components/RoundSetup";
 import { CopyPublicLinkButton } from "@/components/CopyPublicLinkButton";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
 import { LeaderboardCard } from "@/components/LeaderboardCard";
+import { RoundHeaderActions } from "@/components/RoundHeaderActions";
+import { DeleteMatchButton } from "@/components/DeleteMatchButton";
+import { StandingsTable } from "@/components/StandingsTable";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -119,6 +122,13 @@ export default async function RoundDetailPage({
             scoreLeaderboard={scoreLeaderboard}
             bjLeaderboard={bjLeaderboard}
           />
+          <RoundHeaderActions
+            roundId={roundId}
+            seasonId={currentRound.seasonId}
+            currentName={currentRound.name}
+            currentDate={currentRound.date}
+            isCompleted={currentRound.isCompleted}
+          />
 
           {/* Přepínač stavu dokončení večera */}
           <form
@@ -178,66 +188,10 @@ export default async function RoundDetailPage({
             Výsledky a body získané v tomto kole
           </p>
 
-          {teamStandings.length === 0 ? (
-            <p className="text-base-content/60 italic py-6 text-center text-sm">
-              V tomto kole zatím nebyly zapsány žádné výsledky.
-            </p>
-          ) : (
-            <div className="overflow-x-auto w-full">
-              <table className="table table-sm sm:table-md w-full">
-                <thead>
-                  <tr className="bg-base-200/50">
-                    <th className="w-10 sm:w-12 text-center px-1 sm:px-3">Poř.</th>
-                    <th className="px-2 sm:px-3">Tým</th>
-                    <th className="text-center px-1 sm:px-3">
-                      <span className="hidden sm:inline">Zápasy</span>
-                      <span className="sm:hidden">Z</span>
-                    </th>
-                    <th className="text-center px-1 sm:px-3">
-                      <span className="hidden sm:inline">Výhry</span>
-                      <span className="sm:hidden">V</span>
-                    </th>
-                    <th className="text-center px-1 sm:px-3">
-                      <span className="hidden sm:inline">Remízy</span>
-                      <span className="sm:hidden">R</span>
-                    </th>
-                    <th className="text-center px-1 sm:px-3">
-                      <span className="hidden sm:inline">Prohry</span>
-                      <span className="sm:hidden">P</span>
-                    </th>
-                    <th className="text-right px-2 sm:px-3">
-                      <span className="hidden sm:inline">Body</span>
-                      <span className="sm:hidden">B</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {teamStandings.map((t, idx) => (
-                    <tr
-                      key={t.teamId}
-                      className={idx === 0 ? "bg-warning/15 font-bold" : ""}
-                    >
-                      <td className="text-center px-1 sm:px-3 tabular-nums font-semibold">
-                        {idx + 1}.
-                      </td>
-                      <td className="font-semibold px-2 sm:px-3">{t.teamName}</td>
-                      <td className="text-center px-1 sm:px-3 tabular-nums">{t.played}</td>
-                      <td className="text-center px-1 sm:px-3 text-success tabular-nums font-semibold">
-                        {t.wins}
-                      </td>
-                      <td className="text-center px-1 sm:px-3 text-base-content/60 tabular-nums">
-                        {t.draws}
-                      </td>
-                      <td className="text-center px-1 sm:px-3 text-error tabular-nums">{t.losses}</td>
-                      <td className="text-right px-2 sm:px-3 font-black text-primary tabular-nums">
-                        {t.points}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <StandingsTable
+            standings={teamStandings}
+            emptyText="V tomto kole zatím nebyly zapsány žádné výsledky."
+          />
         </div>
       </section>
 
@@ -261,17 +215,24 @@ export default async function RoundDetailPage({
         />
       </div>
 
-      {/* Zápasy večera */}
-      <section className="card bg-base-100 shadow-md border border-base-200">
-        <div className="card-body p-4 sm:p-6">
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-bold">Odehraná utkání večera</h2>
-            <span className="badge badge-neutral text-xs tabular-nums">
-              {matchesWithDetails.length} zápasů
+      {/* Zápasy večera (sbalitelná sekce) */}
+      <details className="collapse collapse-arrow bg-base-100 shadow-md border border-base-200" open>
+        <summary className="collapse-title p-4 sm:p-6 cursor-pointer select-none font-bold text-lg flex items-center justify-between pr-12">
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-bold inline">Odehraná utkání večera</h2>
+            <span className="badge badge-neutral text-xs tabular-nums font-normal">
+              {matchesWithDetails.length}{" "}
+              {matchesWithDetails.length === 1
+                ? "zápas"
+                : matchesWithDetails.length >= 2 && matchesWithDetails.length <= 4
+                ? "zápasy"
+                : "zápasů"}
             </span>
           </div>
+        </summary>
 
-          <div className="flex flex-col gap-3">
+        <div className="collapse-content px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
+          <div className="flex flex-col gap-3 pt-1">
             {matchesWithDetails.map((m) => (
               <div
                 key={m.id}
@@ -287,20 +248,7 @@ export default async function RoundDetailPage({
                   <div className="flex-1 text-center sm:text-left font-bold text-base">
                     {m.team2Name}
                   </div>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await deleteMatch(m.id);
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="btn btn-ghost btn-xs text-error hover:bg-error/10"
-                      title="Smazat zápas"
-                    >
-                      Smazat
-                    </button>
-                  </form>
+                  <DeleteMatchButton matchId={m.id} />
                 </div>
 
                 {m.playerScores && m.playerScores.length > 0 && (
@@ -350,7 +298,7 @@ export default async function RoundDetailPage({
             )}
           </div>
         </div>
-      </section>
+      </details>
 
       {/* Nastavení kola a aktivní týmy (při vygenerovaném rozpisu přístupné v akordeonu) */}
       {schedule.length > 0 && (

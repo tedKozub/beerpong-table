@@ -7,6 +7,7 @@ import {
 import Link from "next/link";
 import { LeaderboardCard } from "@/components/LeaderboardCard";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
+import { StandingsTable } from "@/components/StandingsTable";
 
 export default async function HomePage() {
   const activeSeason = await getActiveSeason();
@@ -126,76 +127,10 @@ export default async function HomePage() {
             Součet bodů ze všech odehraných kol
           </p>
 
-          {teamStandings.length === 0 ? (
-            <p className="text-base-content/60 italic py-6 text-center text-sm">
-              Zatím nebyly zaznamenány žádné výsledky zápasů.
-            </p>
-          ) : (
-            <div className="overflow-x-auto w-full">
-              <table className="table table-sm sm:table-md w-full">
-                <thead>
-                  <tr className="bg-base-200/50">
-                    <th className="w-10 sm:w-12 text-center px-1 sm:px-3">Poř.</th>
-                    <th className="px-2 sm:px-3">Tým</th>
-                    <th className="text-center px-1 sm:px-3">
-                      <span className="hidden sm:inline">Zápasy</span>
-                      <span className="sm:hidden">Z</span>
-                    </th>
-                    <th className="text-center px-1 sm:px-3">
-                      <span className="hidden sm:inline">Výhry</span>
-                      <span className="sm:hidden">V</span>
-                    </th>
-                    <th className="text-center px-1 sm:px-3">
-                      <span className="hidden sm:inline">Remízy</span>
-                      <span className="sm:hidden">R</span>
-                    </th>
-                    <th className="text-center px-1 sm:px-3">
-                      <span className="hidden sm:inline">Prohry</span>
-                      <span className="sm:hidden">P</span>
-                    </th>
-                    <th className="text-right px-2 sm:px-3">
-                      <span className="hidden sm:inline">Body</span>
-                      <span className="sm:hidden">B</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {teamStandings.map((t, idx) => (
-                    <tr
-                      key={t.teamId}
-                      className={
-                        idx === 0
-                          ? "bg-warning/15 font-bold"
-                          : idx < 3
-                          ? "font-semibold"
-                          : ""
-                      }
-                    >
-                      <td className="text-center px-1 sm:px-3">
-                        <span className="font-bold tabular-nums">
-                          {idx + 1}.
-                        </span>
-                      </td>
-                      <td className="font-semibold px-2 sm:px-3">{t.teamName}</td>
-                      <td className="text-center px-1 sm:px-3 tabular-nums">{t.played}</td>
-                      <td className="text-center px-1 sm:px-3 text-success tabular-nums font-semibold">
-                        {t.wins}
-                      </td>
-                      <td className="text-center px-1 sm:px-3 text-base-content/60 tabular-nums">
-                        {t.draws}
-                      </td>
-                      <td className="text-center px-1 sm:px-3 text-error tabular-nums">
-                        {t.losses}
-                      </td>
-                      <td className="text-right px-2 sm:px-3 font-black text-primary tabular-nums">
-                        {t.points}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <StandingsTable
+            standings={teamStandings}
+            emptyText="Zatím nebyly zaznamenány žádné výsledky zápasů."
+          />
         </div>
       </section>
 

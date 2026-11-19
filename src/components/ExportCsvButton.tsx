@@ -145,56 +145,31 @@ export function ExportCsvButton({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1.5 w-64 rounded-xl bg-base-100 p-1.5 shadow-xl border border-base-200 z-50 animate-in fade-in zoom-in-95">
-          <div className="px-3 py-1.5 border-b border-base-200 mb-1">
-            <span className="text-[11px] font-bold text-base-content/60 uppercase tracking-wider">
-              Vyberte formát ke stažení
-            </span>
-          </div>
-
-          {/* 1. Excel XLSX - primární doporučený formát */}
+        <div className="absolute right-0 mt-1.5 w-48 rounded-xl bg-base-100 p-1 shadow-xl border border-base-200 z-50 animate-in fade-in zoom-in-95">
+          {/* 1. Excel XLSX */}
           <button
             type="button"
             onClick={() => {
               handleExportXlsx();
               setIsOpen(false);
             }}
-            className="w-full flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-base-200 text-left transition-colors group"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-base-200 text-left transition-colors font-semibold text-xs text-base-content"
           >
-            <div className="p-1.5 rounded-md bg-primary/10 text-primary mt-0.5 group-hover:bg-primary group-hover:text-primary-content transition-colors">
-              <FileSpreadsheet className="h-4 w-4" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between gap-1">
-                <span className="font-bold text-xs">Excel (.xlsx)</span>
-                <span className="badge badge-primary badge-xs text-[10px] font-bold">
-                  Doporučeno
-                </span>
-              </div>
-              <p className="text-[11px] text-base-content/60 mt-0.5 leading-snug">
-                Formátované listy pro týmy, střelce a BlowJob Kinga
-              </p>
-            </div>
+            <FileSpreadsheet className="h-4 w-4 text-primary shrink-0" />
+            <span>Excel (.xlsx)</span>
           </button>
 
-          {/* 2. CSV - sekundární textový formát */}
+          {/* 2. CSV */}
           <button
             type="button"
             onClick={() => {
               handleExportCsv();
               setIsOpen(false);
             }}
-            className="w-full flex items-start gap-2.5 p-2.5 rounded-lg hover:bg-base-200 text-left transition-colors group mt-0.5"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-base-200 text-left transition-colors font-semibold text-xs text-base-content"
           >
-            <div className="p-1.5 rounded-md bg-base-200 text-base-content/70 mt-0.5 group-hover:bg-neutral group-hover:text-neutral-content transition-colors">
-              <Download className="h-4 w-4" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <span className="font-bold text-xs">CSV (.csv)</span>
-              <p className="text-[11px] text-base-content/60 mt-0.5 leading-snug">
-                Jednoduchý textový soubor pro další zpracování
-              </p>
-            </div>
+            <Download className="h-4 w-4 text-base-content/70 shrink-0" />
+            <span>CSV (.csv)</span>
           </button>
         </div>
       )}

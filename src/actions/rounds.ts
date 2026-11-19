@@ -46,10 +46,14 @@ export async function createRound(data: {
 
 export async function updateRound(id: number, data: Partial<Round>) {
   await requireAuth();
+  const trimmedName = data.name !== undefined ? data.name.trim() : undefined;
+  if (trimmedName !== undefined && !trimmedName) {
+    throw new Error("Název kola nesmí být prázdný.");
+  }
   const result = await db
     .update(round)
     .set({
-      ...(data.name ? { name: data.name } : {}),
+      ...(trimmedName !== undefined ? { name: trimmedName } : {}),
       ...(data.roundNumber !== undefined
         ? { roundNumber: data.roundNumber }
         : {}),

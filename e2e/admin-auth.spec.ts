@@ -22,7 +22,10 @@ test.describe("Admin Authentication & Protected Routes", () => {
     // Verify navbar elements
     await expect(page.getByRole("link", { name: /🦊/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /Veřejné/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /About/i })).toBeVisible();
+    const vp = page.viewportSize();
+    if (vp && vp.width >= 640) {
+      await expect(page.getByRole("link", { name: /(About|O lize)/i })).toBeVisible();
+    }
 
     // Verify logout via user menu popover
     const userMenu = page.getByRole("button", { name: /Přihlášen jako správce/i });

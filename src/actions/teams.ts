@@ -18,28 +18,81 @@ export async function getTeamById(id: number) {
 
 export async function createTeam(data: { name: string; seasonId: number }) {
   await requireAuth();
-  const result = await db
-    .insert(team)
-    .values({
-      name: data.name,
-      seasonId: data.seasonId,
-    })
-    .returning();
-  revalidatePath("/");
-  return result[0];
+  const trimmed = data.name.trim();
+  if (!trimmed) {
+    throw new Error("Název týmu nesmí být prázdný.");
+  }
+
+  // Kontrola duplicitního názvu týmu v dané sezóně
+  const existing = await db
+    .select()
+    .from(team)
+    .where(and(eq(team.seasonId, data.seasonId), eq(team.name, trimmed)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    throw new Error(`Tým s názvem „${trimmed}“ již v této sezóně existuje.`);
+  }
+
+  try {
+    const result = await db
+      .insert(team)
+      .values({
+        name: trimmed,
+        seasonId: data.seasonId,
+      })
+      .returning();
+    revalidatePath("/");
+    return result[0];
+  } catch (err: any) {
+    if (err?.code === "23505" || err?.message?.includes("unique")) {
+      throw new Error(`Tým s názvem „${trimmed}“ již v této sezóně existuje.`);
+    }
+    throw err;
+  }
 }
 
 export async function updateTeam(id: number, data: Partial<Team>) {
   await requireAuth();
-  const result = await db
-    .update(team)
-    .set({
-      ...(data.name ? { name: data.name } : {}),
-    })
-    .where(eq(team.id, id))
-    .returning();
-  revalidatePath("/");
-  return result[0];
+  const current = await getTeamById(id);
+  if (!current) {
+    throw new Error("Tým nebyl nalezen.");
+  }
+
+  const trimmed = data.name !== undefined ? data.name.trim() : undefined;
+  if (trimmed !== undefined) {
+    if (!trimmed) {
+      throw new Error("Název týmu nesmí být prázdný.");
+    }
+
+    // Kontrola, zda jiný tým v téže sezóně nemá stejný název
+    const existing = await db
+      .select()
+      .from(team)
+      .where(and(eq(team.seasonId, current.seasonId), eq(team.name, trimmed)))
+      .limit(1);
+
+    if (existing.length > 0 && existing[0].id !== id) {
+      throw new Error(`Tým s názvem „${trimmed}“ již v této sezóně existuje.`);
+    }
+  }
+
+  try {
+    const result = await db
+      .update(team)
+      .set({
+        ...(trimmed !== undefined ? { name: trimmed } : {}),
+      })
+      .where(eq(team.id, id))
+      .returning();
+    revalidatePath("/");
+    return result[0];
+  } catch (err: any) {
+    if (err?.code === "23505" || err?.message?.includes("unique")) {
+      throw new Error(`Tým s tímto názvem již v této sezóně existuje.`);
+    }
+    throw err;
+  }
 }
 
 export async function deleteTeam(id: number) {
