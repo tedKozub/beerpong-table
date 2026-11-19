@@ -5,6 +5,7 @@ import {
   getSeasonTeamStandings,
 } from "@/actions/stats";
 import { PublicNavbar } from "@/components/PublicNavbar";
+import { LeaderboardCard } from "@/components/LeaderboardCard";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -235,91 +236,22 @@ export default async function PublicOverviewPage() {
 
             {/* Dvě tabulky střelců vedle sebe - zarovnané na 100 % šířky jako v PR #27 */}
             <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-              {/* Historicky Král střelců */}
-              <div className="card bg-base-100 w-full shadow-lg border border-base-200">
-                <div className="card-body p-3.5 sm:p-6">
-                  <h3 className="card-title text-base sm:text-xl justify-center mb-3">
-                    Historicky Král střelců
-                  </h3>
-                  {scoreLeaderboard.length === 0 ? (
-                    <p className="text-center text-base-content/60 italic py-6">
-                      Žádná individuální data.
-                    </p>
-                  ) : (
-                    <div className="overflow-x-auto w-full">
-                      <table className="table table-sm sm:table-md w-full">
-                        <thead>
-                          <tr>
-                            <th className="w-14 sm:w-20 px-2 sm:px-3 text-center sm:text-left">
-                              Pořadí
-                            </th>
-                            <th className="px-2 sm:px-3">Hráč</th>
-                            <th className="text-right px-2 sm:px-3">Skóre</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {scoreLeaderboard.slice(0, 10).map((p, idx) => (
-                            <tr key={p.playerId} className={getRowStyle(idx)}>
-                              <td className="w-14 sm:w-20 px-2 sm:px-3">
-                                {renderRank(idx)}
-                              </td>
-                              <td className="px-2 sm:px-3 font-semibold sm:font-normal">
-                                {p.playerName}
-                              </td>
-                              <td className="text-right px-2 sm:px-3 font-bold tabular-nums">
-                                {p.totalScore}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Historicky BlowJob King */}
-              <div className="card bg-base-100 w-full shadow-lg border border-base-200">
-                <div className="card-body p-3.5 sm:p-6">
-                  <h3 className="card-title text-base sm:text-xl justify-center mb-3">
-                    Historicky BlowJob King
-                  </h3>
-                  {bjLeaderboard.length === 0 ? (
-                    <p className="text-center text-base-content/60 italic py-6">
-                      Žádná individuální data.
-                    </p>
-                  ) : (
-                    <div className="overflow-x-auto w-full">
-                      <table className="table table-sm sm:table-md w-full">
-                        <thead>
-                          <tr>
-                            <th className="w-14 sm:w-20 px-2 sm:px-3 text-center sm:text-left">
-                              Pořadí
-                            </th>
-                            <th className="px-2 sm:px-3">Hráč</th>
-                            <th className="text-right px-2 sm:px-3">Počet</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {bjLeaderboard.slice(0, 10).map((p, idx) => (
-                            <tr key={p.playerId} className={getRowStyle(idx)}>
-                              <td className="w-14 sm:w-20 px-2 sm:px-3">
-                                {renderRank(idx)}
-                              </td>
-                              <td className="px-2 sm:px-3 font-semibold sm:font-normal">
-                                {p.playerName}
-                              </td>
-                              <td className="text-right px-2 sm:px-3 font-bold tabular-nums">
-                                {p.totalBlowjobs}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <LeaderboardCard
+                title="Historicky Král střelců"
+                subtitle="Trefené kelímky"
+                players={scoreLeaderboard}
+                type="score"
+                previewLimit={5}
+                variant="public"
+              />
+              <LeaderboardCard
+                title="Historicky BlowJob King"
+                subtitle="Vyfouknuté kelímky"
+                players={bjLeaderboard}
+                type="blowjob"
+                previewLimit={5}
+                variant="public"
+              />
             </div>
           </div>
         </section>

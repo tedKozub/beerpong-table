@@ -5,6 +5,8 @@ import {
   getSeasonTeamStandings,
 } from "@/actions/stats";
 import Link from "next/link";
+import { LeaderboardCard } from "@/components/LeaderboardCard";
+import { ExportCsvButton } from "@/components/ExportCsvButton";
 
 export default async function HomePage() {
   const activeSeason = await getActiveSeason();
@@ -49,7 +51,13 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <ExportCsvButton
+            roundName={`Liga - ${activeSeason.name}`}
+            standings={teamStandings}
+            scoreLeaderboard={scoreLeaderboard}
+            bjLeaderboard={bjLeaderboard}
+          />
           <Link
             href={`/seasons/${activeSeason.id}`}
             className="btn btn-primary btn-sm text-xs"
@@ -193,97 +201,20 @@ export default async function HomePage() {
 
       {/* Dvě tabulky střelců vedle sebe */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Král střelců */}
-        <section className="card bg-base-100 shadow-md border border-base-200">
-          <div className="card-body p-3.5 sm:p-6">
-            <h3 className="font-bold text-base mb-0.5">
-              Král střelců semestru
-            </h3>
-            <p className="text-xs text-base-content/60 mb-3">
-              Trefené kelímky
-            </p>
-
-            {scoreLeaderboard.length === 0 ? (
-              <p className="text-base-content/60 italic py-4 text-center text-xs">
-                Žádná individuální data.
-              </p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="table table-sm w-full">
-                  <thead>
-                    <tr className="bg-base-200/50">
-                      <th className="w-10 text-center px-1 sm:px-2">Poř.</th>
-                      <th className="px-2">Hráč</th>
-                      <th className="text-right px-2">Kelímky</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {scoreLeaderboard.slice(0, 8).map((p, idx) => (
-                      <tr
-                        key={p.playerId}
-                        className={idx === 0 ? "bg-warning/15 font-bold" : ""}
-                      >
-                        <td className="text-center px-1 sm:px-2 tabular-nums font-semibold">
-                          {idx + 1}.
-                        </td>
-                        <td className="font-medium px-2">{p.playerName}</td>
-                        <td className="text-right px-2 font-bold tabular-nums text-primary">
-                          {p.totalScore}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* BlowJob King */}
-        <section className="card bg-base-100 shadow-md border border-base-200">
-          <div className="card-body p-3.5 sm:p-6">
-            <h3 className="font-bold text-base mb-0.5">
-              BlowJob King semestru
-            </h3>
-            <p className="text-xs text-base-content/60 mb-3">
-              Vyfouknuté kelímky
-            </p>
-
-            {bjLeaderboard.length === 0 ? (
-              <p className="text-base-content/60 italic py-4 text-center text-xs">
-                Žádná individuální data.
-              </p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="table table-sm w-full">
-                  <thead>
-                    <tr className="bg-base-200/50">
-                      <th className="w-10 text-center px-1 sm:px-2">Poř.</th>
-                      <th className="px-2">Hráč</th>
-                      <th className="text-right px-2">Vyfouknuto</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bjLeaderboard.slice(0, 8).map((p, idx) => (
-                      <tr
-                        key={p.playerId}
-                        className={idx === 0 ? "bg-warning/15 font-bold" : ""}
-                      >
-                        <td className="text-center px-1 sm:px-2 tabular-nums font-semibold">
-                          {idx + 1}.
-                        </td>
-                        <td className="font-medium px-2">{p.playerName}</td>
-                        <td className="text-right px-2 font-bold tabular-nums text-info">
-                          {p.totalBlowjobs}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </section>
+        <LeaderboardCard
+          title="Král střelců semestru"
+          subtitle="Trefené kelímky"
+          players={scoreLeaderboard}
+          type="score"
+          previewLimit={5}
+        />
+        <LeaderboardCard
+          title="BlowJob King semestru"
+          subtitle="Vyfouknuté kelímky"
+          players={bjLeaderboard}
+          type="blowjob"
+          previewLimit={5}
+        />
       </div>
     </div>
   );

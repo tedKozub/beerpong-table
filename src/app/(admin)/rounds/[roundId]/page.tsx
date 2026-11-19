@@ -21,6 +21,7 @@ import { ScheduleSection } from "@/components/ScheduleSection";
 import { RoundSetup } from "@/components/RoundSetup";
 import { CopyPublicLinkButton } from "@/components/CopyPublicLinkButton";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
+import { LeaderboardCard } from "@/components/LeaderboardCard";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -242,75 +243,22 @@ export default async function RoundDetailPage({
 
       {/* Střelci a BlowJob King kola */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        <div className="card bg-base-100 shadow-md border border-base-200 p-3.5 sm:p-5">
-          <h3 className="font-bold text-base mb-2">Střelci kola</h3>
-          {scoreLeaderboard.length === 0 ? (
-            <p className="text-xs text-base-content/60 italic py-3 text-center">
-              Žádné statistiky.
-            </p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="table table-sm w-full">
-                <thead>
-                  <tr className="bg-base-200/50">
-                    <th className="w-10 text-center px-1 sm:px-2">#</th>
-                    <th className="px-2">Hráč</th>
-                    <th className="text-right px-2">Kelímky</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {scoreLeaderboard.slice(0, 8).map((p, idx) => (
-                    <tr
-                      key={p.playerId}
-                      className={idx === 0 ? "bg-warning/15 font-bold" : ""}
-                    >
-                      <td className="text-center px-1 sm:px-2 tabular-nums">{idx + 1}.</td>
-                      <td className="font-medium px-2">{p.playerName}</td>
-                      <td className="text-right px-2 font-bold tabular-nums text-primary">
-                        {p.totalScore}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        <div className="card bg-base-100 shadow-md border border-base-200 p-3.5 sm:p-5">
-          <h3 className="font-bold text-base mb-2">BlowJob King kola</h3>
-          {bjLeaderboard.length === 0 ? (
-            <p className="text-xs text-base-content/60 italic py-3 text-center">
-              Žádné statistiky.
-            </p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="table table-sm w-full">
-                <thead>
-                  <tr className="bg-base-200/50">
-                    <th className="w-10 text-center px-1 sm:px-2">#</th>
-                    <th className="px-2">Hráč</th>
-                    <th className="text-right px-2">Vyfouknuto</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bjLeaderboard.slice(0, 8).map((p, idx) => (
-                    <tr
-                      key={p.playerId}
-                      className={idx === 0 ? "bg-warning/15 font-bold" : ""}
-                    >
-                      <td className="text-center px-1 sm:px-2 tabular-nums">{idx + 1}.</td>
-                      <td className="font-medium px-2">{p.playerName}</td>
-                      <td className="text-right px-2 font-bold tabular-nums text-info">
-                        {p.totalBlowjobs}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+        <LeaderboardCard
+          title="Střelci kola"
+          subtitle="Trefené kelímky"
+          players={scoreLeaderboard}
+          type="score"
+          previewLimit={5}
+          emptyText="Žádné statistiky."
+        />
+        <LeaderboardCard
+          title="BlowJob King kola"
+          subtitle="Vyfouknuté kelímky"
+          players={bjLeaderboard}
+          type="blowjob"
+          previewLimit={5}
+          emptyText="Žádné statistiky."
+        />
       </div>
 
       {/* Zápasy večera */}

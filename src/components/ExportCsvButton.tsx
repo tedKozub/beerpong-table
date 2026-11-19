@@ -2,22 +2,8 @@
 
 import { useToast } from "@/hooks/use-toast";
 import { downloadCSVFile, escapeCSV } from "@/lib/csv";
-import { Download } from "lucide-react";
-
-interface TeamStandingItem {
-  teamName: string;
-  played: number;
-  wins: number;
-  draws: number;
-  losses: number;
-  points: number;
-}
-
-interface LeaderboardItem {
-  playerName: string;
-  totalScore?: number;
-  totalBlowjobs?: number;
-}
+import { generateAndDownloadXlsx, TeamStandingItem, LeaderboardItem } from "@/lib/exportXlsx";
+import { Download, FileSpreadsheet } from "lucide-react";
 
 interface ExportCsvButtonProps {
   roundName: string;
@@ -34,7 +20,29 @@ export function ExportCsvButton({
 }: ExportCsvButtonProps) {
   const { toast } = useToast();
 
-  const handleExport = () => {
+  const handleExportXlsx = async () => {
+    try {
+      await generateAndDownloadXlsx({
+        title: roundName,
+        standings,
+        scoreLeaderboard,
+        bjLeaderboard,
+      });
+
+      toast({
+        title: "XLSX export stažen",
+        description: `Výsledky ${roundName} byly uloženy do Excel tabulky (.xlsx).`,
+      });
+    } catch (err: any) {
+      toast({
+        title: "Chyba při exportu do XLSX",
+        description: err?.message || "Export se nezdařil.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleExportCsv = () => {
     try {
       const lines: string[] = [];
 
@@ -92,14 +100,29 @@ export function ExportCsvButton({
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleExport}
-      className="btn btn-outline btn-sm text-xs gap-1.5"
-      title="Exportovat výsledky kola do CSV"
-    >
-      <Download className="w-3.5 h-3.5" />
-      <span>Export CSV</span>
-    </button>
+    <div className="join inline-flex shadow-sm">
+      <button
+        type="button"
+        onClick={handleExportXlsx}
+        className="btn btn-primary btn-sm text-xs gap-1.5 join-item font-semibold"
+        title="Stáhnout výsledky v moderním Excel formátu (.xlsx)"
+      >
+        <FileSpreadsheet className="h-3.5 w-3.5" />
+        <span>Stáhnout XLSX</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={handleExportCsv}
+        className="btn btn-outline btn-sm text-xs gap-1.5 join-item"
+        title="Stáhnout výsledky v CSV formátu"
+      >
+        <Download className="h-3.5 w-3.5" />
+        <span>Export CSV</span>
+      </button>
+    </div>
   );
 }
+
+// Re-export alias pro jednotné pojmenování
+export { ExportCsvButton as ExportResultsButton };

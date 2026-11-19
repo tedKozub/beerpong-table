@@ -12,6 +12,7 @@ import { ScheduleSection } from "@/components/ScheduleSection";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { CopyPublicLinkButton } from "@/components/CopyPublicLinkButton";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
+import { LeaderboardCard } from "@/components/LeaderboardCard";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -236,81 +237,24 @@ export default async function PublicRoundDetailPage({
 
         {/* Dvě tabulky střelců večera vedle sebe */}
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-          <div className="card bg-base-100 w-full shadow-lg border border-base-200">
-            <div className="card-body p-3.5 sm:p-6">
-              <h3 className="card-title text-base sm:text-xl justify-center mb-3">
-                Střelci kola
-              </h3>
-              {scoreLeaderboard.length === 0 ? (
-                <p className="text-center text-base-content/60 italic py-4 text-xs">
-                  Žádná data.
-                </p>
-              ) : (
-                <div className="overflow-x-auto w-full">
-                  <table className="table table-sm w-full">
-                    <thead>
-                      <tr>
-                        <th className="w-14 px-2 sm:px-3 text-center sm:text-left">
-                          Pořadí
-                        </th>
-                        <th className="px-2 sm:px-3">Hráč</th>
-                        <th className="text-right px-2 sm:px-3">Skóre</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {scoreLeaderboard.slice(0, 8).map((p, idx) => (
-                        <tr key={p.playerId} className={getRowStyle(idx)}>
-                          <td className="w-14 px-2 sm:px-3">{renderRank(idx)}</td>
-                          <td className="px-2 sm:px-3 font-medium">{p.playerName}</td>
-                          <td className="text-right px-2 sm:px-3 font-bold tabular-nums">
-                            {p.totalScore}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="card bg-base-100 w-full shadow-lg border border-base-200">
-            <div className="card-body p-3.5 sm:p-6">
-              <h3 className="card-title text-base sm:text-xl justify-center mb-3">
-                BlowJob King kola
-              </h3>
-              {bjLeaderboard.length === 0 ? (
-                <p className="text-center text-base-content/60 italic py-4 text-xs">
-                  Žádná data.
-                </p>
-              ) : (
-                <div className="overflow-x-auto w-full">
-                  <table className="table table-sm w-full">
-                    <thead>
-                      <tr>
-                        <th className="w-14 px-2 sm:px-3 text-center sm:text-left">
-                          Pořadí
-                        </th>
-                        <th className="px-2 sm:px-3">Hráč</th>
-                        <th className="text-right px-2 sm:px-3">Počet</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {bjLeaderboard.slice(0, 8).map((p, idx) => (
-                        <tr key={p.playerId} className={getRowStyle(idx)}>
-                          <td className="w-14 px-2 sm:px-3">{renderRank(idx)}</td>
-                          <td className="px-2 sm:px-3 font-medium">{p.playerName}</td>
-                          <td className="text-right px-2 sm:px-3 font-bold tabular-nums text-info">
-                            {p.totalBlowjobs}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
+          <LeaderboardCard
+            title="Střelci kola"
+            subtitle="Trefené kelímky"
+            players={scoreLeaderboard}
+            type="score"
+            previewLimit={5}
+            emptyText="Žádná data."
+            variant="public"
+          />
+          <LeaderboardCard
+            title="BlowJob King kola"
+            subtitle="Vyfouknuté kelímky"
+            players={bjLeaderboard}
+            type="blowjob"
+            previewLimit={5}
+            emptyText="Žádná data."
+            variant="public"
+          />
         </div>
 
         {/* Zápasy večera */}

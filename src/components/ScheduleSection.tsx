@@ -10,6 +10,7 @@ import {
 } from "@/lib/schedulePdf";
 import { useState } from "react";
 import { ScoreInputDialog } from "./ScoreInputDialog";
+import { TournamentStopwatch } from "./TournamentStopwatch";
 
 interface PlayerOption {
   id: number;
@@ -124,6 +125,9 @@ export function ScheduleSection({
           </div>
         </div>
       </section>
+
+      {/* Turnajové stopky pro měření času zápasů a vln */}
+      <TournamentStopwatch />
 
       {/* Aktuální vlna zápasů (srihak styl) */}
       {currentWave !== null && waves.has(currentWave) && (
