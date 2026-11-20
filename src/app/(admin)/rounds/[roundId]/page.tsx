@@ -300,6 +300,55 @@ export default async function RoundDetailPage({
         </div>
       </details>
 
+      {/* Soupisky týmů pro tento večer (sbalitelná sekce) */}
+      <details className="collapse collapse-arrow bg-base-100 shadow-md border border-base-200" open>
+        <summary className="collapse-title p-4 sm:p-6 cursor-pointer select-none font-bold text-lg flex items-center justify-between pr-12">
+          <div>
+            <h2 className="text-lg font-bold inline">
+              Soupisky týmů pro tento večer
+            </h2>
+            <p className="text-xs text-base-content/60 mt-0.5 font-normal">
+              Rozdělení hráčů platné pro toto konkrétní kolo
+            </p>
+          </div>
+        </summary>
+        <div className="collapse-content px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pt-1">
+            {teams.map((t) => {
+              const teamMembers = roster.filter((r) => r.teamId === t.id);
+              return (
+                <div
+                  key={t.id}
+                  className="bg-base-200/60 border border-base-300 p-3 rounded-lg flex flex-col gap-2"
+                >
+                  <h3 className="font-bold text-sm flex justify-between items-center">
+                    <span>{t.name}</span>
+                    <span className="badge badge-sm badge-neutral tabular-nums font-semibold">
+                      {teamMembers.length}
+                    </span>
+                  </h3>
+                  <div className="flex flex-col gap-1 mt-0.5">
+                    {teamMembers.map((m) => (
+                      <div
+                        key={m.id}
+                        className="bg-base-100 px-2 py-1 rounded text-xs font-medium"
+                      >
+                        {m.playerName}
+                      </div>
+                    ))}
+                    {teamMembers.length === 0 && (
+                      <span className="text-xs text-base-content/50 italic py-0.5">
+                        Žádní hráči nepřiřazeni.
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </details>
+
       {/* Nastavení kola a aktivní týmy (při vygenerovaném rozpisu přístupné v akordeonu) */}
       {schedule.length > 0 && (
         <details className="card bg-base-100 shadow-md border border-base-200">

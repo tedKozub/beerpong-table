@@ -236,12 +236,23 @@ export function ScheduleSection({
         </section>
       )}
 
-      {/* Celý rozpis (všechny vlny přehledně) */}
-      <section className="card bg-base-100 shadow-md border border-base-200">
-        <div className="card-body p-4 sm:p-6">
-          <h3 className="text-lg font-bold mb-3">Celý rozpis turnajového večera</h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Celý rozpis (všechny vlny přehledně - sbalitelná sekce) */}
+      <details className="collapse collapse-arrow bg-base-100 shadow-md border border-base-200" open>
+        <summary className="collapse-title p-4 sm:p-6 cursor-pointer select-none font-bold text-lg flex items-center justify-between pr-12">
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-bold inline">Celý rozpis turnajového večera</h3>
+            <span className="badge badge-neutral text-xs tabular-nums font-normal">
+              {schedule.length}{" "}
+              {schedule.length === 1
+                ? "zápas"
+                : schedule.length >= 2 && schedule.length <= 4
+                ? "zápasy"
+                : "zápasů"}
+            </span>
+          </div>
+        </summary>
+        <div className="collapse-content px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
             {Array.from(waves.entries()).map(([waveNumber, matches]) => (
               <div
                 key={waveNumber}
@@ -320,7 +331,7 @@ export function ScheduleSection({
             ))}
           </div>
         </div>
-      </section>
+      </details>
 
       {/* Dialog pro zadání bodů a blowjobů (otevře se po kliknutí na zápas) */}
       {selectedMatch && (

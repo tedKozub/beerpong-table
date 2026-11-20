@@ -233,16 +233,19 @@ export default async function PublicRoundDetailPage({
         </details>
 
         {/* Týmové soupisky pro toto kolo */}
-        <section className="card bg-base-100 shadow-md border border-base-200">
-          <div className="card-body p-4 sm:p-6">
-            <h2 className="text-lg font-bold mb-1">
-              Soupisky týmů pro tento večer
-            </h2>
-            <p className="text-xs text-base-content/60 mb-3">
-              Rozdělení hráčů platné pro toto konkrétní kolo
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        <details className="collapse collapse-arrow bg-base-100 shadow-md border border-base-200" open>
+          <summary className="collapse-title p-4 sm:p-6 cursor-pointer select-none font-bold text-lg flex items-center justify-between pr-12">
+            <div>
+              <h2 className="text-lg font-bold inline">
+                Soupisky týmů pro tento večer
+              </h2>
+              <p className="text-xs text-base-content/60 mt-0.5 font-normal">
+                Rozdělení hráčů platné pro toto konkrétní kolo
+              </p>
+            </div>
+          </summary>
+          <div className="collapse-content px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pt-1">
               {teams.map((t) => {
                 const teamMembers = roster.filter((r) => r.teamId === t.id);
                 return (
@@ -276,7 +279,7 @@ export default async function PublicRoundDetailPage({
               })}
             </div>
           </div>
-        </section>
+        </details>
       </main>
     </div>
   );

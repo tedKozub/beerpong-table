@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { updateRound, deleteRound } from "@/actions/rounds";
-import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
-import { Pencil, Trash2, Check, X, Loader2 } from "lucide-react";
+import { updateRound } from "@/actions/rounds";
+import { Pencil, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,18 +16,16 @@ import {
 
 interface RoundHeaderActionsProps {
   roundId: number;
-  seasonId: number;
+  seasonId?: number;
   currentName: string;
   currentDate?: Date | null;
-  isCompleted: boolean;
+  isCompleted?: boolean;
 }
 
 export function RoundHeaderActions({
   roundId,
-  seasonId,
   currentName,
   currentDate,
-  isCompleted,
 }: RoundHeaderActionsProps) {
   const router = useRouter();
   const { toast } = useToast();
@@ -39,9 +36,6 @@ export function RoundHeaderActions({
     currentDate ? new Date(currentDate).toISOString().split("T")[0] : ""
   );
   const [isSaving, setIsSaving] = useState(false);
-
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,33 +81,6 @@ export function RoundHeaderActions({
     }
   };
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const res = await deleteRound(roundId);
-      if (!res.success) {
-        toast({
-          title: "Chyba při mazání kola",
-          description: res.error || "Smazání se nezdařilo.",
-          variant: "destructive",
-        });
-        return;
-      }
-      toast({
-        title: "Kolo smazáno",
-        description: `Kolo „${currentName}“ a všechna jeho data byla odstraněna.`,
-      });
-      router.push(`/seasons/${seasonId}`);
-    } catch (err: any) {
-      toast({
-        title: "Chyba při mazání kola",
-        description: err?.message || "Smazání se nezdařilo.",
-        variant: "destructive",
-      });
-      setIsDeleting(false);
-    }
-  };
-
   return (
     <div className="flex items-center gap-1.5 shrink-0">
       <button
@@ -131,16 +98,6 @@ export function RoundHeaderActions({
       >
         <Pencil className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
         <span className="hidden sm:inline">Přejmenovat kolo</span>
-      </button>
-
-      <button
-        type="button"
-        onClick={() => setIsDeleteDialogOpen(true)}
-        className="btn btn-ghost btn-xs sm:btn-sm text-xs text-error hover:bg-error/10 gap-1"
-        title="Smazat kolo"
-      >
-        <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-        <span className="hidden sm:inline">Smazat</span>
       </button>
 
       {/* Dialog pro úpravu kola */}
@@ -206,16 +163,6 @@ export function RoundHeaderActions({
           </form>
         </DialogContent>
       </Dialog>
-
-      {/* Dialog pro smazání kola */}
-      <ConfirmDeleteDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-        title="Smazat turnajové kolo"
-        description={`Opravdu chcete smazat kolo „${currentName}“? Všechny zápasy, rozpis a statistiky tohoto kola budou nenávratně odstraněny.`}
-        onConfirm={handleDelete}
-        isPending={isDeleting}
-      />
     </div>
   );
 }
