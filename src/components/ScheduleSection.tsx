@@ -141,9 +141,11 @@ export function ScheduleSection({
                 Aktuální vlna zápasů #{currentWave}
               </h3>
             </div>
-            <span className="text-xs text-base-content/60 font-semibold">
-              Kliknutím na zápas otevřeš zadání bodů
-            </span>
+            {isAdmin && (
+              <span className="text-xs text-base-content/60 font-semibold">
+                Kliknutím na zápas otevřeš zadání bodů
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -334,7 +336,7 @@ export function ScheduleSection({
       </details>
 
       {/* Dialog pro zadání bodů a blowjobů (otevře se po kliknutí na zápas) */}
-      {selectedMatch && (
+      {isAdmin && selectedMatch && (
         <ScoreInputDialog
           isOpen={true}
           onClose={() => setSelectedMatch(null)}

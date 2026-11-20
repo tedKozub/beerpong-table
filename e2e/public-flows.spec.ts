@@ -48,6 +48,9 @@ test.describe("Public Views & Navigation", () => {
 
     // Verify standings table is visible
     await expect(page.getByRole("heading", { name: /Pořadí večera/i })).toBeVisible();
+
+    // Verify admin score entering hint is NOT visible to public visitors
+    await expect(page.getByText("Kliknutím na zápas otevřeš zadání bodů")).not.toBeVisible();
   });
 
   test("loads about page with authors and system info", async ({ page }) => {
