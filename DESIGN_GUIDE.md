@@ -1,127 +1,127 @@
 # Design Guide: SPPDF Beerpong 2.0
 
-Tento dokument slouží jako závazný průvodce architekturou uživatelského rozhraní, designovými tokeny a komponentami pro vývojáře i autonomní AI agenty pracující v repozitáři **beerpong-table**.
+This document defines the binding UI architecture, design tokens, and component guidelines for developers and autonomous AI agents working in the **beerpong-table** repository.
 
 ---
 
-## 1. Vizuální a estetické standardy
+## 1. Visual & Aesthetic Standards
 
-### A. Pravidla pro Emoji
-- **Přísný zákaz emoji v UI i v kódu:**
-  - Žádné emoji v nadpisech, tlačítkách, bannerech, toastech, popiscích ani tabulkách.
-  - Žádné emoji v commit messages, logovacích hláškách, proměnných ani testech.
-  - **Jediná povolená výjimka:** Znak lišky `🦊` výhradně jako součást brandového loga spolku (*🦊 SPPDF Beerpong*).
-- Místo emoji používejte profesionální typografii a standardní SVG ikony z knihovny `lucide-react`.
+### A. Emoji Policy
+- **Strict Ban on Emojis in UI and Code:**
+  - Never use emojis in headings, titles, buttons, alert banners, toasts, placeholders, metadata tags, or footer links.
+  - Never use emojis in source code, variable names, log statements, test descriptions, commit messages, or documentation.
+  - **Single Allowed Exception:** The fox icon `🦊` exclusively for the brand title (*🦊 SPPDF Beerpong*).
+- Rely on clean typography, precise microcopy, and standard SVG icons from `lucide-react`.
 
-### B. Omezení ikon a odznaků (Badges / Pills)
-- **Ikony:** Používejte pouze tam, kde vyjasňují akci (např. tužka pro úpravu, křížek pro zrušení, lupa pro vyhledávání). Nevkládejte ikony před každý běžný textový štítek.
-- **Odznaky (Pills / Badges):** Vyvarujte se nadměrného obalování běžných dat do barevných pilulek. Badges jsou vyhrazeny výhradně pro:
-  - Kritické stavy (např. *Dokončeno*, *Plánováno*, *Právě se hraje*).
-  - Významné kvantitativní počty (např. počet zápasů ve vlně, počet hráčů v týmu).
-- **Terminologie:** Ocenění **BlowJob King** zůstává vždy v původním anglickém znění bez překladu.
-
----
-
-## 2. Barevná témata a Designové tokeny
-
-Aplikace využívá DaisyUI 4 integrované s Tailwind CSS. Všechny komponenty musí fungovat a být 100% čitelné ve světlém i tmavém motivu s garancí **WCAG AAA** kontrastu (minimální kontrastní poměr 7:1 pro běžný text).
-
-### A. Témata
-- **Světlý motiv (`beerpong-light`):**
-  - `primary`: `#9a3412` (sytá pivní měď pro vysoký kontrast 7.2:1 na světlém podkladu)
-  - `success`: `#166534` (tmavá lesní zeleň pro kontrast 7.5:1)
-  - `base-100`: `#ffffff` (čisté bílé karty)
-  - `base-200`: `#f8fafc` (jemné pozadí těla stránky)
-  - `base-300`: `#e2e8f0` (rámečky a oddělovače)
-  - `base-content`: `#0f172a` (hluboká břidlice pro text)
-- **Tmavý motiv (`beerpong-dark`):**
-  - `primary`: `#fb923c` (jasná teplá oranžová)
-  - `success`: `#4ade80` (světle zelená)
-  - `base-100`: `#141923` (hluboké tmavě šedé karty)
-  - `base-200`: `#0d1117` (pozadí stránky)
-  - `base-300`: `#262f3d` (kontrastní rámečky)
-  - `base-content`: `#f1f5f9` (světlý text)
-
-### B. Specifikace pódia (Stupně vítězů)
-Stupně vítězů jsou implementovány v [src/lib/podium.tsx](file:///root/beerpong-table/src/lib/podium.tsx):
-- **1. místo (Zlato):**
-  - Levý rámeček: `border-l-4 border-l-warning`
-  - Podkres řádku: `bg-warning/[0.08]` (ve světlém) / `bg-warning/[0.12]` (v tmavém)
-  - Textová barva štítku: `#854d0e` (light) / `#fef08a` (dark)
-- **2. místo (Stříbro):**
-  - Levý rámeček: `border-l-4 border-l-base-content/40`
-  - Podkres řádku: `bg-base-200/50`
-  - Textová barva štítku: `#334155` (light) / `#cbd5e1` (dark)
-- **3. místo (Bronz):**
-  - Levý rámeček: `border-l-4 border-l-amber-600`
-  - Podkres řádku: `bg-amber-800/[0.08]` (ve světlém) / `bg-amber-800/[0.15]` (v tmavém)
-  - Textová barva štítku: `#78350f` (light) / `#fcd34d` (dark)
-- **4.+ místo:**
-  - Vždy aplikujte `border-l-4 border-l-transparent`, aby všechny řádky měly stejnou šířku a nedocházelo k posunu layoutu (Cumulative Layout Shift = 0).
+### B. Minimal Iconography & Badges
+- **Icons:** Use icons strictly to clarify ambiguous actions (e.g., pencil for edit, trash for delete, search for query). Never prepend decorative icons to self-explanatory text labels.
+- **Badge Proliferation:** Avoid surrounding everyday data fields with pill badges or colored tags. Badges are reserved exclusively for:
+  - Critical status indicators (*Dokončeno*, *Plánováno*, *Právě se hraje*).
+  - Quantitative counts >= 2 (e.g., match count in a wave, player count in a team).
+- **Terminology:** The award title **BlowJob King** is permanently kept in original English without Czech translation.
 
 ---
 
-## 3. Pravidla pro komponenty
+## 2. Color Themes & Design Tokens
 
-### A. Sbalitelné sekce (Accordions)
-Pro dlouhé seznamy a vedlejší sekce (např. *Odehraná utkání večera*, *Celý rozpis turnajového večera*, *Soupisky týmů pro tento večer*) používejte nativní HTML `<details>` s DaisyUI třídami:
+The application leverages DaisyUI 4 integrated with Tailwind CSS. All components must function seamlessly and remain 100% readable in both light and dark modes, guaranteeing **WCAG AAA** contrast compliance (minimum 7:1 contrast ratio for normal text).
+
+### A. Themes
+- **Light Theme (`beerpong-light`):**
+  - `primary`: `#9a3412` (deep amber-copper for 7.2:1 contrast on light backgrounds)
+  - `success`: `#166534` (forest green for 7.5:1 contrast)
+  - `base-100`: `#ffffff` (clean white cards)
+  - `base-200`: `#f8fafc` (subtle page background)
+  - `base-300`: `#e2e8f0` (borders and dividers)
+  - `base-content`: `#0f172a` (deep slate text)
+- **Dark Theme (`beerpong-dark`):**
+  - `primary`: `#fb923c` (bright warm orange)
+  - `success`: `#4ade80` (bright green)
+  - `base-100`: `#141923` (deep dark grey cards)
+  - `base-200`: `#0d1117` (canvas background)
+  - `base-300`: `#262f3d` (contrast borders)
+  - `base-content`: `#f1f5f9` (bright slate text)
+
+### B. Podium Hierarchy (1st, 2nd, 3rd Place)
+Podium styles are implemented centrally in [src/lib/podium.tsx](file:///root/beerpong-table/src/lib/podium.tsx):
+- **1st Place (Gold):**
+  - Left border: `border-l-4 border-l-warning`
+  - Row tint: `bg-warning/[0.08]` (light) / `bg-warning/[0.12]` (dark)
+  - Badge text color: `#854d0e` (light) / `#fef08a` (dark)
+- **2nd Place (Silver):**
+  - Left border: `border-l-4 border-l-base-content/40`
+  - Row tint: `bg-base-200/50`
+  - Badge text color: `#334155` (light) / `#cbd5e1` (dark)
+- **3rd Place (Bronze):**
+  - Left border: `border-l-4 border-l-amber-600`
+  - Row tint: `bg-amber-800/[0.08]` (light) / `bg-amber-800/[0.15]` (dark)
+  - Badge text color: `#78350f` (light) / `#fcd34d` (dark)
+- **4th+ Place:**
+  - Always apply `border-l-4 border-l-transparent` so all rows maintain identical column widths, preventing Cumulative Layout Shift (CLS = 0).
+
+---
+
+## 3. Component Guidelines
+
+### A. Collapsible Sections (Accordions)
+Use native HTML `<details>` elements styled with DaisyUI collapse classes for long lists and secondary content (*Odehraná utkání večera*, *Celý rozpis turnajového večera*, *Soupisky týmů pro tento večer*):
 ```tsx
 <details className="collapse collapse-arrow bg-base-100 shadow-md border border-base-200" open>
   <summary className="collapse-title p-4 sm:p-6 cursor-pointer select-none font-bold text-lg flex items-center justify-between pr-12">
-    <span>Název sekce</span>
+    <span>Section Title</span>
   </summary>
   <div className="collapse-content px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
-    {/* Obsah */}
+    {/* Content */}
   </div>
 </details>
 ```
 
-### B. Tabulky pořadí (`StandingsTable`)
-- Pevné minimální šířky pro číselné sloupce (např. `w-14 sm:w-16`).
-- Třída `tabular-nums` pro všechna čísla a skóre, aby se sloupce neposouvaly při změně hodnot.
-- Podpora vodorovného posunu tabulky na mobilech (`overflow-x-auto w-full`).
+### B. Standings Tables (`StandingsTable`)
+- Enforce fixed column widths for numeric data (e.g., `w-14 sm:w-16`).
+- Always use `tabular-nums` for numbers and scores to prevent layout twitching during value updates.
+- Support mobile horizontal scrolling via `overflow-x-auto w-full`.
 
-### C. Karty žebříčků (`LeaderboardCard`)
-- Zobrazují náhled Top 5 hráčů.
-- Obsahují tlačítko pro otevření plného dialogu se statistikami všech hráčů a interaktivním vyhledáváním.
-- Pevná minimální výška `min-h-[380px]`, aby nedocházelo ke skákání layoutu při přepínání zobrazení.
+### C. Leaderboard Cards (`LeaderboardCard`)
+- Display a preview of the top 5 players.
+- Provide a button opening a full modal dialog with real-time search filtering.
+- Maintain a minimum height `min-h-[380px]` to eliminate layout shifts when toggling tabs or views.
 
-### D. Veřejný vs. Administrátorský režim
-- Veřejné stránky pod `/public` nesmí **nikdy** obsahovat:
-  - Tlačítka pro zápis nebo úpravu skóre (*Vyplnit*, *Upravit*).
-  - Tlačítka pro mazání nebo přejmenování čehokoliv.
-  - Nápovědné texty pro zápis (*„Kliknutím na zápas otevřeš zadání bodů“*).
-  - Turnajové stopky.
-  - Přepínač semestrů s mutacemi.
-- Pro veřejné zobrazení vždy používejte `<PublicNavbar />` a parametr `isAdmin={false}`.
+### D. Public vs. Admin Boundary
+- Public routes under `/public/*` must **never** contain:
+  - Mutation controls or score entry buttons (*Vyplnit*, *Upravit*).
+  - Deletion or renaming controls.
+  - Hint copy for editing (*„Kliknutím na zápas otevřeš zadání bodů“*).
+  - Tournament stopwatch.
+  - Active semester switcher with mutation effects.
+- Always render `<PublicNavbar />` and pass `isAdmin={false}` on public views.
 
 ---
 
-## 4. Formuláře, Validace a Chybové stavy
+## 4. Forms, Validation & Error States
 
-### A. Klientská validace přes React Hook Form
-- Všechny formuláře s uživatelským vstupem musí využívat `react-hook-form`.
-- Povinná pole musí mít explicitní chybovou hlášku v češtině.
-- Během odesílání formuláře musí být tlačítko v disabled stavu a zobrazovat rotující spinner `Loader2`.
+### A. Client-Side Validation with React Hook Form
+- All user-input forms must use `react-hook-form`.
+- Required fields must display clear inline validation errors.
+- Buttons must display a disabled state with a spinning `Loader2` during asynchronous submission.
 
-### B. Serverové akce (Server Actions)
-- Serverové akce nesmí vyhazovat neošetřené výjimky (`throw new Error(...)`), které by v Next.js vedly ke generické chybové stránce *„An error occurred in the Server Components render“*.
-- Vždy vracejte strukturovaný objekt:
+### B. Server Actions
+- Server actions must never throw unhandled runtime errors that cause generic Next.js crashes (*„An error occurred in the Server Components render“*).
+- Always return a structured response object:
   ```ts
   type ActionResponse<T = any> = 
     | { success: true; data?: T }
     | { success: false; error: string };
   ```
-- Ošetřujte unikátnost jmen (např. hráčů, týmů, semestrů) case-insensitive kontrolou (`lower(name) = lower(...)`).
+- Enforce case-insensitive uniqueness checks on names (teams, players, seasons) via `lower(name) = lower(...)`.
 
-### C. Uživatelská zpětná vazba (Toasty)
-- Úspěch: `toast({ title: "...", description: "..." })`
-- Chyba: `toast({ title: "Chyba", description: errorMsg, variant: "destructive" })`
+### C. User Feedback (Toasts)
+- Success: `toast({ title: "...", description: "..." })`
+- Error: `toast({ title: "Chyba", description: errorMsg, variant: "destructive" })`
 
 ---
 
-## 5. Mobilní responzivita
+## 5. Mobile Responsiveness
 
-- **Nulový horizontální scroll:** Celá stránka musí držet šířku `100vw`. Používejte `min-w-0`, `max-w-full`, `truncate` a `break-words` na textech týmů a hráčů.
-- **Klikací plochy:** Tlačítka a interaktivní prvky na dotykových displejích musí mít výšku minimálně 44px (nebo odpovídající padding `py-2 sm:py-1.5`).
-- **Responzivní hlavičky:** Tlačítka v hlavičce stohujte přes `flex flex-wrap items-center gap-2 w-full sm:w-auto`.
+- **Zero Horizontal Overflow:** The page must strictly fit within `100vw`. Apply `min-w-0`, `max-w-full`, `truncate`, and `break-words` on long strings.
+- **Touch Targets:** Buttons and interactive elements must have a touch target height of at least 44px on mobile devices.
+- **Responsive Headers:** Stack action buttons on small viewports using `flex flex-wrap items-center gap-2 w-full sm:w-auto`.

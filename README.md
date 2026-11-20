@@ -1,63 +1,63 @@
 # SPPDF Beerpong Table
 
-Webová aplikace pro správu pivních turnajů a celosemestrální ligy spolku **SPPDF MUNI**. Systém automatizuje správu semestrů, turnajových večerů, dynamické soupisky týmů, generování rozpisu stolů (Round-Robin), živé stopky, zadávání výsledků, exporty statistik (XLSX, CSV, PDF) a prezentace na projektor.
+Web application for managing beerpong tournaments and semester league seasons for the **SPPDF MUNI** student union. The system automates semester management, tournament rounds, dynamic team rosters, table scheduling (Round-Robin), live stopwatch, match scoring, statistics exports (XLSX, CSV, PDF), and 16:9 projector presentations.
 
 ---
 
-## Repozitáře & Autoři
+## Repositories & Authors
 
-- **Původní repozitář:** [petrsgamers/beerpong-table](https://github.com/petrsgamers/beerpong-table) (autoři: Petr Hýbl, Štěpán Řihák, Tadeáš Kozub)
-- **Aktuální fork & údržba:** [tedKozub/beerpong-table](https://github.com/tedKozub/beerpong-table) (Tadeáš Kozub)
-- **IT divize spolku SPPDF MUNI**
-
----
-
-## Hlavní Funkce
-
-- **Generování rozpisu zápasů na stoly:** Deterministický Round-Robin algoritmus využívající Bergerovy tabulky (`circleRounds`). Zamezuje souběžnému hraní stejného týmu a optimalizuje využití stolů.
-- **Živé turnajové stopky:** Integrovaný časoměřič pro administrátory s předvolbami (6 min, 10 min), digitálním zvukovým signálem po dojetí a možností minimalizace do plovoucí lišty.
-- **Exporty & Prezentace:**
-  - Export celkových tabulek a statistik kola do **Excel (.xlsx)** i **CSV**.
-  - Generování rozpisů stolů do **PDF (A4 formát)** pro tisk.
-  - Generování prezentace zápasových vln **PDF v poměru 16:9** na promítací plátno / TV.
-- **Dynamické soupisky týmů:** Hráči mohou v jednotlivých kolech semestru nastupovat za různé týmy, přičemž jejich individuální statistiky se sčítají napříč celou sezónou.
-- **Statistiky & Žebříčky:**
-  - Týmová tabulka (výhry, remízy, prohry, skóre, body).
-  - Střelci večera i celého semestru (trefené kelímky).
-  - Prestižní ocenění **BlowJob King** (vyfouknuté kelímky).
-  - Zlaté, stříbrné a bronzové stupně vítězů s vysokým kontrastem splňujícím WCAG AAA ve světlém i tmavém režimu.
-- **Veřejné zobrazení (Public Mode):** Bezpečná, čistě čtecí sekce pro hráče a diváky bez administrátorských ovládacích prvků.
+- **Original Repository:** [petrsgamers/beerpong-table](https://github.com/petrsgamers/beerpong-table) (Authors: Petr Hýbl, Štěpán Řihák, Tadeáš Kozub)
+- **Maintained Fork:** [tedKozub/beerpong-table](https://github.com/tedKozub/beerpong-table) (Tadeáš Kozub)
+- **IT Division of SPPDF MUNI**
 
 ---
 
-## Technologický Stack
+## Key Features
+
+- **Round-Robin Match Scheduler:** Deterministic table scheduling algorithm using the Berger circle method (`circleRounds`). Eliminates consecutive match conflicts and optimizes table allocation.
+- **Live Tournament Stopwatch:** Integrated countdown timer for tournament directors with presets (6 min, 10 min), digital alarm sound, and minimizable floating toolbar.
+- **Exports & Presentation Modes:**
+  - Export overall league tables and round statistics to **Excel (.xlsx)** and **CSV**.
+  - Generate printable **A4 PDF** table schedules.
+  - Generate **16:9 slideshow PDF** for tournament projector / TV screens.
+- **Dynamic Weekly Rosters:** Players can represent different teams in different tournament rounds; cumulative individual stats track seamlessly across the entire semester.
+- **Statistics & Leaderboards:**
+  - Team standings (matches, wins, draws, losses, points).
+  - Individual scorers (cups hit).
+  - Prestigious **BlowJob King** leaderboard (cups blown out).
+  - High-contrast Gold, Silver, and Bronze podium styling compliant with WCAG AAA in both light and dark themes.
+- **Public Read-Only Mode:** Safe, isolated view for players and spectators with zero mutation controls or administrative widgets.
+
+---
+
+## Tech Stack
 
 - **Framework:** [Next.js 14](https://nextjs.org/) (App Router, Server Actions)
-- **Jazyk:** [TypeScript](https://www.typescriptlang.org/) (strict mode)
-- **Databáze:** [PostgreSQL](https://www.postgresql.org/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/) (strict mode)
+- **Database:** [PostgreSQL](https://www.postgresql.org/)
 - **ORM:** [Drizzle ORM](https://orm.drizzle.team/) & `drizzle-kit`
 - **Styling & UI:** [Tailwind CSS](https://tailwindcss.com/), [DaisyUI 4](https://daisyui.com/), [Lucide React](https://lucide.dev/)
-- **Formuláře:** [React Hook Form](https://react-hook-form.com/)
-- **Testování:** [Playwright](https://playwright.dev/) E2E testy (Desktop & Mobile)
-- **Kontejnerizace:** Docker, Docker Compose, Traefik proxy
+- **Form Handling:** [React Hook Form](https://react-hook-form.com/)
+- **Testing:** [Playwright](https://playwright.dev/) E2E test suite (Desktop Chrome & Mobile Pixel)
+- **Deployment:** Docker, Docker Compose, Coolify, Traefik reverse proxy
 
 ---
 
-## Rychlý Start (Lokální Vývoj)
+## Quickstart (Local Development)
 
-### 1. Klonování repozitáře
+### 1. Clone Repository
 ```bash
 git clone https://github.com/tedKozub/beerpong-table.git
 cd beerpong-table
 ```
 
-### 2. Instalace závislostí
+### 2. Install Dependencies
 ```bash
 npm install
 ```
 
-### 3. Konfigurace prostředí
-Vytvořte soubor `.env.local` na základě níže uvedených proměnných:
+### 3. Environment Configuration
+Create a `.env.local` file with the following variables:
 ```env
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/beerpong_dev
 ADMIN_USERNAME=admin
@@ -65,53 +65,53 @@ ADMIN_PASSWORD=admin
 SESSION_SECRET=beerpong_super_secret_session_key_local_development_123456
 ```
 
-### 4. Databázové migrace & Seeding
+### 4. Database Migrations & Seeding
 ```bash
 npm run migrate
 npx tsx src/db/seed.ts
 ```
 
-### 5. Spuštění vývojového serveru
+### 5. Start Development Server
 ```bash
 npm run dev
 ```
-Aplikace běží na `http://localhost:3000`.
+The application will be running at `http://localhost:3000`.
 
 ---
 
-## Konfigurační Proměnné Prostředí
+## Environment Variables
 
-| Proměnná | Popis | Příklad |
+| Variable | Description | Example |
 | --- | --- | --- |
 | `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host:5432/db` |
-| `ADMIN_USERNAME` | Uživatelské jméno správce turnaje | `admin` |
-| `ADMIN_PASSWORD` | Heslo pro přístup do administrace | `bezpecneheslo` |
-| `SESSION_SECRET` | Šifrovací klíč pro session cookies (min. 32 znaků) | `nahodny_tajny_klic` |
-| `PORT` | Port, na kterém aplikace naslouchá (výchozí 3000) | `3000` |
-| `NODE_ENV` | Běhové prostředí | `production` / `development` |
+| `ADMIN_USERNAME` | Administrator username | `admin` |
+| `ADMIN_PASSWORD` | Administrator password | `secretpassword` |
+| `SESSION_SECRET` | Secret key for encrypted session cookies (min. 32 chars) | `random_secret_string` |
+| `PORT` | HTTP server port (default 3000) | `3000` |
+| `NODE_ENV` | Runtime environment | `production` / `development` |
 
 ---
 
-## Testování a Ověřování Kvality
+## Verification & Quality Assurance
 
-Před každým commitem a nasazením do produkce spusťte sadu kontrol:
+Run the automated validation suite before committing or deploying:
 
 ```bash
-# Kontrola formátování a linteru
+# Code style and ESLint check
 npm run lint
 
-# Statická typová kontrola
+# TypeScript static type check
 npx tsc --noEmit
 
-# End-to-End Playwright testy
+# End-to-End Playwright test suite
 npm run test:e2e
 
-# Souhrnný deploy check
+# Full deployment verification pipeline
 npm run deploy:check
 ```
 
 ---
 
-## Designový Průvodce (Design System)
+## Design Guide
 
-Pravidla designu, vizuální standardy a designové tokeny jsou podrobně zdokumentovány v souboru [DESIGN_GUIDE.md](./DESIGN_GUIDE.md). Interaktivní vzorník komponent a barevných témat je k dispozici na cestě `/design-system`.
+Design rules, aesthetic standards, and token specifications are documented in [DESIGN_GUIDE.md](./DESIGN_GUIDE.md). An interactive component catalog is available at the `/design-system` route.
