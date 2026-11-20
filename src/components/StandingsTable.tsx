@@ -30,25 +30,25 @@ export function StandingsTable({
         <table className="table table-sm sm:table-md w-full">
           <thead>
             <tr className="bg-base-200/50">
-              <th className="w-10 sm:w-14 text-center px-1 sm:px-3">Poř.</th>
+              <th className="w-12 sm:w-16 text-center px-1 sm:px-3">Poř.</th>
               <th className="px-2 sm:px-3">Tým</th>
-              <th className="text-center px-1 sm:px-3">
+              <th className="w-12 sm:w-16 text-center px-1 sm:px-3">
                 <span className="hidden sm:inline">Zápasy</span>
                 <span className="sm:hidden">Z</span>
               </th>
-              <th className="text-center px-1 sm:px-3">
+              <th className="w-12 sm:w-16 text-center px-1 sm:px-3">
                 <span className="hidden sm:inline">Výhry</span>
                 <span className="sm:hidden">V</span>
               </th>
-              <th className="text-center px-1 sm:px-3">
+              <th className="w-12 sm:w-16 text-center px-1 sm:px-3">
                 <span className="hidden sm:inline">Remízy</span>
                 <span className="sm:hidden">R</span>
               </th>
-              <th className="text-center px-1 sm:px-3">
+              <th className="w-12 sm:w-16 text-center px-1 sm:px-3">
                 <span className="hidden sm:inline">Prohry</span>
                 <span className="sm:hidden">P</span>
               </th>
-              <th className="text-right px-2 sm:px-3">
+              <th className="w-14 sm:w-20 text-right px-2 sm:px-3">
                 <span className="hidden sm:inline">Body</span>
                 <span className="sm:hidden">B</span>
               </th>
@@ -57,7 +57,7 @@ export function StandingsTable({
           <tbody>
             {standings.map((t, idx) => (
               <tr key={t.teamId} className={getPodiumRowStyle(idx)}>
-                <td className="w-10 sm:w-14 text-center px-1 sm:px-3 tabular-nums">
+                <td className="w-12 sm:w-16 text-center px-1 sm:px-3 tabular-nums">
                   {renderRank(idx)}
                 </td>
                 <td className="px-2 sm:px-3">
@@ -70,17 +70,17 @@ export function StandingsTable({
                     {t.teamName}
                   </button>
                 </td>
-                <td className="text-center px-1 sm:px-3 tabular-nums">{t.played}</td>
-                <td className="text-center px-1 sm:px-3 text-success font-semibold tabular-nums">
+                <td className="w-12 sm:w-16 text-center px-1 sm:px-3 tabular-nums">{t.played}</td>
+                <td className="w-12 sm:w-16 text-center px-1 sm:px-3 text-success font-semibold tabular-nums">
                   {t.wins}
                 </td>
-                <td className="text-center px-1 sm:px-3 text-base-content/60 tabular-nums">
+                <td className="w-12 sm:w-16 text-center px-1 sm:px-3 text-base-content/60 tabular-nums">
                   {t.draws}
                 </td>
-                <td className="text-center px-1 sm:px-3 text-error tabular-nums">
+                <td className="w-12 sm:w-16 text-center px-1 sm:px-3 text-error tabular-nums">
                   {t.losses}
                 </td>
-                <td className="text-right px-2 sm:px-3 font-black text-primary tabular-nums">
+                <td className="w-14 sm:w-20 text-right px-2 sm:px-3 font-black text-primary tabular-nums">
                   {t.points}
                 </td>
               </tr>

@@ -5,6 +5,7 @@ import { getActiveSeason, getAllSeasons } from "@/actions/seasons";
 import { SeasonSelector } from "@/components/SeasonSelector";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserNav } from "@/components/UserNav";
+import { PublicNavbar } from "@/components/PublicNavbar";
 import Link from "next/link";
 
 export const Navbar = async () => {
@@ -13,6 +14,11 @@ export const Navbar = async () => {
     getAllSeasons(),
     getActiveSeason(),
   ]);
+
+  // Pokud uživatel není přihlášený administrátor (např. na /about nebo /login), zobrazíme veřejný read-only navbar
+  if (!session?.userId) {
+    return <PublicNavbar seasonName={activeSeason?.name} />;
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-base-100/95 backdrop-blur-md border-b border-base-300 transition-colors">
@@ -47,12 +53,11 @@ export const Navbar = async () => {
 
           <Link
             href="/public"
-            className="btn btn-ghost btn-xs sm:btn-sm text-xs font-semibold text-base-content/70 hover:text-base-content shrink-0 gap-1 px-1.5 sm:px-2"
+            className="btn btn-ghost btn-xs sm:btn-sm text-xs font-semibold text-base-content/70 hover:text-base-content shrink-0 px-1.5 sm:px-2"
             title="Přepnout na veřejné výsledky"
           >
             <span className="hidden lg:inline">Veřejné výsledky</span>
             <span className="lg:hidden">Veřejné</span>
-            <span className="text-[10px] opacity-60">↗</span>
           </Link>
 
           <Link

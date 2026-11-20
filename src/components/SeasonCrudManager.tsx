@@ -97,7 +97,15 @@ export function SeasonCrudManager({
 
     setIsAddingTeam(true);
     try {
-      await createTeam({ name: trimmed, seasonId });
+      const res = await createTeam({ name: trimmed, seasonId });
+      if (!res.success) {
+        toast({
+          title: "Chyba při vytváření týmu",
+          description: res.error || "Tým se nepodařilo vytvořit.",
+          variant: "destructive",
+        });
+        return;
+      }
       setNewTeamName("");
       toast({
         title: "Tým vytvořen",
@@ -128,7 +136,15 @@ export function SeasonCrudManager({
 
     setIsSavingTeam(true);
     try {
-      await updateTeam(teamId, { name: trimmed });
+      const res = await updateTeam(teamId, { name: trimmed });
+      if (!res.success) {
+        toast({
+          title: "Chyba při úpravě týmu",
+          description: res.error || "Úprava se nezdařila.",
+          variant: "destructive",
+        });
+        return;
+      }
       setEditingTeamId(null);
       toast({
         title: "Tým přejmenován",
@@ -150,7 +166,15 @@ export function SeasonCrudManager({
     if (!deletingTeam) return;
     setIsDeletingTeam(true);
     try {
-      await deleteTeam(deletingTeam.id);
+      const res = await deleteTeam(deletingTeam.id);
+      if (!res.success) {
+        toast({
+          title: "Chyba při mazání týmu",
+          description: res.error || "Smazání se nezdařilo.",
+          variant: "destructive",
+        });
+        return;
+      }
       toast({
         title: "Tým smazán",
         description: `Tým „${deletingTeam.name}“ byl smazán.`,
@@ -178,7 +202,15 @@ export function SeasonCrudManager({
 
     setIsAddingPlayer(true);
     try {
-      await createPlayer({ name: trimmed, seasonId });
+      const res = await createPlayer({ name: trimmed, seasonId });
+      if (!res.success) {
+        toast({
+          title: "Chyba při registraci hráče",
+          description: res.error || "Hráče se nepodařilo přidat.",
+          variant: "destructive",
+        });
+        return;
+      }
       setNewPlayerName("");
       toast({
         title: "Hráč registrován",
@@ -209,7 +241,15 @@ export function SeasonCrudManager({
 
     setIsSavingPlayer(true);
     try {
-      await updatePlayer(playerId, { name: trimmed });
+      const res = await updatePlayer(playerId, { name: trimmed });
+      if (!res.success) {
+        toast({
+          title: "Chyba při úpravě hráče",
+          description: res.error || "Úprava se nezdařila.",
+          variant: "destructive",
+        });
+        return;
+      }
       setEditingPlayerId(null);
       toast({
         title: "Hráč upraven",
@@ -231,7 +271,15 @@ export function SeasonCrudManager({
     if (!deletingPlayer) return;
     setIsDeletingPlayer(true);
     try {
-      await deletePlayer(deletingPlayer.id);
+      const res = await deletePlayer(deletingPlayer.id);
+      if (!res.success) {
+        toast({
+          title: "Chyba při mazání hráče",
+          description: res.error || "Smazání se nezdařilo.",
+          variant: "destructive",
+        });
+        return;
+      }
       toast({
         title: "Hráč smazán",
         description: `Hráč „${deletingPlayer.name}“ byl smazán.`,
@@ -261,12 +309,20 @@ export function SeasonCrudManager({
     try {
       const parsedDate = newRoundDate ? new Date(newRoundDate) : undefined;
       const nextNumber = initialRounds.length + 1;
-      await createRound({
+      const res = await createRound({
         name: trimmed,
         seasonId,
         roundNumber: nextNumber,
         date: parsedDate,
       });
+      if (!res.success) {
+        toast({
+          title: "Chyba při vytváření kola",
+          description: res.error || "Kolo se nepodařilo vytvořit.",
+          variant: "destructive",
+        });
+        return;
+      }
       setNewRoundName("");
       setNewRoundDate("");
       toast({
@@ -299,10 +355,18 @@ export function SeasonCrudManager({
     setIsSavingRound(true);
     try {
       const parsedDate = editingRoundDate ? new Date(editingRoundDate) : undefined;
-      await updateRound(roundId, {
+      const res = await updateRound(roundId, {
         name: trimmed,
         ...(editingRoundDate !== "" ? { date: parsedDate } : {}),
       });
+      if (!res.success) {
+        toast({
+          title: "Chyba při úpravě kola",
+          description: res.error || "Úprava se nezdařila.",
+          variant: "destructive",
+        });
+        return;
+      }
       setEditingRoundId(null);
       toast({
         title: "Kolo upraveno",
@@ -324,7 +388,15 @@ export function SeasonCrudManager({
     if (!deletingRound) return;
     setIsDeletingRound(true);
     try {
-      await deleteRound(deletingRound.id);
+      const res = await deleteRound(deletingRound.id);
+      if (!res.success) {
+        toast({
+          title: "Chyba při mazání kola",
+          description: res.error || "Smazání se nezdařilo.",
+          variant: "destructive",
+        });
+        return;
+      }
       toast({
         title: "Kolo smazáno",
         description: `Kolo „${deletingRound.name}“ a všechny jeho zápasy byly smazány.`,
@@ -410,6 +482,15 @@ export function SeasonCrudManager({
                       <input
                         value={editingRoundName}
                         onChange={(e) => setEditingRoundName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleSaveRoundEdit(r.id);
+                          } else if (e.key === "Escape") {
+                            e.preventDefault();
+                            setEditingRoundId(null);
+                          }
+                        }}
                         className="input input-bordered input-sm flex-1 font-semibold"
                         placeholder="Název kola"
                         disabled={isSavingRound}
@@ -419,6 +500,15 @@ export function SeasonCrudManager({
                         type="date"
                         value={editingRoundDate}
                         onChange={(e) => setEditingRoundDate(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleSaveRoundEdit(r.id);
+                          } else if (e.key === "Escape") {
+                            e.preventDefault();
+                            setEditingRoundId(null);
+                          }
+                        }}
                         className="input input-bordered input-sm font-medium"
                         disabled={isSavingRound}
                       />
@@ -575,6 +665,15 @@ export function SeasonCrudManager({
                         <input
                           value={editingTeamName}
                           onChange={(e) => setEditingTeamName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleSaveTeamEdit(t.id);
+                            } else if (e.key === "Escape") {
+                              e.preventDefault();
+                              setEditingTeamId(null);
+                            }
+                          }}
                           className="input input-bordered input-xs flex-1 font-semibold"
                           disabled={isSavingTeam}
                           autoFocus
@@ -698,6 +797,15 @@ export function SeasonCrudManager({
                         <input
                           value={editingPlayerName}
                           onChange={(e) => setEditingPlayerName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleSavePlayerEdit(p.id);
+                            } else if (e.key === "Escape") {
+                              e.preventDefault();
+                              setEditingPlayerId(null);
+                            }
+                          }}
                           className="input input-bordered input-xs flex-1 font-semibold"
                           disabled={isSavingPlayer}
                           autoFocus

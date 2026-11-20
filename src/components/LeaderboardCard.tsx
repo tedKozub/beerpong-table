@@ -98,9 +98,9 @@ export function LeaderboardCard({
               <table className="table table-sm w-full">
                 <thead>
                   <tr className="bg-base-200/50">
-                    <th className="w-12 text-center px-1 sm:px-2">Poř.</th>
+                    <th className="w-12 sm:w-14 text-center px-1 sm:px-2">Poř.</th>
                     <th className="px-2">Hráč</th>
-                    <th className="text-right px-2">{defaultColTitle}</th>
+                    <th className="w-20 sm:w-24 text-right px-2">{defaultColTitle}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -109,7 +109,7 @@ export function LeaderboardCard({
                       key={p.playerId}
                       className={getPodiumRowStyle(idx)}
                     >
-                      <td className="w-12 text-center px-1 sm:px-2 tabular-nums">
+                      <td className="w-12 sm:w-14 text-center px-1 sm:px-2 tabular-nums">
                         {renderRank(idx)}
                       </td>
                       <td className="font-semibold px-2">
@@ -123,7 +123,7 @@ export function LeaderboardCard({
                         </button>
                       </td>
                       <td
-                        className={`text-right px-2 font-bold tabular-nums ${valueColorClass}`}
+                        className={`w-20 sm:w-24 text-right px-2 font-bold tabular-nums ${valueColorClass}`}
                       >
                         {getValue(p)}
                       </td>

@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { renderRank, getPodiumRowStyle } from "@/lib/podium";
 
 export default function DesignSystemPage() {
   const [currentTheme, setCurrentTheme] = useState<string>("beerpong-light");
@@ -223,48 +224,23 @@ export default function DesignSystemPage() {
               </h3>
               <div className="flex flex-wrap gap-4 items-center">
                 <div className="flex items-center gap-2">
-                  <span className="badge badge-warning font-black text-xs h-6 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center">
-                    <span className="relative inline-flex items-center justify-center">
-                      <span className="tabular-nums">1</span>
-                      <span className="absolute left-full top-0 select-none">.</span>
-                    </span>
-                  </span>
-                  <span className="text-xs font-semibold">1. místo</span>
+                  {renderRank(0)}
+                  <span className="text-xs font-semibold">1. místo (Zlato)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="badge badge-ghost bg-slate-300 text-slate-900 border-slate-300 font-bold text-xs h-6 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center">
-                    <span className="relative inline-flex items-center justify-center">
-                      <span className="tabular-nums">2</span>
-                      <span className="absolute left-full top-0 select-none">.</span>
-                    </span>
-                  </span>
-                  <span className="text-xs font-semibold">2. místo</span>
+                  {renderRank(1)}
+                  <span className="text-xs font-semibold">2. místo (Stříbro)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="badge badge-ghost bg-amber-800 text-amber-100 border-amber-800 font-bold text-xs h-6 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center">
-                    <span className="relative inline-flex items-center justify-center">
-                      <span className="tabular-nums">3</span>
-                      <span className="absolute left-full top-0 select-none">.</span>
-                    </span>
-                  </span>
-                  <span className="text-xs font-semibold">3. místo</span>
+                  {renderRank(2)}
+                  <span className="text-xs font-semibold">3. místo (Bronz)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="badge badge-ghost font-bold text-xs h-6 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center">
-                    <span className="relative inline-flex items-center justify-center">
-                      <span className="tabular-nums">4</span>
-                      <span className="absolute left-full top-0 select-none">.</span>
-                    </span>
-                  </span>
+                  {renderRank(3)}
                   <span className="text-xs font-semibold">4. místo</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="badge badge-ghost font-bold text-xs h-6 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center">
-                    <span className="relative inline-flex items-center justify-center">
-                      <span className="tabular-nums">5</span>
-                      <span className="absolute left-full top-0 select-none">.</span>
-                    </span>
-                  </span>
+                  {renderRank(4)}
                   <span className="text-xs font-semibold">5. místo</span>
                 </div>
               </div>
@@ -609,16 +585,11 @@ export default function DesignSystemPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="bg-warning/15 font-bold border-b border-base-300">
+                  <tr className={getPodiumRowStyle(0)}>
                     <td>
-                      <span className="badge badge-warning font-black text-xs h-6 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center">
-                        <span className="relative inline-flex items-center justify-center">
-                          <span className="tabular-nums">1</span>
-                          <span className="absolute left-full top-0 select-none">.</span>
-                        </span>
-                      </span>
+                      {renderRank(0)}
                     </td>
-                    <td className="text-base text-base-content">Vlci</td>
+                    <td className="text-base text-base-content font-bold">Vlci</td>
                     <td className="text-center tabular-nums">3</td>
                     <td className="text-center text-success font-black tabular-nums">3</td>
                     <td className="text-center text-base-content/60 tabular-nums">0</td>
@@ -628,14 +599,9 @@ export default function DesignSystemPage() {
                     <td className="text-right font-black text-xl text-primary tabular-nums">9</td>
                   </tr>
 
-                  <tr className="border-b border-base-300/80 hover:bg-base-200/50 transition-colors">
+                  <tr className={getPodiumRowStyle(1)}>
                     <td>
-                      <span className="badge badge-ghost bg-slate-300 text-slate-900 border-slate-300 font-bold text-xs h-6 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center">
-                        <span className="relative inline-flex items-center justify-center">
-                          <span className="tabular-nums">2</span>
-                          <span className="absolute left-full top-0 select-none">.</span>
-                        </span>
-                      </span>
+                      {renderRank(1)}
                     </td>
                     <td className="font-semibold text-base text-base-content">Brouci</td>
                     <td className="text-center tabular-nums">3</td>
@@ -647,14 +613,9 @@ export default function DesignSystemPage() {
                     <td className="text-right font-bold text-lg text-primary tabular-nums">6</td>
                   </tr>
 
-                  <tr className="border-b border-base-300/80 hover:bg-base-200/50 transition-colors">
+                  <tr className={getPodiumRowStyle(2)}>
                     <td>
-                      <span className="badge badge-ghost bg-amber-800 text-amber-100 border-amber-800 font-bold text-xs h-6 min-w-[1.75rem] px-1 shadow-sm inline-flex items-center justify-center">
-                        <span className="relative inline-flex items-center justify-center">
-                          <span className="tabular-nums">3</span>
-                          <span className="absolute left-full top-0 select-none">.</span>
-                        </span>
-                      </span>
+                      {renderRank(2)}
                     </td>
                     <td className="font-semibold text-base text-base-content">Šneci</td>
                     <td className="text-center tabular-nums">3</td>

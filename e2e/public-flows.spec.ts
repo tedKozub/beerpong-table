@@ -57,7 +57,9 @@ test.describe("Public Views & Navigation", () => {
     await expect(page.getByText("Tadeáš Kozub").first()).toBeVisible();
     await expect(page.getByText("Petr Hýbl").first()).toBeVisible();
     await expect(page.getByText("Štěpán Řihák").first()).toBeVisible();
+    await expect(page.getByText(/IT divize spolku SPPDF MUNI/i)).toBeVisible();
     await expect(page.getByRole("link", { name: /petrsgamer\/beerpong-table/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /Zpět na přehled/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Zpět na přehled/i })).not.toBeVisible();
+    await expect(page.getByRole("link", { name: /Přejít na design systém/i })).toBeVisible();
   });
 });

@@ -30,50 +30,77 @@ export async function createRound(data: {
   roundNumber?: number;
   date?: Date;
 }) {
-  await requireAuth();
-  const result = await db
-    .insert(round)
-    .values({
-      name: data.name,
-      seasonId: data.seasonId,
-      roundNumber: data.roundNumber ?? 1,
-      date: data.date,
-    })
-    .returning();
-  revalidatePath("/");
-  return result[0];
+  try {
+    await requireAuth();
+    const trimmed = data.name.trim();
+    if (!trimmed) {
+      return { success: false, error: "Název kola nesmí být prázdný." };
+    }
+
+    const result = await db
+      .insert(round)
+      .values({
+        name: trimmed,
+        seasonId: data.seasonId,
+        roundNumber: data.roundNumber ?? 1,
+        date: data.date,
+      })
+      .returning();
+    revalidatePath("/");
+    revalidatePath(`/seasons/${data.seasonId}`);
+    return { success: true, data: result[0] };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err?.message || "Kolo se nepodařilo vytvořit.",
+    };
+  }
 }
 
 export async function updateRound(id: number, data: Partial<Round>) {
-  await requireAuth();
-  const trimmedName = data.name !== undefined ? data.name.trim() : undefined;
-  if (trimmedName !== undefined && !trimmedName) {
-    throw new Error("Název kola nesmí být prázdný.");
+  try {
+    await requireAuth();
+    const trimmedName = data.name !== undefined ? data.name.trim() : undefined;
+    if (trimmedName !== undefined && !trimmedName) {
+      return { success: false, error: "Název kola nesmí být prázdný." };
+    }
+    const result = await db
+      .update(round)
+      .set({
+        ...(trimmedName !== undefined ? { name: trimmedName } : {}),
+        ...(data.roundNumber !== undefined
+          ? { roundNumber: data.roundNumber }
+          : {}),
+        ...(data.date !== undefined ? { date: data.date } : {}),
+        ...(data.isCompleted !== undefined
+          ? { isCompleted: data.isCompleted }
+          : {}),
+      })
+      .where(eq(round.id, id))
+      .returning();
+    revalidatePath("/");
+    return { success: true, data: result[0] };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err?.message || "Úprava kola se nezdařila.",
+    };
   }
-  const result = await db
-    .update(round)
-    .set({
-      ...(trimmedName !== undefined ? { name: trimmedName } : {}),
-      ...(data.roundNumber !== undefined
-        ? { roundNumber: data.roundNumber }
-        : {}),
-      ...(data.date !== undefined ? { date: data.date } : {}),
-      ...(data.isCompleted !== undefined
-        ? { isCompleted: data.isCompleted }
-        : {}),
-    })
-    .where(eq(round.id, id))
-    .returning();
-  revalidatePath("/");
-  return result[0];
 }
 
 export async function deleteRound(id: number) {
-  await requireAuth();
-  const result = await db
-    .delete(round)
-    .where(eq(round.id, id))
-    .returning();
-  revalidatePath("/");
-  return result[0];
+  try {
+    await requireAuth();
+    const result = await db
+      .delete(round)
+      .where(eq(round.id, id))
+      .returning();
+    revalidatePath("/");
+    return { success: true, data: result[0] };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err?.message || "Smazání kola se nezdařilo.",
+    };
+  }
 }

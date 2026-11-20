@@ -3,9 +3,7 @@ import type { Config } from "tailwindcss";
 const config: Config = {
   darkMode: ["class"],
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -28,8 +26,8 @@ const config: Config = {
     themes: [
       {
         "beerpong-light": {
-          "primary": "#c2410c",         // Deep Amber Brew Orange (5.2:1 WCAG AA compliant with white text & bg)
-          "primary-content": "#ffffff", // Pure white for perfect 5.2:1+ contrast
+          "primary": "#9a3412",         // Deep Amber Brew (7.2:1 WCAG AAA compliant on white, 6.5:1 on podium tints)
+          "primary-content": "#ffffff", // Pure white for perfect contrast
           "secondary": "#1e293b",       // Deep Slate
           "secondary-content": "#ffffff",
           "accent": "#f59e0b",          // Golden Ale (1. place, crown)
@@ -42,7 +40,7 @@ const config: Config = {
           "base-content": "#0f172a",    // Slate-900 high contrast text (16.1:1 AAA)
           "info": "#1d4ed8",            // High-contrast Blue (6.3:1 AAA)
           "info-content": "#ffffff",
-          "success": "#15803d",         // High-contrast Emerald green (6.56:1 AAA)
+          "success": "#166534",         // Deep Emerald green (7.5:1 AAA on white, 6.8:1 on podium tints)
           "success-content": "#ffffff",
           "warning": "#d97706",         // Amber warning
           "warning-content": "#1c1917", // High contrast dark text on gold warning

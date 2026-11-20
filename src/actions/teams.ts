@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { player, scheduledMatch, team, teamPlayer } from "@/db/schema";
 import { Team } from "@/db/types";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "./auth";
 
@@ -17,24 +17,32 @@ export async function getTeamById(id: number) {
 }
 
 export async function createTeam(data: { name: string; seasonId: number }) {
-  await requireAuth();
-  const trimmed = data.name.trim();
-  if (!trimmed) {
-    throw new Error("Název týmu nesmí být prázdný.");
-  }
-
-  // Kontrola duplicitního názvu týmu v dané sezóně
-  const existing = await db
-    .select()
-    .from(team)
-    .where(and(eq(team.seasonId, data.seasonId), eq(team.name, trimmed)))
-    .limit(1);
-
-  if (existing.length > 0) {
-    throw new Error(`Tým s názvem „${trimmed}“ již v této sezóně existuje.`);
-  }
-
   try {
+    await requireAuth();
+    const trimmed = data.name.trim();
+    if (!trimmed) {
+      return { success: false, error: "Název týmu nesmí být prázdný." };
+    }
+
+    // Kontrola duplicitního názvu týmu v dané sezóně (case-insensitive)
+    const existing = await db
+      .select()
+      .from(team)
+      .where(
+        and(
+          eq(team.seasonId, data.seasonId),
+          sql`lower(${team.name}) = lower(${trimmed})`
+        )
+      )
+      .limit(1);
+
+    if (existing.length > 0) {
+      return {
+        success: false,
+        error: `Tým s názvem „${trimmed}“ již v tomto semestru existuje.`,
+      };
+    }
+
     const result = await db
       .insert(team)
       .values({
@@ -43,41 +51,56 @@ export async function createTeam(data: { name: string; seasonId: number }) {
       })
       .returning();
     revalidatePath("/");
-    return result[0];
+    revalidatePath(`/seasons/${data.seasonId}`);
+    return { success: true, data: result[0] };
   } catch (err: any) {
     if (err?.code === "23505" || err?.message?.includes("unique")) {
-      throw new Error(`Tým s názvem „${trimmed}“ již v této sezóně existuje.`);
+      return {
+        success: false,
+        error: `Tým s tímto názvem již v tomto semestru existuje.`,
+      };
     }
-    throw err;
+    return {
+      success: false,
+      error: err?.message || "Tým se nepodařilo vytvořit.",
+    };
   }
 }
 
 export async function updateTeam(id: number, data: Partial<Team>) {
-  await requireAuth();
-  const current = await getTeamById(id);
-  if (!current) {
-    throw new Error("Tým nebyl nalezen.");
-  }
-
-  const trimmed = data.name !== undefined ? data.name.trim() : undefined;
-  if (trimmed !== undefined) {
-    if (!trimmed) {
-      throw new Error("Název týmu nesmí být prázdný.");
-    }
-
-    // Kontrola, zda jiný tým v téže sezóně nemá stejný název
-    const existing = await db
-      .select()
-      .from(team)
-      .where(and(eq(team.seasonId, current.seasonId), eq(team.name, trimmed)))
-      .limit(1);
-
-    if (existing.length > 0 && existing[0].id !== id) {
-      throw new Error(`Tým s názvem „${trimmed}“ již v této sezóně existuje.`);
-    }
-  }
-
   try {
+    await requireAuth();
+    const current = await getTeamById(id);
+    if (!current) {
+      return { success: false, error: "Tým nebyl nalezen." };
+    }
+
+    const trimmed = data.name !== undefined ? data.name.trim() : undefined;
+    if (trimmed !== undefined) {
+      if (!trimmed) {
+        return { success: false, error: "Název týmu nesmí být prázdný." };
+      }
+
+      // Kontrola, zda jiný tým v téže sezóně nemá stejný název (case-insensitive)
+      const existing = await db
+        .select()
+        .from(team)
+        .where(
+          and(
+            eq(team.seasonId, current.seasonId),
+            sql`lower(${team.name}) = lower(${trimmed})`
+          )
+        )
+        .limit(1);
+
+      if (existing.length > 0 && existing[0].id !== id) {
+        return {
+          success: false,
+          error: `Tým s názvem „${trimmed}“ již v tomto semestru existuje.`,
+        };
+      }
+    }
+
     const result = await db
       .update(team)
       .set({
@@ -86,20 +109,34 @@ export async function updateTeam(id: number, data: Partial<Team>) {
       .where(eq(team.id, id))
       .returning();
     revalidatePath("/");
-    return result[0];
+    revalidatePath(`/seasons/${current.seasonId}`);
+    return { success: true, data: result[0] };
   } catch (err: any) {
     if (err?.code === "23505" || err?.message?.includes("unique")) {
-      throw new Error(`Tým s tímto názvem již v této sezóně existuje.`);
+      return {
+        success: false,
+        error: `Tým s tímto názvem již v tomto semestru existuje.`,
+      };
     }
-    throw err;
+    return {
+      success: false,
+      error: err?.message || "Úprava týmu se nezdařila.",
+    };
   }
 }
 
 export async function deleteTeam(id: number) {
-  await requireAuth();
-  const result = await db.delete(team).where(eq(team.id, id)).returning();
-  revalidatePath("/");
-  return result[0];
+  try {
+    await requireAuth();
+    const result = await db.delete(team).where(eq(team.id, id)).returning();
+    revalidatePath("/");
+    return { success: true, data: result[0] };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err?.message || "Smazání týmu se nezdařilo.",
+    };
+  }
 }
 
 // Přiřazení hráče do týmu v daném kole (večeru)

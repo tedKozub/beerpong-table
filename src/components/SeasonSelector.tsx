@@ -26,8 +26,12 @@ export function SeasonSelector({
     const newId = Number(e.target.value);
     if (newId) {
       startTransition(async () => {
-        await setActiveSeason(newId);
-        router.refresh();
+        try {
+          await setActiveSeason(newId);
+          router.refresh();
+        } catch (err) {
+          // Gracefully prevent unhandled exceptions on client
+        }
       });
     }
   };

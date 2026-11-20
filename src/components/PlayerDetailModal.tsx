@@ -35,7 +35,7 @@ export function PlayerDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl max-h-[88vh] flex flex-col p-4 sm:p-6 bg-base-100 border border-base-300 shadow-2xl">
+      <DialogContent className="max-w-xl min-h-[380px] max-h-[88vh] flex flex-col p-4 sm:p-6 bg-base-100 border border-base-300 shadow-2xl">
         <DialogHeader className="space-y-1 border-b border-base-200 pb-3">
           <DialogTitle className="text-lg sm:text-xl font-bold flex items-center gap-2">
             <span>Profil a statistiky hráče</span>

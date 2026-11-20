@@ -58,10 +58,18 @@ export function RoundHeaderActions({
     setIsSaving(true);
     try {
       const parsedDate = date ? new Date(date) : undefined;
-      await updateRound(roundId, {
+      const res = await updateRound(roundId, {
         name: trimmed,
         date: parsedDate,
       });
+      if (!res.success) {
+        toast({
+          title: "Chyba při úpravě kola",
+          description: res.error || "Úprava se nezdařila.",
+          variant: "destructive",
+        });
+        return;
+      }
       toast({
         title: "Kolo upraveno",
         description: `Turnajový večer byl přejmenován na „${trimmed}“.`,
@@ -82,7 +90,15 @@ export function RoundHeaderActions({
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await deleteRound(roundId);
+      const res = await deleteRound(roundId);
+      if (!res.success) {
+        toast({
+          title: "Chyba při mazání kola",
+          description: res.error || "Smazání se nezdařilo.",
+          variant: "destructive",
+        });
+        return;
+      }
       toast({
         title: "Kolo smazáno",
         description: `Kolo „${currentName}“ a všechna jeho data byla odstraněna.`,
