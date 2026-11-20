@@ -4,15 +4,45 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { createSession, decrypt } from "@/lib/session";
 
-export async function login(formData: FormData) {
+export type LoginResult = {
+  success: boolean;
+  error?: string;
+};
+
+export async function loginAction(values: {
+  name?: string;
+  password?: string;
+}): Promise<LoginResult> {
   const adminUsername = process.env.ADMIN_USERNAME;
   const adminPassword = process.env.ADMIN_PASSWORD;
-  if (!(formData.get("name") === adminUsername)) {
-    return;
+
+  const name = values.name?.trim();
+  const password = values.password;
+
+  if (!name || !password) {
+    return { success: false, error: "Zadejte uživatelské jméno i heslo." };
   }
-  if (!(formData.get("password") === adminPassword)) {
-    return;
+
+  if (name !== adminUsername || password !== adminPassword) {
+    return { success: false, error: "Nesprávné přihlašovací jméno nebo heslo." };
   }
+
+  // create session
+  await createSession("1");
+  return { success: true };
+}
+
+export async function login(formData: FormData): Promise<LoginResult | void> {
+  const adminUsername = process.env.ADMIN_USERNAME;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  const name = formData.get("name")?.toString().trim();
+  const password = formData.get("password")?.toString();
+
+  if (!name || !password || name !== adminUsername || password !== adminPassword) {
+    return { success: false, error: "Nesprávné přihlašovací jméno nebo heslo." };
+  }
+
   // create session
   await createSession("1");
 

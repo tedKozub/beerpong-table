@@ -48,16 +48,30 @@ export default function AboutPage() {
               Vytvořeno v <strong>říjnu 2024</strong> (první verze 2. října 2024).
             </div>
 
-            <div>
-              Původní repozitář:{" "}
-              <a
-                href="https://github.com/petrsgamer/beerpong-table"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline font-semibold"
-              >
-                petrsgamer/beerpong-table
-              </a>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+              <div>
+                Původní repozitář:{" "}
+                <a
+                  href="https://github.com/petrsgamers/beerpong-table"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-semibold"
+                >
+                  petrsgamers/beerpong-table
+                </a>
+              </div>
+              <span className="hidden sm:inline text-base-content/40">•</span>
+              <div>
+                Aktuální fork:{" "}
+                <a
+                  href="https://github.com/tedKozub/beerpong-table"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-semibold"
+                >
+                  tedKozub/beerpong-table
+                </a>
+              </div>
             </div>
           </div>
         </section>

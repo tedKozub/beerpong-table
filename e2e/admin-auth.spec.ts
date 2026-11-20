@@ -7,6 +7,44 @@ test.describe("Admin Authentication & Protected Routes", () => {
     await expect(page.locator("h1")).toContainText("Přihlášení");
   });
 
+  test("shows client validation errors when submitting empty form", async ({ page }) => {
+    await page.goto("/login");
+    await page.click('button[type="submit"]');
+
+    await expect(page.getByText("Vyplňte prosím uživatelské jméno")).toBeVisible();
+    await expect(page.getByText("Vyplňte prosím heslo")).toBeVisible();
+    await expect(page).toHaveURL(/\/login/);
+  });
+
+  test("shows error toast and alert on invalid credentials", async ({ page }) => {
+    await page.goto("/login");
+
+    await page.fill('input[name="name"]', "spatne_jmeno");
+    await page.fill('input[name="password"]', "spatne_heslo");
+    await page.click('button[type="submit"]');
+
+    // Verify error toast and inline alert
+    await expect(page.getByText("Chyba přihlášení").first()).toBeVisible();
+    await expect(page.getByText("Nesprávné přihlašovací jméno nebo heslo.").first()).toBeVisible();
+    await expect(page).toHaveURL(/\/login/);
+  });
+
+  test("API route /api/auth/login returns 401 on bad credentials and 400 on missing fields", async ({ request }) => {
+    // Missing fields
+    const resBad = await request.post("/api/auth/login", {
+      data: { name: "" },
+    });
+    expect(resBad.status()).toBe(400);
+
+    // Invalid credentials
+    const resUnauthorized = await request.post("/api/auth/login", {
+      data: { name: "admin", password: "wrong_password" },
+    });
+    expect(resUnauthorized.status()).toBe(401);
+    const json = await resUnauthorized.json();
+    expect(json.error).toBe("Nesprávné přihlašovací jméno nebo heslo.");
+  });
+
   test("successful admin login grants access to dashboard and allows logout", async ({ page }) => {
     await page.goto("/login");
 
