@@ -11,6 +11,8 @@ import {
 import { useState } from "react";
 import { ScoreInputDialog } from "./ScoreInputDialog";
 import { TournamentStopwatch } from "./TournamentStopwatch";
+import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface PlayerOption {
   id: number;
@@ -40,11 +42,16 @@ export function ScheduleSection({
   allSeasonPlayers = [],
   isAdmin = false,
 }: ScheduleSectionProps) {
+  const { toast } = useToast();
   const [downloading, setDownloading] = useState<"pdf" | "slides" | null>(null);
 
   // Dialog state for entering/editing score for a match
   const [selectedMatch, setSelectedMatch] =
     useState<ScheduledMatchWithResult | null>(null);
+
+  // Confirm delete schedule dialog state
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeletingSchedule, setIsDeletingSchedule] = useState(false);
 
   const handleDownload = async (kind: "pdf" | "slides") => {
     setDownloading(kind);
@@ -60,8 +67,23 @@ export function ScheduleSection({
   };
 
   const handleDelete = async () => {
-    if (confirm("Opravdu chceš smazat rozpis stolů pro toto kolo?")) {
+    setIsDeletingSchedule(true);
+    try {
       await deleteScheduleForRound(roundId);
+      toast({
+        title: "Rozpis smazán",
+        description:
+          "Rozpis stolů byl úspěšně odstraněn. Výsledky dříve odehraných zápasů zůstaly zachovány.",
+      });
+      setIsDeleteDialogOpen(false);
+    } catch (err: any) {
+      toast({
+        title: "Chyba při mazání rozpisu",
+        description: err?.message || "Rozpis se nepodařilo smazat.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeletingSchedule(false);
     }
   };
 
@@ -116,7 +138,7 @@ export function ScheduleSection({
               {isAdmin && (
                 <button
                   className="btn btn-ghost btn-sm text-xs text-error hover:bg-error/10"
-                  onClick={handleDelete}
+                  onClick={() => setIsDeleteDialogOpen(true)}
                 >
                   Smazat rozpis
                 </button>
@@ -347,6 +369,19 @@ export function ScheduleSection({
           roster={roster}
           allSeasonPlayers={allSeasonPlayers}
           existingScore={selectedMatch.score}
+        />
+      )}
+
+      {/* Potvrzovací dialog pro smazání rozpisu stolů */}
+      {isAdmin && (
+        <ConfirmDeleteDialog
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          title="Smazat rozpis zápasů na stoly"
+          description="Opravdu chcete smazat rozpis stolů pro toto turnajové kolo? Výsledky odehraných zápasů a statistiky hráčů zůstanou v systému bezpečně zachovány."
+          confirmLabel="Smazat rozpis"
+          onConfirm={handleDelete}
+          isPending={isDeletingSchedule}
         />
       )}
     </div>

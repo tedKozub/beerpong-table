@@ -3,9 +3,13 @@
 import { db } from "@/db";
 import { round, season } from "@/db/schema";
 import { Season } from "@/db/types";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "./auth";
+
+export type SeasonActionResult<T = any> =
+  | { success: true; data: T }
+  | { success: false; error: string };
 
 export async function getAllSeasons() {
   return db
@@ -59,8 +63,26 @@ export async function getSeasonById(id: number) {
   return seasonData[0];
 }
 
-export async function createSeason(s: { name: string; isActive?: boolean }) {
+export async function createSeason(s: {
+  name: string;
+  isActive?: boolean;
+}): Promise<SeasonActionResult<Season>> {
   await requireAuth();
+  const trimmed = s.name.trim();
+  if (!trimmed) {
+    return { success: false, error: "Název semestru nesmí být prázdný." };
+  }
+
+  // Case-insensitive duplicate check
+  const existing = await db
+    .select({ id: season.id })
+    .from(season)
+    .where(sql`lower(${season.name}) = lower(${trimmed})`);
+
+  if (existing.length > 0) {
+    return { success: false, error: `Semestr s názvem „${trimmed}“ již existuje.` };
+  }
+
   // Pokud je označena jako aktivní, deaktivujeme ostatní
   if (s.isActive) {
     await db.update(season).set({ isActive: false });
@@ -69,7 +91,7 @@ export async function createSeason(s: { name: string; isActive?: boolean }) {
   const [newSeason] = await db
     .insert(season)
     .values({
-      name: s.name,
+      name: trimmed,
       isActive: s.isActive ?? false,
     })
     .returning();
@@ -87,11 +109,31 @@ export async function createSeason(s: { name: string; isActive?: boolean }) {
 
   revalidatePath("/");
   revalidatePath("/seasons");
-  return newSeason;
+  return { success: true, data: newSeason };
 }
 
-export async function updateSeason(id: number, s: Partial<Season>) {
+export async function updateSeason(
+  id: number,
+  s: Partial<Season>
+): Promise<SeasonActionResult<Season>> {
   await requireAuth();
+  if (s.name) {
+    const trimmed = s.name.trim();
+    if (!trimmed) {
+      return { success: false, error: "Název semestru nesmí být prázdný." };
+    }
+    const existing = await db
+      .select({ id: season.id })
+      .from(season)
+      .where(
+        sql`lower(${season.name}) = lower(${trimmed}) AND ${season.id} != ${id}`
+      );
+
+    if (existing.length > 0) {
+      return { success: false, error: `Semestr s názvem „${trimmed}“ již existuje.` };
+    }
+  }
+
   if (s.isActive) {
     await db.update(season).set({ isActive: false });
   }
@@ -99,7 +141,7 @@ export async function updateSeason(id: number, s: Partial<Season>) {
   const updatedSeason = await db
     .update(season)
     .set({
-      ...(s.name ? { name: s.name } : {}),
+      ...(s.name ? { name: s.name.trim() } : {}),
       ...(s.isActive !== undefined ? { isActive: s.isActive } : {}),
     })
     .where(eq(season.id, id))
@@ -107,10 +149,12 @@ export async function updateSeason(id: number, s: Partial<Season>) {
 
   revalidatePath("/");
   revalidatePath("/seasons");
-  return updatedSeason[0];
+  return { success: true, data: updatedSeason[0] };
 }
 
-export async function deleteSeason(id: number) {
+export async function deleteSeason(
+  id: number
+): Promise<SeasonActionResult<Season | undefined>> {
   await requireAuth();
   const deletedSeason = await db
     .delete(season)
@@ -118,5 +162,5 @@ export async function deleteSeason(id: number) {
     .returning();
   revalidatePath("/");
   revalidatePath("/seasons");
-  return deletedSeason[0];
+  return { success: true, data: deletedSeason[0] };
 }

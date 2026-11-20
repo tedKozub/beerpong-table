@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { loginAsAdmin } from "./auth-helper";
 
 test.describe("Mobile Responsiveness & Viewport Checks", () => {
   test("public overview has no horizontal scroll on mobile viewport and logo shows fox", async ({ page }) => {
@@ -20,11 +21,7 @@ test.describe("Mobile Responsiveness & Viewport Checks", () => {
     await page.setViewportSize({ width: 390, height: 844 });
 
     // Login to view admin navbar
-    await page.goto("/login");
-    await page.fill('input[name="name"]', "admin");
-    await page.fill('input[name="password"]', "admin");
-    await page.click('button[type="submit"]');
-    await page.waitForURL("**/");
+    await loginAsAdmin(page);
 
     await page.goto("/rounds/11");
 
@@ -51,15 +48,11 @@ test.describe("Mobile Responsiveness & Viewport Checks", () => {
     await page.setViewportSize({ width: 390, height: 844 });
 
     // Login
-    await page.goto("/login");
-    await page.fill('input[name="name"]', "admin");
-    await page.fill('input[name="password"]', "admin");
-    await page.click('button[type="submit"]');
-    await page.waitForURL("**/");
+    await loginAsAdmin(page);
 
     for (const roundId of [11, 15]) {
       await page.goto(`/rounds/${roundId}`);
-      await page.waitForLoadState("networkidle");
+      await expect(page.locator("h1")).toBeVisible();
 
       const isOverflowing = await page.evaluate(() => {
         return document.documentElement.scrollWidth > document.documentElement.clientWidth;
@@ -72,11 +65,7 @@ test.describe("Mobile Responsiveness & Viewport Checks", () => {
     await page.setViewportSize({ width: 390, height: 844 });
 
     // Login
-    await page.goto("/login");
-    await page.fill('input[name="name"]', "admin");
-    await page.fill('input[name="password"]', "admin");
-    await page.click('button[type="submit"]');
-    await page.waitForURL("**/");
+    await loginAsAdmin(page);
 
     await page.goto("/rounds/11");
 

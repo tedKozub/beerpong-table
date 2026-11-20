@@ -92,8 +92,8 @@ npm install
 Create a `.env.local` file with the following variables:
 ```env
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/beerpong_dev
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=admin
+ADMIN_USERNAME=your_admin_username
+ADMIN_PASSWORD=your_secure_admin_password
 SESSION_SECRET=beerpong_super_secret_session_key_local_development_123456
 ```
 

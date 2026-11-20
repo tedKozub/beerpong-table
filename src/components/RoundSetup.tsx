@@ -8,6 +8,7 @@ import {
   createScheduleForRound,
   deleteScheduleForRound,
 } from "@/actions/schedule";
+import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -59,6 +60,16 @@ export function RoundSetup({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Dialog states for confirmations
+  const [teamToDelete, setTeamToDelete] = useState<{
+    teamId: number;
+    name: string;
+  } | null>(null);
+  const [isDeletingTeam, setIsDeletingTeam] = useState(false);
+  const [isResetScheduleOpen, setIsResetScheduleOpen] = useState(false);
+  const [isResettingSchedule, setIsResettingSchedule] = useState(false);
+  const [isRegenerateOpen, setIsRegenerateOpen] = useState(false);
 
   // Group roster by team
   const activeTeamsMap = new Map<
@@ -131,15 +142,16 @@ export function RoundSetup({
     }
   };
 
-  const handleRemoveTeam = async (teamId: number, name: string) => {
-    if (!confirm(`Opravdu chceš odebrat tým ${name} z tohoto kola?`)) return;
-    setLoading(true);
+  const confirmRemoveTeam = async () => {
+    if (!teamToDelete) return;
+    setIsDeletingTeam(true);
     try {
-      await removeTeamFromRound(roundId, teamId);
+      await removeTeamFromRound(roundId, teamToDelete.teamId);
       toast({
         title: "Tým odebrán",
-        description: `Tým ${name} byl odebrán z kola.`,
+        description: `Tým „${teamToDelete.name}“ byl úspěšně odebrán z kola.`,
       });
+      setTeamToDelete(null);
       router.refresh();
     } catch (err: any) {
       setError(err?.message || "Chyba při odebírání týmu");
@@ -149,11 +161,11 @@ export function RoundSetup({
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsDeletingTeam(false);
     }
   };
 
-  const handleGenerateSchedule = async () => {
+  const executeGenerateSchedule = async () => {
     const tables = parseInt(tablesCount);
     if (isNaN(tables) || tables < 1) {
       setError("Zadej platný počet stolů.");
@@ -176,6 +188,7 @@ export function RoundSetup({
           title: "Rozpis vygenerován",
           description: `Rozpis zápasů na ${tables} ${tables === 1 ? "stůl" : tables < 5 ? "stoly" : "stolů"} byl úspěšně vytvořen.`,
         });
+        setIsRegenerateOpen(false);
         router.refresh();
       }
     } catch (err: any) {
@@ -190,21 +203,23 @@ export function RoundSetup({
     }
   };
 
-  const handleResetSchedule = async () => {
-    if (
-      !confirm(
-        "Opravdu chceš smazat vygenerovaný rozpis? Budou smazány i naplánované zápasy."
-      )
-    )
-      return;
+  const handleGenerateClick = () => {
+    if (hasSchedule) {
+      setIsRegenerateOpen(true);
+    } else {
+      executeGenerateSchedule();
+    }
+  };
 
-    setLoading(true);
+  const confirmResetSchedule = async () => {
+    setIsResettingSchedule(true);
     try {
       await deleteScheduleForRound(roundId);
       toast({
         title: "Rozpis smazán",
         description: "Rozpis zápasů byl smazán a je možné ho znovu nastavit.",
       });
+      setIsResetScheduleOpen(false);
       router.refresh();
     } catch (err: any) {
       setError(err?.message || "Chyba při resetování rozpisu");
@@ -214,7 +229,7 @@ export function RoundSetup({
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsResettingSchedule(false);
     }
   };
 
@@ -376,7 +391,12 @@ export function RoundSetup({
                         <td className="text-center">
                           <button
                             type="button"
-                            onClick={() => handleRemoveTeam(t.teamId, t.teamName)}
+                            onClick={() =>
+                              setTeamToDelete({
+                                teamId: t.teamId,
+                                name: t.teamName,
+                              })
+                            }
                             disabled={loading}
                             title="Odebrat tým z kola"
                             className="btn btn-ghost btn-xs text-error p-1"
@@ -415,7 +435,7 @@ export function RoundSetup({
             {hasSchedule && (
               <button
                 type="button"
-                onClick={handleResetSchedule}
+                onClick={() => setIsResetScheduleOpen(true)}
                 disabled={loading}
                 className="btn btn-ghost btn-xs text-error order-2 sm:order-1"
               >
@@ -425,7 +445,7 @@ export function RoundSetup({
 
             <button
               type="button"
-              onClick={handleGenerateSchedule}
+              onClick={handleGenerateClick}
               disabled={loading || activeTeams.length < 2}
               className="btn btn-primary btn-sm font-bold gap-1.5 order-1 sm:order-2 w-full sm:w-auto"
             >
@@ -443,6 +463,41 @@ export function RoundSetup({
           </div>
         </div>
       </div>
+
+      {/* Dialog pro odebrání týmu z kola */}
+      <ConfirmDeleteDialog
+        open={teamToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setTeamToDelete(null);
+        }}
+        title="Odebrat tým z kola"
+        description={`Opravdu chcete odebrat tým „${teamToDelete?.name}“ z tohoto turnajového večera? Hráči týmu budou ze soupisky kola uvolněni.`}
+        confirmLabel="Odebrat tým"
+        onConfirm={confirmRemoveTeam}
+        isPending={isDeletingTeam}
+      />
+
+      {/* Dialog pro smazání rozpisu stolů */}
+      <ConfirmDeleteDialog
+        open={isResetScheduleOpen}
+        onOpenChange={setIsResetScheduleOpen}
+        title="Smazat rozpis stolů"
+        description="Opravdu chcete smazat vygenerovaný rozpis pro toto kolo? Výsledky dříve odehraných zápasů zůstanou bezpečně uloženy v databázi."
+        confirmLabel="Smazat rozpis"
+        onConfirm={confirmResetSchedule}
+        isPending={isResettingSchedule}
+      />
+
+      {/* Dialog pro přegenerování rozpisu stolů */}
+      <ConfirmDeleteDialog
+        open={isRegenerateOpen}
+        onOpenChange={setIsRegenerateOpen}
+        title="Přegenerovat rozpis zápasů"
+        description="Pro toto kolo již existuje aktivní rozpis. Opravdu chcete vytvořit nový rozpis zápasů na stoly? Všechny dosud odehrané výsledky zápasů zůstanou v systému zachovány a automaticky se spárují."
+        confirmLabel="Přegenerovat"
+        onConfirm={executeGenerateSchedule}
+        isPending={loading}
+      />
     </div>
   );
 }

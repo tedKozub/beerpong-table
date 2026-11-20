@@ -1,12 +1,5 @@
 import { test, expect } from "@playwright/test";
-
-async function loginAsAdmin(page: any) {
-  await page.goto("/login");
-  await page.fill('input[name="name"]', "admin");
-  await page.fill('input[name="password"]', "admin");
-  await page.click('button[type="submit"]');
-  await page.waitForURL("**/");
-}
+import { loginAsAdmin } from "./auth-helper";
 
 test.describe("Tournament Feedback & Field-Tested Features", () => {
   test("export dropdown menu clearly offers XLSX as recommended primary action and CSV", async ({ page }) => {

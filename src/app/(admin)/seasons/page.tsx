@@ -1,10 +1,7 @@
-import {
-  getAllSeasons,
-  createSeason,
-  deleteSeason,
-  setActiveSeason,
-} from "@/actions/seasons";
+import { getAllSeasons, setActiveSeason } from "@/actions/seasons";
 import { getRoundsForSeason } from "@/actions/rounds";
+import { DeleteSeasonButton } from "@/components/DeleteSeasonButton";
+import { CreateSeasonForm } from "@/components/CreateSeasonForm";
 import Link from "next/link";
 
 export default async function SeasonsArchivePage() {
@@ -108,20 +105,11 @@ export default async function SeasonsArchivePage() {
                   )}
                 </div>
 
-                <form
-                  action={async () => {
-                    "use server";
-                    await deleteSeason(s.id);
-                  }}
-                >
-                  <button
-                    type="submit"
-                    className="btn btn-ghost btn-xs text-error hover:bg-error/10"
-                    title="Smazat celou sezónu"
-                  >
-                    Smazat
-                  </button>
-                </form>
+                <DeleteSeasonButton
+                  seasonId={s.id}
+                  seasonName={s.name}
+                  isActive={s.isActive}
+                />
               </div>
             </div>
           </div>
@@ -136,40 +124,7 @@ export default async function SeasonsArchivePage() {
             Při založení semestru se pro něj automaticky vytvoří standardních 5 kol včetně Velkého Finále.
           </p>
 
-          <form
-            action={async (formData: FormData) => {
-              "use server";
-              const name = formData.get("name") as string;
-              const isActive = formData.get("isActive") === "on";
-              if (name?.trim()) {
-                await createSeason({
-                  name: name.trim(),
-                  isActive,
-                });
-              }
-            }}
-            className="flex flex-col sm:flex-row gap-3 items-start sm:items-center mt-3"
-          >
-            <input
-              name="name"
-              placeholder="Např. Podzimní semestr 2026"
-              className="input input-bordered input-sm w-full sm:w-80"
-              required
-            />
-            <label className="label cursor-pointer gap-2 py-0">
-              <input
-                type="checkbox"
-                name="isActive"
-                className="checkbox checkbox-success checkbox-sm"
-              />
-              <span className="label-text text-xs font-semibold">
-                Nastavit rovnou jako aktivní
-              </span>
-            </label>
-            <button type="submit" className="btn btn-primary btn-sm">
-              Vytvořit semestr (s 5 koly)
-            </button>
-          </form>
+          <CreateSeasonForm />
         </div>
       </section>
     </div>

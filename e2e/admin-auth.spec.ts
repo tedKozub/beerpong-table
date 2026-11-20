@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { ADMIN_CREDENTIALS } from "./auth-helper";
 
 test.describe("Admin Authentication & Protected Routes", () => {
   test("unauthenticated access redirects to /login", async ({ page }) => {
@@ -49,8 +50,8 @@ test.describe("Admin Authentication & Protected Routes", () => {
     await page.goto("/login");
 
     // Fill login form
-    await page.fill('input[name="name"]', "admin");
-    await page.fill('input[name="password"]', "admin");
+    await page.fill('input[name="name"]', ADMIN_CREDENTIALS.username);
+    await page.fill('input[name="password"]', ADMIN_CREDENTIALS.password);
     await page.click('button[type="submit"]');
 
     // Should redirect to dashboard
