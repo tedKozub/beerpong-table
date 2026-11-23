@@ -142,6 +142,16 @@ npm run test:e2e
 npm run deploy:check
 ```
 
+### CI/CD Quality Gates & Security Checks
+
+Every push and pull request to `staging` or `main` automatically triggers GitHub Actions:
+- **SAST Code Security Analysis**: Semgrep scanning for security anti-patterns and vulnerabilities.
+- **Dependency Audit**: `npm audit` checking for known security advisories.
+- **Code Style & Linting**: `next lint` enforcing standard Next.js rules with zero warnings or errors.
+- **Strict Typing**: `tsc --noEmit` guaranteeing 100% type safety.
+- **Production Compilation**: `next build` validating build artifacts and SSR routes.
+- **End-to-End Testing**: Automated Playwright test suite covering all critical desktop and mobile user flows.
+
 ---
 
 ## Design Guide
