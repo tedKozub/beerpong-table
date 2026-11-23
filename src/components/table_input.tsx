@@ -1,4 +1,8 @@
-export const TableInput = (props: any) => (
+import React from "react";
+
+export const TableInput = (
+  props: React.InputHTMLAttributes<HTMLInputElement>
+) => (
   <td className="p-2 border-b border-base-300">
     <input
       type="number"

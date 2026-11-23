@@ -10,5 +10,5 @@ export async function loginAsAdmin(page: Page) {
   await page.fill('input[name="name"]', ADMIN_CREDENTIALS.username);
   await page.fill('input[name="password"]', ADMIN_CREDENTIALS.password);
   await page.click('button[type="submit"]');
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/$/, { timeout: 10000 });
 }

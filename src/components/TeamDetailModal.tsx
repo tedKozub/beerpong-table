@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, Users } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface TeamDetailModalProps {
   teamId: number | null;

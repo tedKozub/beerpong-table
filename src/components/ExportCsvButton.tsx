@@ -8,7 +8,7 @@ import {
   TeamStandingItem,
   LeaderboardItem,
 } from "@/lib/exportXlsx";
-import { Download, FileSpreadsheet, ChevronDown, Check } from "lucide-react";
+import { Download, FileSpreadsheet, ChevronDown } from "lucide-react";
 
 interface ExportCsvButtonProps {
   roundName: string;
@@ -59,10 +59,11 @@ export function ExportCsvButton({
         title: "XLSX export stažen",
         description: `Výsledky ${roundName} byly uloženy do Excel tabulky (.xlsx).`,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při exportu do XLSX",
-        description: err?.message || "Export se nezdařil.",
+        description: errorObj?.message || "Export se nezdařil.",
         variant: "destructive",
       });
     }
@@ -116,10 +117,11 @@ export function ExportCsvButton({
         title: "CSV export stažen",
         description: `Výsledky ${roundName} byly staženy do ${filename}`,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při exportu",
-        description: err?.message || "Export se nezdařil.",
+        description: errorObj?.message || "Export se nezdařil.",
         variant: "destructive",
       });
     }

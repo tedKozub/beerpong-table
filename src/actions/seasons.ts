@@ -7,7 +7,7 @@ import { desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "./auth";
 
-export type SeasonActionResult<T = any> =
+export type SeasonActionResult<T = unknown> =
   | { success: true; data: T }
   | { success: false; error: string };
 

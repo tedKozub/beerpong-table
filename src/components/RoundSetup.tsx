@@ -130,11 +130,13 @@ export function RoundSetup({
         });
         router.refresh();
       }
-    } catch (err: any) {
-      setError(err?.message || "Chyba při přidávání týmu");
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
+      const errorMsg = errorObj?.message || "Chyba při přidávání týmu";
+      setError(errorMsg);
       toast({
         title: "Chyba",
-        description: err?.message || "Chyba při přidávání týmu",
+        description: errorMsg,
         variant: "destructive",
       });
     } finally {
@@ -153,11 +155,13 @@ export function RoundSetup({
       });
       setTeamToDelete(null);
       router.refresh();
-    } catch (err: any) {
-      setError(err?.message || "Chyba při odebírání týmu");
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
+      const errorMsg = errorObj?.message || "Chyba při odebírání týmu";
+      setError(errorMsg);
       toast({
         title: "Chyba při odebírání týmu",
-        description: err?.message,
+        description: errorMsg,
         variant: "destructive",
       });
     } finally {
@@ -191,11 +195,13 @@ export function RoundSetup({
         setIsRegenerateOpen(false);
         router.refresh();
       }
-    } catch (err: any) {
-      setError(err?.message || "Chyba při generování rozpisu");
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
+      const errorMsg = errorObj?.message || "Chyba při generování rozpisu";
+      setError(errorMsg);
       toast({
         title: "Chyba při generování rozpisu",
-        description: err?.message,
+        description: errorMsg,
         variant: "destructive",
       });
     } finally {
@@ -221,11 +227,13 @@ export function RoundSetup({
       });
       setIsResetScheduleOpen(false);
       router.refresh();
-    } catch (err: any) {
-      setError(err?.message || "Chyba při resetování rozpisu");
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
+      const errorMsg = errorObj?.message || "Chyba při resetování rozpisu";
+      setError(errorMsg);
       toast({
         title: "Chyba",
-        description: err?.message,
+        description: errorMsg,
         variant: "destructive",
       });
     } finally {

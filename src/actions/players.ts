@@ -57,8 +57,9 @@ export async function createPlayer(data: { name: string; seasonId: number }) {
     revalidatePath("/");
     revalidatePath(`/seasons/${data.seasonId}`);
     return { success: true, data: result[0] };
-  } catch (err: any) {
-    if (err?.code === "23505" || err?.message?.includes("unique")) {
+  } catch (err: unknown) {
+    const errorObj = err as { code?: string; message?: string } | null;
+    if (errorObj?.code === "23505" || errorObj?.message?.includes("unique")) {
       return {
         success: false,
         error: `Hráč se jménem „${data.name.trim()}“ již v tomto semestru existuje.`,
@@ -66,7 +67,7 @@ export async function createPlayer(data: { name: string; seasonId: number }) {
     }
     return {
       success: false,
-      error: err?.message || "Hráče se nepodařilo přidat.",
+      error: errorObj?.message || "Hráče se nepodařilo přidat.",
     };
   }
 }
@@ -115,8 +116,9 @@ export async function updatePlayer(id: number, data: Partial<Player>) {
     revalidatePath("/");
     revalidatePath(`/seasons/${current.seasonId}`);
     return { success: true, data: result[0] };
-  } catch (err: any) {
-    if (err?.code === "23505" || err?.message?.includes("unique")) {
+  } catch (err: unknown) {
+    const errorObj = err as { code?: string; message?: string } | null;
+    if (errorObj?.code === "23505" || errorObj?.message?.includes("unique")) {
       return {
         success: false,
         error: `Hráč s tímto jménem již v tomto semestru existuje.`,
@@ -124,7 +126,7 @@ export async function updatePlayer(id: number, data: Partial<Player>) {
     }
     return {
       success: false,
-      error: err?.message || "Úprava hráče se nezdařila.",
+      error: errorObj?.message || "Úprava hráče se nezdařila.",
     };
   }
 }
@@ -138,10 +140,11 @@ export async function deletePlayer(id: number) {
       .returning();
     revalidatePath("/");
     return { success: true, data: result[0] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorObj = err as { message?: string } | null;
     return {
       success: false,
-      error: err?.message || "Smazání hráče se nezdařilo.",
+      error: errorObj?.message || "Smazání hráče se nezdařilo.",
     };
   }
 }

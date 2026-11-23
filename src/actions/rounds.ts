@@ -49,10 +49,11 @@ export async function createRound(data: {
     revalidatePath("/");
     revalidatePath(`/seasons/${data.seasonId}`);
     return { success: true, data: result[0] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorObj = err as { message?: string } | null;
     return {
       success: false,
-      error: err?.message || "Kolo se nepodařilo vytvořit.",
+      error: errorObj?.message || "Kolo se nepodařilo vytvořit.",
     };
   }
 }
@@ -80,10 +81,11 @@ export async function updateRound(id: number, data: Partial<Round>) {
       .returning();
     revalidatePath("/");
     return { success: true, data: result[0] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorObj = err as { message?: string } | null;
     return {
       success: false,
-      error: err?.message || "Úprava kola se nezdařila.",
+      error: errorObj?.message || "Úprava kola se nezdařila.",
     };
   }
 }
@@ -97,10 +99,11 @@ export async function deleteRound(id: number) {
       .returning();
     revalidatePath("/");
     return { success: true, data: result[0] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorObj = err as { message?: string } | null;
     return {
       success: false,
-      error: err?.message || "Smazání kola se nezdařilo.",
+      error: errorObj?.message || "Smazání kola se nezdařilo.",
     };
   }
 }

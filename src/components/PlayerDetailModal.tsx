@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, Shield, Trophy } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface PlayerDetailModalProps {
   playerId: number | null;

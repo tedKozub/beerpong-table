@@ -2,7 +2,6 @@
 
 import { db } from "@/db";
 import { match, player, playerMatchScore, team } from "@/db/schema";
-import { Match } from "@/db/types";
 import { and, eq, or } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "./auth";

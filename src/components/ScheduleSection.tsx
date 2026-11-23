@@ -76,10 +76,11 @@ export function ScheduleSection({
           "Rozpis stolů byl úspěšně odstraněn. Výsledky dříve odehraných zápasů zůstaly zachovány.",
       });
       setIsDeleteDialogOpen(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při mazání rozpisu",
-        description: err?.message || "Rozpis se nepodařilo smazat.",
+        description: errorObj?.message || "Rozpis se nepodařilo smazat.",
         variant: "destructive",
       });
     } finally {

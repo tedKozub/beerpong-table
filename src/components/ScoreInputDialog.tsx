@@ -138,7 +138,16 @@ export function ScoreInputDialog({
     return () => {
       isCancelled = true;
     };
-  }, [isOpen, team1.id, team2.id, roundId, existingScore]);
+  }, [
+    isOpen,
+    team1.id,
+    team2.id,
+    roundId,
+    existingScore,
+    allSeasonPlayers,
+    team1Roster,
+    team2Roster,
+  ]);
 
   if (!isOpen) return null;
 
@@ -229,10 +238,11 @@ export function ScoreInputDialog({
 
       onClose();
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při ukládání",
-        description: err?.message || "Nepodařilo se uložit výsledek zápasu.",
+        description: errorObj?.message || "Nepodařilo se uložit výsledek zápasu.",
         variant: "destructive",
       });
       console.error("Chyba při ukládání zápasu:", err);

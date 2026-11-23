@@ -1,15 +1,8 @@
 import { getSeasonById, setActiveSeason } from "@/actions/seasons";
-import { getRoundsForSeason, createRound } from "@/actions/rounds";
-import { getTeamsForSeason, createTeam, deleteTeam } from "@/actions/teams";
-import {
-  getPlayersForSeason,
-  createPlayer,
-  deletePlayer,
-} from "@/actions/players";
-import {
-  getSeasonPlayerLeaderboard,
-  getSeasonTeamStandings,
-} from "@/actions/stats";
+import { getRoundsForSeason } from "@/actions/rounds";
+import { getTeamsForSeason } from "@/actions/teams";
+import { getPlayersForSeason } from "@/actions/players";
+import { getSeasonTeamStandings } from "@/actions/stats";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SeasonCrudManager } from "@/components/SeasonCrudManager";
@@ -26,21 +19,12 @@ export default async function SeasonDetailPage({
   const currentSeason = await getSeasonById(seasonId);
   if (!currentSeason) return notFound();
 
-  const [rounds, teams, players, playerStats, teamStandings] =
-    await Promise.all([
-      getRoundsForSeason(seasonId),
-      getTeamsForSeason(seasonId),
-      getPlayersForSeason(seasonId),
-      getSeasonPlayerLeaderboard(seasonId),
-      getSeasonTeamStandings(seasonId),
-    ]);
-
-  const scoreLeaderboard = [...playerStats].sort(
-    (a, b) => b.totalScore - a.totalScore
-  );
-  const bjLeaderboard = [...playerStats].sort(
-    (a, b) => b.totalBlowjobs - a.totalBlowjobs
-  );
+  const [rounds, teams, players, teamStandings] = await Promise.all([
+    getRoundsForSeason(seasonId),
+    getTeamsForSeason(seasonId),
+    getPlayersForSeason(seasonId),
+    getSeasonTeamStandings(seasonId),
+  ]);
 
   return (
     <div className="p-3 sm:p-6 md:p-8 max-w-7xl mx-auto flex flex-col gap-6 sm:gap-8">

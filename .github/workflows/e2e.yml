@@ -34,3 +34,17 @@ jobs:
           ADMIN_USERNAME: admin
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'SppdfBeerpongAdmin2026!' }}
         continue-on-error: true
+
+  sast:
+    name: SAST Code Security Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Perform Semgrep SAST Scan
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/secrets
+            p/javascript
+

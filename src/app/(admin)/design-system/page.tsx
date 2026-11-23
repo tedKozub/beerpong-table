@@ -26,11 +26,9 @@ import { renderRank, getPodiumRowStyle } from "@/lib/podium";
 
 export default function DesignSystemPage() {
   const [currentTheme, setCurrentTheme] = useState<string>("beerpong-light");
-  const [mounted, setMounted] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    setMounted(true);
     const attr = document.documentElement.getAttribute("data-theme") || "beerpong-light";
     setCurrentTheme(attr);
   }, []);

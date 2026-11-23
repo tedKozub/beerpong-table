@@ -70,10 +70,11 @@ export function RoundHeaderActions({
       });
       setIsEditDialogOpen(false);
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při úpravě kola",
-        description: err?.message || "Úprava se nezdařila.",
+        description: errorObj?.message || "Úprava se nezdařila.",
         variant: "destructive",
       });
     } finally {

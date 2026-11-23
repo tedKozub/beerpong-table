@@ -11,7 +11,6 @@ import {
 } from "./schema";
 import {
   getRoundPlayerLeaderboard,
-  getRoundTeamStandings,
   getSeasonPlayerLeaderboard,
   getSeasonTeamStandings,
 } from "../actions/stats";
@@ -48,7 +47,7 @@ export async function seedV2() {
     .returning();
 
   console.log("2. Creating Rounds for Spring 2025 (5 turnajových večerů)...");
-  const [r1, r2, r3, r4, r5] = await db
+  const [r1, r2] = await db
     .insert(round)
     .values([
       {
@@ -129,7 +128,7 @@ export async function seedV2() {
   ]);
 
   console.log("3. Creating Teams for Spring 2025...");
-  const [teamBrouci, teamVlci, teamSneci, teamLisky] = await db
+  const [teamBrouci, teamVlci, teamSneci] = await db
     .insert(team)
     .values([
       { name: "Brouci", seasonId: spring2025.id },

@@ -50,10 +50,11 @@ export function CreateSeasonForm() {
       });
       reset();
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při vytváření semestru",
-        description: err?.message || "Vytvoření se nezdařilo.",
+        description: errorObj?.message || "Vytvoření se nezdařilo.",
         variant: "destructive",
       });
     }

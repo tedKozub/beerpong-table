@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2, Edit, Plus, Loader2, Check, X } from "lucide-react";
+import { Trash2, Edit, Plus, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { CrudButtonWithConfirm } from "./CrudButtonWithConfirm";
 import { CrudTableColumn } from "./types";
@@ -46,7 +46,7 @@ export function CrudTable<T extends { id: number }>({
 }: CrudTableProps<T>) {
   const [isPending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [addFormData, setAddFormData] = useState<Record<string, any>>({});
+  const [addFormData, setAddFormData] = useState<Record<string, unknown>>({});
 
   const { toast } = useToast();
 
@@ -61,7 +61,7 @@ export function CrudTable<T extends { id: number }>({
           title: "Success",
           description: "Item deleted successfully",
         });
-      } catch (error) {
+      } catch {
         toast({
           title: "Error",
           description: "Failed to delete item",
@@ -83,7 +83,7 @@ export function CrudTable<T extends { id: number }>({
           title: "Success",
           description: "Item updated successfully",
         });
-      } catch (error) {
+      } catch {
         toast({
           title: "Error",
           description: "Failed to update item",
@@ -183,7 +183,7 @@ export function CrudTable<T extends { id: number }>({
           description: "Item added successfully",
         });
         setAddFormData({});
-      } catch (error) {
+      } catch {
         toast({
           title: "Error",
           description: "Failed to add item",
@@ -193,7 +193,7 @@ export function CrudTable<T extends { id: number }>({
     });
   };
 
-  const handleInputChange = (key: string, value: any) => {
+  const handleInputChange = (key: string, value: unknown) => {
     setAddFormData((prev) => ({
       ...prev,
       [key]: value,
@@ -209,7 +209,8 @@ export function CrudTable<T extends { id: number }>({
 
   const renderAddInput = (column: CrudTableColumn<T>) => {
     const key = String(column.key);
-    const value = addFormData[key] || "";
+    const rawVal = addFormData[key];
+    const value = rawVal !== undefined && rawVal !== null ? String(rawVal) : "";
 
     if (column.type === "enum" && column.options) {
       return (

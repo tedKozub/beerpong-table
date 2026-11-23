@@ -16,7 +16,6 @@ import {
   Check,
   X,
   Loader2,
-  Calendar,
   Users,
   User,
 } from "lucide-react";
@@ -112,10 +111,11 @@ export function SeasonCrudManager({
         description: `Tým „${trimmed}“ byl úspěšně přidán.`,
       });
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při vytváření týmu",
-        description: err?.message || "Tým se nepodařilo vytvořit.",
+        description: errorObj?.message || "Tým se nepodařilo vytvořit.",
         variant: "destructive",
       });
     } finally {
@@ -151,10 +151,11 @@ export function SeasonCrudManager({
         description: `Název týmu byl upraven na „${trimmed}“.`,
       });
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při úpravě týmu",
-        description: err?.message || "Úprava se nezdařila.",
+        description: errorObj?.message || "Úprava se nezdařila.",
         variant: "destructive",
       });
     } finally {
@@ -181,10 +182,11 @@ export function SeasonCrudManager({
       });
       setDeletingTeam(null);
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při mazání týmu",
-        description: err?.message || "Smazání se nezdařilo.",
+        description: errorObj?.message || "Smazání se nezdařilo.",
         variant: "destructive",
       });
     } finally {
@@ -217,10 +219,11 @@ export function SeasonCrudManager({
         description: `Hráč „${trimmed}“ byl úspěšně přidán.`,
       });
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při registraci hráče",
-        description: err?.message || "Hráče se nepodařilo přidat.",
+        description: errorObj?.message || "Hráče se nepodařilo přidat.",
         variant: "destructive",
       });
     } finally {
@@ -256,10 +259,11 @@ export function SeasonCrudManager({
         description: `Jméno hráče bylo upraveno na „${trimmed}“.`,
       });
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při úpravě hráče",
-        description: err?.message || "Úprava se nezdařila.",
+        description: errorObj?.message || "Úprava se nezdařila.",
         variant: "destructive",
       });
     } finally {
@@ -286,10 +290,11 @@ export function SeasonCrudManager({
       });
       setDeletingPlayer(null);
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při mazání hráče",
-        description: err?.message || "Smazání se nezdařilo.",
+        description: errorObj?.message || "Smazání se nezdařilo.",
         variant: "destructive",
       });
     } finally {
@@ -330,10 +335,11 @@ export function SeasonCrudManager({
         description: `Turnajový večer „${trimmed}“ byl přidán.`,
       });
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při vytváření kola",
-        description: err?.message || "Kolo se nepodařilo vytvořit.",
+        description: errorObj?.message || "Kolo se nepodařilo vytvořit.",
         variant: "destructive",
       });
     } finally {
@@ -373,10 +379,11 @@ export function SeasonCrudManager({
         description: `Turnajový večer byl přejmenován na „${trimmed}“.`,
       });
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při úpravě kola",
-        description: err?.message || "Úprava se nezdařila.",
+        description: errorObj?.message || "Úprava se nezdařila.",
         variant: "destructive",
       });
     } finally {
@@ -403,10 +410,11 @@ export function SeasonCrudManager({
       });
       setDeletingRound(null);
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při mazání kola",
-        description: err?.message || "Smazání se nezdařilo.",
+        description: errorObj?.message || "Smazání se nezdařilo.",
         variant: "destructive",
       });
     } finally {

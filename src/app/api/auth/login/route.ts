@@ -27,9 +27,10 @@ export async function POST(request: NextRequest) {
     await createSession("1");
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorObj = error as { message?: string } | null;
     return NextResponse.json(
-      { success: false, error: error?.message || "Chyba serveru při přihlášení." },
+      { success: false, error: errorObj?.message || "Chyba serveru při přihlášení." },
       { status: 500 }
     );
   }

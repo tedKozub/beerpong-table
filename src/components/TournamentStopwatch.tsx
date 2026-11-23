@@ -32,7 +32,9 @@ const DEFAULT_DURATION = 10 * 60; // 10 minut default
 function playDigitalAlarm() {
   try {
     const AudioContextClass =
-      window.AudioContext || (window as any).webkitAudioContext;
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
     if (!AudioContextClass) return;
 
     const ctx = new AudioContextClass();
@@ -97,7 +99,7 @@ export function TournamentStopwatch() {
           isClosed: parsed.isClosed ?? false,
         };
       }
-    } catch (e) {
+    } catch {
       // Ignorovat chybu parsování
     }
 
@@ -121,7 +123,9 @@ export function TournamentStopwatch() {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (e) {}
+    } catch {
+      // Ignorovat chybu zápisu
+    }
   }, [state]);
 
   // Hlavní smyčka hodin
@@ -165,7 +169,14 @@ export function TournamentStopwatch() {
     timerRef.current = interval;
 
     return () => clearInterval(interval);
-  }, [state.isRunning, state.targetTimestamp, state.mode, state.soundEnabled, hasFinishedAlert]);
+  }, [
+    state.isRunning,
+    state.targetTimestamp,
+    state.remainingSeconds,
+    state.mode,
+    state.soundEnabled,
+    hasFinishedAlert,
+  ]);
 
   const handleStart = () => {
     const now = Date.now();

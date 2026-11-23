@@ -9,12 +9,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import React from "react";
+
+interface SubmitDialogProps {
+  handleModalConfirm: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  description?: string;
+  disabled?: boolean;
+}
 
 export function SubmitDialog({
   handleModalConfirm,
   description,
   disabled,
-}: any) {
+}: SubmitDialogProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>

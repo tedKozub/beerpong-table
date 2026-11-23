@@ -53,8 +53,9 @@ export async function createTeam(data: { name: string; seasonId: number }) {
     revalidatePath("/");
     revalidatePath(`/seasons/${data.seasonId}`);
     return { success: true, data: result[0] };
-  } catch (err: any) {
-    if (err?.code === "23505" || err?.message?.includes("unique")) {
+  } catch (err: unknown) {
+    const errorObj = err as { code?: string; message?: string } | null;
+    if (errorObj?.code === "23505" || errorObj?.message?.includes("unique")) {
       return {
         success: false,
         error: `Tým s tímto názvem již v tomto semestru existuje.`,
@@ -62,7 +63,7 @@ export async function createTeam(data: { name: string; seasonId: number }) {
     }
     return {
       success: false,
-      error: err?.message || "Tým se nepodařilo vytvořit.",
+      error: errorObj?.message || "Tým se nepodařilo vytvořit.",
     };
   }
 }
@@ -111,8 +112,9 @@ export async function updateTeam(id: number, data: Partial<Team>) {
     revalidatePath("/");
     revalidatePath(`/seasons/${current.seasonId}`);
     return { success: true, data: result[0] };
-  } catch (err: any) {
-    if (err?.code === "23505" || err?.message?.includes("unique")) {
+  } catch (err: unknown) {
+    const errorObj = err as { code?: string; message?: string } | null;
+    if (errorObj?.code === "23505" || errorObj?.message?.includes("unique")) {
       return {
         success: false,
         error: `Tým s tímto názvem již v tomto semestru existuje.`,
@@ -120,7 +122,7 @@ export async function updateTeam(id: number, data: Partial<Team>) {
     }
     return {
       success: false,
-      error: err?.message || "Úprava týmu se nezdařila.",
+      error: errorObj?.message || "Úprava týmu se nezdařila.",
     };
   }
 }
@@ -131,10 +133,11 @@ export async function deleteTeam(id: number) {
     const result = await db.delete(team).where(eq(team.id, id)).returning();
     revalidatePath("/");
     return { success: true, data: result[0] };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorObj = err as { message?: string } | null;
     return {
       success: false,
-      error: err?.message || "Smazání týmu se nezdařilo.",
+      error: errorObj?.message || "Smazání týmu se nezdařilo.",
     };
   }
 }

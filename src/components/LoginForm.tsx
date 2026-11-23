@@ -51,8 +51,9 @@ export function LoginForm() {
 
       router.push("/");
       router.refresh();
-    } catch (err: any) {
-      const errorMsg = err?.message || "Došlo k neočekávané chybě při přihlašování.";
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
+      const errorMsg = errorObj?.message || "Došlo k neočekávané chybě při přihlašování.";
       setServerError(errorMsg);
       toast({
         title: "Chyba přihlášení",

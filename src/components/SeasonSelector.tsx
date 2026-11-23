@@ -29,7 +29,7 @@ export function SeasonSelector({
         try {
           await setActiveSeason(newId);
           router.refresh();
-        } catch (err) {
+        } catch {
           // Gracefully prevent unhandled exceptions on client
         }
       });

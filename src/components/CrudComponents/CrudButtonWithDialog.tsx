@@ -17,7 +17,7 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import type { CrudTableColumn } from "./types";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 type Props<T> = {
   data: T;
@@ -44,22 +44,25 @@ export function CrudButtonWithDialog<T extends { id: string | number }>({
   const [isOpen, setIsOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  const handleChange = (key: keyof T, value: any) => {
+  const handleChange = (key: keyof T, value: unknown) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    onConfirm(formData);
-    setIsOpen(false);
-  };
+  const handleSubmit = useCallback(
+    (e?: React.FormEvent) => {
+      e?.preventDefault();
+      onConfirm(formData);
+      setIsOpen(false);
+    },
+    [formData, onConfirm]
+  );
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setFormData(data); // Reset form data
     setIsOpen(false);
-  };
+  }, [data]);
 
-  const renderValue = (value: any) => {
+  const renderValue = (value: unknown) => {
     if (typeof value === "string" || typeof value === "number") {
       return value;
     }
@@ -90,7 +93,7 @@ export function CrudButtonWithDialog<T extends { id: string | number }>({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, formData]);
+  }, [isOpen, handleSubmit, handleCancel]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

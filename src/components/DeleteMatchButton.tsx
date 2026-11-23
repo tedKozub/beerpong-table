@@ -22,10 +22,11 @@ export function DeleteMatchButton({ matchId }: { matchId: number }) {
       });
       setIsOpen(false);
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string } | null;
       toast({
         title: "Chyba při mazání zápasu",
-        description: err?.message || "Smazání se nezdařilo.",
+        description: errorObj?.message || "Smazání se nezdařilo.",
         variant: "destructive",
       });
     } finally {
