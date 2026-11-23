@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ staging, main ]
 
+concurrency:
+  group: e2e-staging-tests
+  cancel-in-progress: true
+
 jobs:
   pipeline:
     runs-on: ubuntu-latest
@@ -33,7 +37,6 @@ jobs:
           PLAYWRIGHT_TEST_BASE_URL: https://staging.beerpong.tadeaskozub.com
           ADMIN_USERNAME: admin
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'SppdfBeerpongAdmin2026!' }}
-        continue-on-error: true
 
   sast:
     name: SAST Code Security Analysis

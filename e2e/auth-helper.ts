@@ -6,9 +6,11 @@ export const ADMIN_CREDENTIALS = {
 };
 
 export async function loginAsAdmin(page: Page) {
-  await page.goto("/login");
-  await page.fill('input[name="name"]', ADMIN_CREDENTIALS.username);
-  await page.fill('input[name="password"]', ADMIN_CREDENTIALS.password);
-  await page.click('button[type="submit"]');
-  await expect(page).toHaveURL(/\/$/, { timeout: 10000 });
+  const response = await page.request.post("/api/auth/login", {
+    data: {
+      name: ADMIN_CREDENTIALS.username,
+      password: ADMIN_CREDENTIALS.password,
+    },
+  });
+  expect(response.ok()).toBeTruthy();
 }

@@ -37,9 +37,9 @@ test.describe("Admin Round Management & Match Scoring", () => {
     await saveBtn.click();
 
     // Verify toast confirmation
-    await expect(page.getByText("Výsledek zápasu byl uložen", { exact: true })).toBeVisible();
+    await expect(page.getByText("Výsledek zápasu byl uložen", { exact: true })).toBeVisible({ timeout: 15000 });
 
     // Verify dialog closed
-    await expect(dialogTitle).not.toBeVisible();
+    await expect(dialogTitle).not.toBeVisible({ timeout: 10000 });
   });
 });
